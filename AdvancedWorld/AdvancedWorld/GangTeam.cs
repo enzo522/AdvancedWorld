@@ -8,10 +8,14 @@ namespace AdvancedWorld
     public class GangTeam : EntitySet
     {
         private List<Ped> members;
+        private List<WeaponHash> closeWeapons;
+        private List<WeaponHash> standoffWeapons;
 
         public GangTeam() : base()
         {
             members = new List<Ped>();
+            closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Unarmed };
+            standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun };
         }
 
         public bool IsCreatedIn(float radius, Vector3 position, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
@@ -24,15 +28,15 @@ namespace AdvancedWorld
 
                 if (!Util.ThereIs(p)) continue;
 
-                List<WeaponHash> weaponList = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.Bat, WeaponHash.SawnOffShotgun, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Unarmed };
-                p.Weapons.Give(weaponList[Util.GetRandomInt(weaponList.Count)], 1000, false, true);
-                p.Armor = Util.GetRandomInt(100);
+                if (Util.GetRandomInt(3) == 0) p.Weapons.Give(closeWeapons[Util.GetRandomInt(closeWeapons.Count)], 1, true, true);
+                else p.Weapons.Give(standoffWeapons[Util.GetRandomInt(standoffWeapons.Count)], 300, true, true);
 
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
                 p.RelationshipGroup = teamID;
                 p.AlwaysKeepTask = true;
+                p.Armor = Util.GetRandomInt(100);
 
                 if (!Util.BlipIsOn(p))
                 {
