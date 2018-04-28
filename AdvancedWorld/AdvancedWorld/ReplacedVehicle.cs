@@ -8,77 +8,87 @@ namespace AdvancedWorld
     {
         private string name;
 
-        public ReplacedVehicle(string name) : base()
-        {
-            this.name = name;
-        }
+        public ReplacedVehicle(string name) : base() { this.name = name; }
 
         public bool IsCreatedIn(float radius)
         {
             Vehicle[] nearbyVehicles = World.GetNearbyVehicles(Game.Player.Character.Position, radius);
 
-            if (nearbyVehicles.Length <= 0) return false;
+            if (nearbyVehicles.Length < 1) return false;
 
-            Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
-
-            if (Util.WeCanReplace(selectedVehicle) && !selectedVehicle.IsPersistent && !Function.Call<bool>(Hash.IS_VEHICLE_ATTACHED_TO_TRAILER, selectedVehicle) && (!selectedVehicle.IsOnScreen || Util.SomethingIsBetween(selectedVehicle)))
+            for (int trycount = 0; trycount < 5; trycount++)
             {
-                Vector3 selectedPosition = selectedVehicle.Position;
-                float selectedHeading = selectedVehicle.Heading;
-                float selectedSpeed = selectedVehicle.Speed;
-                bool selectedEngineRunning = selectedVehicle.EngineRunning;
-                string selectedBlipName;
-                BlipColor selectedBlipColor;
+                Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
 
-                selectedVehicle.Delete();
-                spawnedVehicle = Util.Create(name, selectedPosition, selectedHeading);
-
-                if (!Util.ThereIs(spawnedVehicle)) return false;
-                if (selectedEngineRunning)
+                if (Util.WeCanReplace(selectedVehicle) && !selectedVehicle.IsPersistent && !Function.Call<bool>(Hash.IS_VEHICLE_ATTACHED_TO_TRAILER, selectedVehicle) && (!selectedVehicle.IsOnScreen || Util.SomethingIsBetween(selectedVehicle)))
                 {
-                    Ped driver = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
+                    Vector3 selectedPosition = selectedVehicle.Position;
+                    float selectedHeading = selectedVehicle.Heading;
+                    float selectedSpeed = selectedVehicle.Speed;
+                    bool selectedEngineRunning = selectedVehicle.EngineRunning;
+                    string selectedBlipName;
+                    BlipColor selectedBlipColor;
 
-                    if (Util.ThereIs(driver))
+                    selectedVehicle.Delete();
+                    spawnedVehicle = Util.Create(name, selectedPosition, selectedHeading);
+
+                    if (!Util.ThereIs(spawnedVehicle)) return false;
+                    if (selectedEngineRunning)
                     {
-                        spawnedVehicle.EngineRunning = true;
-                        driver.MarkAsNoLongerNeeded();
+                        spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
+
+                        if (Util.ThereIs(spawnedPed))
+                        {
+                            spawnedVehicle.EngineRunning = true;
+                            spawnedVehicle.Speed = selectedSpeed;
+                            spawnedPed.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIV" + spawnedPed.Gender.ToString().ToUpper());
+                            spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                        }
                     }
-                }
 
-                if (Util.GetRandomInt(3) == 1)
-                {
-                    selectedBlipName = "Tuned ";
-                    selectedBlipColor = BlipColor.Blue;
-                    Util.Tune(spawnedVehicle, true);
-                }
-                else
-                {
-                    selectedBlipName = "";
-                    selectedBlipColor = BlipColor.White;
-                }
+                    if (Util.GetRandomInt(3) == 1)
+                    {
+                        selectedBlipName = "Tuned ";
+                        selectedBlipColor = BlipColor.Blue;
+                        Util.Tune(spawnedVehicle, Util.GetRandomInt(2) == 1, Util.GetRandomInt(3) == 1);
+                    }
+                    else
+                    {
+                        selectedBlipName = "";
+                        selectedBlipColor = BlipColor.White;
+                    }
 
-                if (spawnedVehicle.FriendlyName.Equals("NULL")) selectedBlipName += spawnedVehicle.DisplayName.ToUpper();
-                else selectedBlipName += spawnedVehicle.FriendlyName;
+                    if (spawnedVehicle.FriendlyName.Equals("NULL")) selectedBlipName += spawnedVehicle.DisplayName.ToUpper();
+                    else selectedBlipName += spawnedVehicle.FriendlyName;
 
-                if (!Util.BlipIsOn(spawnedVehicle))
-                {
-                    Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, selectedBlipColor, selectedBlipName);
-                    return true;
+                    if (!Util.BlipIsOn(spawnedVehicle))
+                    {
+                        Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, selectedBlipColor, selectedBlipName);
+                        return true;
+                    }
+                    else Restore();
                 }
-                else spawnedVehicle.Delete();
+                else selectedVehicle = null;
             }
 
             return false;
         }
 
+        public override void Restore()
+        {
+            if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
+            if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+        }
+
         public override bool ShouldBeRemoved()
         {
             if (!Util.ThereIs(spawnedVehicle)) return true;
-            if ((!spawnedVehicle.IsDriveable && (!Util.ThereIs(spawnedVehicle.Driver) || !Game.Player.Character.Equals(spawnedVehicle.Driver))) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+            if ((!spawnedVehicle.IsDriveable && !Game.Player.Character.IsInVehicle(spawnedVehicle)) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
             {
                 if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
                 if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
-                
+                if (Util.ThereIs(spawnedPed) && spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
+
                 return true;
             }
 

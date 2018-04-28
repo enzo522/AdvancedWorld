@@ -1,71 +1,115 @@
 ﻿using GTA;
+using GTA.Native;
 
 namespace AdvancedWorld
 {
     public class Carjacker : EntitySet
     {
-        public Carjacker() : base() { }
+        private float radius;
+        private int trycount;
+        private int relationship;
+
+        public Carjacker() : base()
+        {
+            this.radius = 0.0f;
+            this.trycount = 0;
+            this.relationship = 0;
+        }
 
         public bool IsCreatedIn(float radius)
         {
             Ped[] nearbyPeds = World.GetNearbyPeds(Game.Player.Character.Position, radius);
 
-            if (nearbyPeds.Length <= 0) return false;
+            if (nearbyPeds.Length < 1) return false;
 
-            Ped selectedPed = nearbyPeds[Util.GetRandomInt(nearbyPeds.Length)];
+            spawnedPed = nearbyPeds[Util.GetRandomInt(nearbyPeds.Length)];
 
-            if (!Util.ThereIs(selectedPed) || Util.BlipIsOn(selectedPed) || selectedPed.Equals(Game.Player.Character) || !selectedPed.IsHuman || selectedPed.IsDead) return false;
+            if (!Util.ThereIs(spawnedPed) || spawnedPed.IsPersistent || spawnedPed.Equals(Game.Player.Character) || !spawnedPed.IsHuman || spawnedPed.IsDead) return false;
 
-            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(selectedPed.Position, radius / 5);
+            this.radius = radius;
+            spawnedPed.IsPersistent = true;
+            relationship = AdvancedWorld.NewRelationship(0);
 
-            if (nearbyVehicles.Length <= 0) return false;
+            if (relationship == 0)
+            {
+                Restore();
+                return false;
+            }
 
-            Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
+            spawnedPed.RelationshipGroup = relationship;
+            spawnedPed.AlwaysKeepTask = true;
+            spawnedPed.BlockPermanentEvents = true;
 
-            if (!Util.ThereIs(selectedVehicle) || !selectedVehicle.IsDriveable) return false;
+            if (!Util.BlipIsOn(spawnedPed))
+            {
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
+                FindNewVehicle();
 
-            selectedPed.IsPersistent = true;
-            selectedVehicle.IsPersistent = true;
-            selectedVehicle.EngineRunning = true;
+                return true;
+            }
+            else
+            {
+                Restore();
+                return false;
+            }
+        }
 
-            selectedPed.RelationshipGroup = AdvancedWorld.racerID;
-            selectedPed.AlwaysKeepTask = true;
-            selectedPed.BlockPermanentEvents = true;
+        private void FindNewVehicle()
+        {
+            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+
+            trycount++;
+
+            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(spawnedPed.Position, radius / 2);
+
+            if (nearbyVehicles.Length < 1) return;
+
+            spawnedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
+
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || Game.Player.Character.IsInVehicle(spawnedVehicle) || spawnedPed.IsInVehicle(spawnedVehicle))
+            {
+                spawnedVehicle = null;
+                return;
+            }
+
+            spawnedVehicle.IsPersistent = true;
 
             TaskSequence ts = new TaskSequence();
-            ts.AddTask.EnterVehicle(selectedVehicle, VehicleSeat.Driver);
-            ts.AddTask.CruiseWithVehicle(selectedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+            ts.AddTask.ClearAll();
+            ts.AddTask.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
+            ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
             ts.Close();
 
-            selectedPed.Task.PerformSequence(ts);
+            spawnedPed.Task.PerformSequence(ts);
             ts.Dispose();
+        }
 
-            Util.AddBlipOn(selectedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
-            spawnedPed = selectedPed;
-            spawnedVehicle = selectedVehicle;
-            return true;
+        public override void Restore()
+        {
+            if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
+            if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+            if (relationship != 0) AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
         }
 
         public override bool ShouldBeRemoved()
         {
             if (!Util.ThereIs(spawnedPed))
             {
-                if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+
+                AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
                 return true;
             }
 
-            if (!Util.ThereIs(spawnedVehicle))
-            {
-                if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
-                return true;
-            }
-
-            if (spawnedPed.IsDead || !spawnedVehicle.IsDriveable || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 200.0f) || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
+            if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) radius += 50.0f;
+            if (trycount > 5 || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
-                if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
 
+                AdvancedWorld.CleanUpRelationship(relationship);
                 return true;
             }
 

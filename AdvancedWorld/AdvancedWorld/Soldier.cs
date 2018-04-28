@@ -1,96 +1,140 @@
 ﻿using GTA;
 using GTA.Math;
+using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
     public class Soldier : EntitySet
     {
-        private string name;
+        private List<Ped> members;
+        private List<string> names;
+        private int relationship;
 
-        public Soldier(string name) : base()
+        public Soldier(string nameA, string nameB) : base()
         {
-            this.name = name;
+            this.members = new List<Ped>();
+            this.names = new List<string>();
+            this.names.Add(nameA);
+            this.names.Add(nameB);
+            this.relationship = 0;
         }
 
-        public bool IsCreatedIn(float radius, Vector3 safePosition, int teamNum)
+        public bool IsCreatedIn(float radius, Vector3 safePosition, BlipColor teamColor, int teamID)
         {
-            spawnedVehicle = Util.Create(name, safePosition, Util.GetRandomInt(360));
+            this.relationship = teamID;
 
-            if (!Util.ThereIs(spawnedVehicle)) return false;
-
-            spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
-
-            if (!Util.ThereIs(spawnedPed))
+            for (int i = 0; i < 2; i++)
             {
-                spawnedVehicle.Delete();
-                return false;
+                Vehicle v = Util.Create(names[i], World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360));
+
+                if (!Util.ThereIs(v)) continue;
+
+                Ped p = v.CreateRandomPedOnSeat(VehicleSeat.Driver);
+
+                if (!Util.ThereIs(p))
+                {
+                    v.Delete();
+                    continue;
+                }
+
+                p.RelationshipGroup = relationship;
+                p.AlwaysKeepTask = true;
+                Util.Tune(v, false, false);
+
+                if (!Util.BlipIsOn(p))
+                {
+                    Util.AddBlipOn(p, 0.7f, BlipSprite.Tank, teamColor, "War " + v.FriendlyName);
+                    members.Add(p);
+                }
+                else
+                {
+                    p.Delete();
+                    v.Delete();
+                }
             }
 
-            if (Util.BlipIsOn(spawnedPed))
+            foreach (Ped p in members)
             {
-                spawnedPed.Delete();
-                spawnedVehicle.Delete();
-                return false;
+                if (!Util.ThereIs(p))
+                {
+                    Restore();
+                    return false;
+                }
             }
-
-            if (teamNum < 2)
-            {
-                spawnedPed.RelationshipGroup = AdvancedWorld.warAID;
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Green, "War " + spawnedVehicle.FriendlyName);
-            }
-            else if (teamNum < 4)
-            {
-                spawnedPed.RelationshipGroup = AdvancedWorld.warBID;
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Red, "War " + spawnedVehicle.FriendlyName);
-            }
-            else
-            {
-                spawnedPed.Delete();
-                spawnedVehicle.Delete();
-                return false;
-            }
-
-            Util.Tune(spawnedVehicle, false);
-            spawnedPed.AlwaysKeepTask = true;
 
             return true;
         }
 
+        public override void Restore()
+        {
+            foreach (Ped p in members)
+            {
+                if (Util.ThereIs(p))
+                {
+                    if (Util.ThereIs(p.CurrentVehicle)) p.CurrentVehicle.Delete();
+                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+
+                    p.Delete();
+                }
+            }
+
+            if (relationship != 0) AdvancedWorld.CleanUpRelationship(relationship);
+
+            members.Clear();
+        }
+
         public void PerformTask()
         {
-            TaskSequence ts = new TaskSequence();
-            ts.AddTask.FightAgainstHatedTargets(400.0f);
-            ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
-            ts.Close();
+            foreach (Ped p in members)
+            {
+                TaskSequence ts = new TaskSequence();
+                ts.AddTask.FightAgainstHatedTargets(100.0f);
+                ts.AddTask.CruiseWithVehicle(p.CurrentVehicle, 50.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                ts.Close();
 
-            spawnedPed.Task.PerformSequence(ts);
-            ts.Dispose();
+                p.Task.PerformSequence(ts);
+                ts.Dispose();
+            }
         }
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(spawnedPed))
+            for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
-                return true;
+                if (!Util.ThereIs(members[i]))
+                {
+                    if (Util.ThereIs(members[i].CurrentVehicle) && members[i].CurrentVehicle.IsPersistent) members[i].CurrentVehicle.MarkAsNoLongerNeeded();
+
+                    members.RemoveAt(i);
+                    continue;
+                }
+
+                if (!Util.ThereIs(members[i].CurrentVehicle))
+                {
+                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                    if (members[i].IsPersistent) members[i].MarkAsNoLongerNeeded();
+
+                    members.RemoveAt(i);
+                    continue;
+                }
+
+                if ((members[i].IsDead || !members[i].CurrentVehicle.IsDriveable) && Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                {
+                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                    if (members[i].IsPersistent) members[i].MarkAsNoLongerNeeded();
+                    if (members[i].CurrentVehicle.IsPersistent) members[i].CurrentVehicle.MarkAsNoLongerNeeded();
+
+                    members.RemoveAt(i);
+                }
             }
 
-            if (!Util.ThereIs(spawnedVehicle))
+            if (members.Count < 1)
             {
-                if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
+                AdvancedWorld.CleanUpRelationship(relationship);
                 return true;
             }
-
-            if ((spawnedPed.IsDead || !spawnedVehicle.IsDriveable) && Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-            if (!spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
-                if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
-
-                return true;
-            }
-
-            return false;
+            else return false;
         }
     }
 }

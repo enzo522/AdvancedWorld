@@ -8,7 +8,7 @@ namespace AdvancedWorld
         protected Vehicle spawnedVehicle;
 
         public EntitySet() { }
-
+        public abstract void Restore();
         public abstract bool ShouldBeRemoved();
     }
 }

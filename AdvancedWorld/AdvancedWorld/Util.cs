@@ -7,10 +7,14 @@ namespace AdvancedWorld
 {
     public static class Util
     {
-        private static Array vehicleColorValues = Enum.GetValues(typeof(VehicleColor));
-        private static Array modValues = Enum.GetValues(typeof(VehicleMod));
-        private static Array neonColorValues = Enum.GetValues(typeof(KnownColor));
+        private static Array vehicleColors = Enum.GetValues(typeof(VehicleColor));
+        private static Array mods = Enum.GetValues(typeof(VehicleMod));
+        private static Array neonColors = Enum.GetValues(typeof(KnownColor));
+        private static Array neonLights = Enum.GetValues(typeof(VehicleNeonLight));
+        private static Array tints = Enum.GetValues(typeof(VehicleWindowTint));
         private static Random dice = new Random();
+        private static int[] wheelTypes = { 0, 1, 2, 3, 4, 5, 7, 8, 9 };
+        private static int[] wheelColors = { 156, 0, 1, 11, 2, 8, 122, 27, 30, 45, 35, 33, 136, 135, 36, 41, 138, 37, 99, 90, 95, 115, 109, 153, 154, 88, 89, 91, 55, 125, 53, 56, 151, 82, 64, 87, 70, 140, 81, 145, 142, 134 };
 
         public static int GetRandomInt(int maxValue)
         {
@@ -29,15 +33,13 @@ namespace AdvancedWorld
 
         public static bool SomethingIsBetween(Entity en)
         {
-            if (ThereIs(en) && !en.IsInRangeOf(Game.Player.Character.Position, 30.0f))
+            if (!ThereIs(en) || en.IsInRangeOf(Game.Player.Character.Position, 50.0f)) return false;
+            else
             {
-                Vector3 gp = Game.Player.Character.Position;
-                RaycastResult r = World.Raycast(new Vector3(gp.X, gp.Y, gp.Z + 3.0f), en.Position, IntersectOptions.Map);
+                RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return r.DitHitAnything;
+                return (r.DitHitAnything && r.HitCoords.DistanceTo(en.Position) > 10.0f);
             }
-
-            return false;
         }
 
         public static Vector3 GetSafePositionIn(float radius)
@@ -48,8 +50,7 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && !en.IsOnScreen && !en.IsInRangeOf(Game.Player.Character.Position, 50.0f))
-                        return en.Position;
+                    if (ThereIs(en) && !en.IsPersistent && (!en.IsOnScreen || SomethingIsBetween(en))) return en.Position;
                 }
             }
 
@@ -58,8 +59,7 @@ namespace AdvancedWorld
 
         public static bool WeCanReplace(Vehicle v)
         {
-            if (ThereIs(v) && (v.Model.IsCar || v.Model.IsBike) && !BlipIsOn(v) && !v.IsOnFire && v.IsDriveable)
-                return (!Game.Player.Character.IsInVehicle() || !v.Equals(Game.Player.Character.CurrentVehicle));
+            if (ThereIs(v) && (v.Model.IsCar || v.Model.IsBike || v.Model.IsQuadbike) && v.IsDriveable) return !Game.Player.Character.IsInVehicle(v);
 
             return false;
         }
@@ -82,6 +82,7 @@ namespace AdvancedWorld
             if (m.IsValid && !v3.Equals(Vector3.Zero))
             {
                 Ped p = World.CreatePed(m, v3);
+                Script.Wait(100);
                 m.MarkAsNoLongerNeeded();
 
                 if (ThereIs(p)) return p;
@@ -95,12 +96,13 @@ namespace AdvancedWorld
             if (m.IsValid && !v3.Equals(Vector3.Zero))
             {
                 Vehicle v = World.CreateVehicle(m, v3, h);
+                Script.Wait(100);
                 m.MarkAsNoLongerNeeded();
 
                 if (ThereIs(v))
                 {
-                    v.PrimaryColor = (VehicleColor)vehicleColorValues.GetValue(dice.Next(vehicleColorValues.Length));
-                    v.SecondaryColor = (VehicleColor)vehicleColorValues.GetValue(dice.Next(vehicleColorValues.Length));
+                    v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
+                    v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
 
                     return v;
                 }
@@ -109,26 +111,43 @@ namespace AdvancedWorld
             return null;
         }
 
-        public static void Tune(Vehicle v, bool neonIsNeeded)
+        public static void Tune(Vehicle v, bool neonsAreNeeded, bool wheelsAreNeeded)
         {
             if (ThereIs(v))
             {
                 v.InstallModKit();
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
+                v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
 
-                foreach (VehicleMod m in modValues)
+                foreach (VehicleMod m in mods)
                 {
-                    if (m != VehicleMod.Horns && m != VehicleMod.FrontWheels && m != VehicleMod.BackWheels && v.GetModCount(m) > 0)
-                        v.SetMod(m, dice.Next(-1, v.GetModCount(m)), false);
+                    if (m != VehicleMod.Horns && m != VehicleMod.FrontWheels && m != VehicleMod.BackWheels && v.GetModCount(m) > 0) v.SetMod(m, dice.Next(-1, v.GetModCount(m)), false);
                 }
 
-                if (neonIsNeeded)
+                if (wheelsAreNeeded)
                 {
-                    v.NeonLightsColor = Color.FromKnownColor((KnownColor)neonColorValues.GetValue(dice.Next(neonColorValues.Length)));
-                    v.SetNeonLightsOn(VehicleNeonLight.Back, true);
-                    v.SetNeonLightsOn(VehicleNeonLight.Front, true);
-                    v.SetNeonLightsOn(VehicleNeonLight.Left, true);
-                    v.SetNeonLightsOn(VehicleNeonLight.Right, true);
+                    if (v.Model.IsCar)
+                    {
+                        v.WheelType = (VehicleWheelType)wheelTypes[dice.Next(wheelTypes.Length)];
+                        v.SetMod(VehicleMod.FrontWheels, dice.Next(-1, v.GetModCount(VehicleMod.FrontWheels)), false);
+                    }
+                    else if (v.Model.IsBike || v.Model.IsQuadbike)
+                    {
+                        v.WheelType = VehicleWheelType.BikeWheels;
+                        int modIndex = dice.Next(-1, v.GetModCount(VehicleMod.FrontWheels));
+
+                        v.SetMod(VehicleMod.FrontWheels, modIndex, false);
+                        v.SetMod(VehicleMod.BackWheels, modIndex, false);
+                    }
+
+                    v.RimColor = (VehicleColor)wheelColors[dice.Next(wheelColors.Length)];
+                }
+
+                if (neonsAreNeeded)
+                {
+                    v.NeonLightsColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
+
+                    foreach (VehicleNeonLight n in neonLights) v.SetNeonLightsOn(n, true);
                 }
             }
         }

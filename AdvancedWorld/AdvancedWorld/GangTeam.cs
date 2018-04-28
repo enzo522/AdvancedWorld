@@ -10,17 +10,21 @@ namespace AdvancedWorld
         private List<Ped> members;
         private List<WeaponHash> closeWeapons;
         private List<WeaponHash> standoffWeapons;
+        private int relationship;
 
         public GangTeam() : base()
         {
-            members = new List<Ped>();
-            closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Unarmed };
-            standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun };
+            this.members = new List<Ped>();
+            this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.SwitchBlade, WeaponHash.BattleAxe, WeaponHash.Unarmed };
+            this.standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Revolver, WeaponHash.MiniSMG, WeaponHash.PumpShotgunMk2, WeaponHash.DoubleBarrelShotgun };
+            this.relationship = 0;
         }
 
         public bool IsCreatedIn(float radius, Vector3 position, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
         {
             if (selectedModels == null) return false;
+
+            this.relationship = teamID;
 
             for (int i = 0; i < 6; i++)
             {
@@ -34,7 +38,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
-                p.RelationshipGroup = teamID;
+                p.RelationshipGroup = relationship;
                 p.AlwaysKeepTask = true;
                 p.Armor = Util.GetRandomInt(100);
 
@@ -54,16 +58,23 @@ namespace AdvancedWorld
                     return false;
                 }
             }
-            
+
             return true;
         }
 
-        private void Restore()
+        public override void Restore()
         {
             foreach (Ped p in members)
             {
-                if (Util.ThereIs(p)) p.Delete();
+                if (Util.ThereIs(p))
+                {
+                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+
+                    p.Delete();
+                }
             }
+
+            if (relationship != 0) AdvancedWorld.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -71,7 +82,7 @@ namespace AdvancedWorld
         public void PerformTask()
         {
             TaskSequence ts = new TaskSequence();
-            ts.AddTask.FightAgainstHatedTargets(400.0f);
+            ts.AddTask.FightAgainstHatedTargets(100.0f);
             ts.AddTask.WanderAround();
             ts.Close();
 
@@ -87,20 +98,24 @@ namespace AdvancedWorld
                 if (!Util.ThereIs(members[i]))
                 {
                     members.RemoveAt(i);
-                    break;
+                    continue;
                 }
 
                 if (members[i].IsDead && Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
                 if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
+                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
                     if (members[i].IsPersistent) members[i].MarkAsNoLongerNeeded();
 
                     members.RemoveAt(i);
-                    break;
                 }
             }
 
-            if (members.Count == 0) return true;
+            if (members.Count < 1)
+            {
+                AdvancedWorld.CleanUpRelationship(relationship);
+                return true;
+            }
             else return false;
         }
     }
