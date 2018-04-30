@@ -195,7 +195,7 @@ namespace AdvancedWorld
                     }
                 }
             }
-            else if (spawnedVehicle.IsOnFire || !spawnedVehicle.IsDriveable)
+            else if (spawnedVehicle.IsOnFire || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped))
             {
                 foreach (Ped p in members)
                 {

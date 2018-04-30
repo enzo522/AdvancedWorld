@@ -147,13 +147,7 @@ namespace AdvancedWorld
                 Script.Wait(100);
                 m.MarkAsNoLongerNeeded();
 
-                if (ThereIs(v))
-                {
-                    v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
-                    v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
-
-                    return v;
-                }
+                if (ThereIs(v)) return v;
             }
 
             return null;
@@ -166,6 +160,9 @@ namespace AdvancedWorld
                 v.InstallModKit();
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
+
+                v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
+                v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
 
                 foreach (VehicleMod m in mods)
                 {

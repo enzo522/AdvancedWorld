@@ -495,8 +495,8 @@ namespace AdvancedWorld
             switch (type)
             {
                 case CrimeType.AggressiveDriver:
-                case CrimeType.Carjacker:
                 case CrimeType.GangTeam:
+                case CrimeType.Racer:
                     {
                         for (int i = 0; i < 2; i++)
                         {
@@ -505,6 +505,16 @@ namespace AdvancedWorld
                             if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
+
+                        break;
+                    }
+
+                case CrimeType.Carjacker:
+                    {
+                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+
+                        if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                        else lspd.Restore();
 
                         break;
                     }
@@ -544,16 +554,6 @@ namespace AdvancedWorld
                             if (swat.IsCreatedNear(target, swatModels)) dispatchList.Add(swat);
                             else swat.Restore();
                         }
-
-                        break;
-                    }
-
-                case CrimeType.Racer:
-                    {
-                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
-
-                        if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
-                        else lspd.Restore();
 
                         break;
                     }
@@ -798,7 +798,7 @@ namespace AdvancedWorld
                             {
                                 Vehicle tunedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
 
-                                if (Util.WeCanReplace(tunedVehicle) && !tunedVehicle.IsToggleModOn(VehicleToggleMod.Turbo))
+                                if (Util.WeCanReplace(tunedVehicle) && (!tunedVehicle.IsOnScreen || Util.SomethingIsBetween(tunedVehicle)) && !tunedVehicle.IsToggleModOn(VehicleToggleMod.Turbo))
                                 {
                                     Util.AddBlipOn(tunedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)27, "Tuned " + tunedVehicle.FriendlyName);
                                     Util.Tune(tunedVehicle, true, true);
