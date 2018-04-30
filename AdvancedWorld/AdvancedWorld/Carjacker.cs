@@ -28,7 +28,7 @@ namespace AdvancedWorld
 
             this.radius = radius;
             spawnedPed.IsPersistent = true;
-            relationship = AdvancedWorld.NewRelationship(0);
+            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Carjacker);
 
             if (relationship == 0)
             {
@@ -88,7 +88,7 @@ namespace AdvancedWorld
         {
             if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
             if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
-            if (relationship != 0) AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
+            if (relationship != 0) Util.CleanUpRelationship(spawnedPed.RelationshipGroup);
         }
 
         public override bool ShouldBeRemoved()
@@ -96,22 +96,24 @@ namespace AdvancedWorld
             if (!Util.ThereIs(spawnedPed))
             {
                 if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
-                AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
                 return true;
             }
-
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
-            if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) radius += 50.0f;
+            
             if (trycount > 5 || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
                 if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
-                AdvancedWorld.CleanUpRelationship(relationship);
                 return true;
             }
+
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
+            if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) radius += 50.0f;
+            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.Carjacker);
 
             return false;
         }

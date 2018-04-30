@@ -100,7 +100,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (relationship != 0) AdvancedWorld.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -115,7 +115,9 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].IsDead && Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                if (!members[i].IsDead) spawnedPed = members[i];
+                else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+
                 if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
                     if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
@@ -125,22 +127,25 @@ namespace AdvancedWorld
                 }
             }
 
+            if (members.Count < 1)
+            {
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
+
+                return true;
+            }
+
+            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.Massacre);
             foreach (Ped p in members)
             {
-                if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 342) && p.IsStopped)
+                if (!p.IsInCombat)
                 {
                     radius += 50.0f;
                     PerformTask();
                     break;
                 }
             }
-
-            if (members.Count < 1)
-            {
-                AdvancedWorld.CleanUpRelationship(relationship);
-                return true;
-            }
-            else return false;
+            
+            return false;
         }
     }
 }

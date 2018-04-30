@@ -22,20 +22,15 @@ namespace AdvancedWorld
         {
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
-            if (safePosition.Equals(Vector3.Zero)) return false;
+            if (safePosition.Equals(Vector3.Zero) || selectedModels == null) return false;
 
             spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360));
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
-            if (selectedModels == null)
-            {
-                spawnedVehicle.Delete();
-                return false;
-            }
 
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };
             Util.Tune(spawnedVehicle, false, (Util.GetRandomInt(3) == 1));
-            relationship = AdvancedWorld.NewRelationship(1);
+            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Driveby);
 
             if (relationship == 0)
             {
@@ -92,7 +87,7 @@ namespace AdvancedWorld
             }
 
             if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
-            if (relationship != 0) AdvancedWorld.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -143,7 +138,7 @@ namespace AdvancedWorld
             {
                 if (!Util.ThereIs(members[i])) members.RemoveAt(i);
             }
-
+            
             if (!Util.ThereIs(spawnedVehicle) || !DriverExists() || members.Count < 1 || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 foreach (Ped p in members)
@@ -157,12 +152,13 @@ namespace AdvancedWorld
 
                 if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 members.Clear();
-                AdvancedWorld.CleanUpRelationship(relationship);
                 return true;
             }
 
+            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.Driveby);
             if (spawnedPed.IsSittingInVehicle(spawnedVehicle) && spawnedPed.Equals(spawnedVehicle.Driver))
             {
                 if (EveryoneIsSitting())
@@ -173,7 +169,7 @@ namespace AdvancedWorld
                         {
                             if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                         }
-                        else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 342)) p.Task.FightAgainstHatedTargets(400.0f);
+                        else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                     }
                 }
                 else
@@ -203,7 +199,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 342)) p.Task.FightAgainstHatedTargets(400.0f);
+                    if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                 }
             }
             else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) spawnedPed.Task.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);

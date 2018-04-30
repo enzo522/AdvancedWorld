@@ -4,25 +4,22 @@ using GTA.Native;
 using System;
 using System.Xml;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace AdvancedWorld
 {
     public class AdvancedWorld : Script
     {
-        private static List<int> oldRelationships;
-        private static List<int> newRelationships;
-        private static int copID;
-        private static int playerID;
-        private static int count;
-
         private static List<string> addOnCarNames;
         private static List<string> racerCarNames;
         private static List<string> racerBikeNames;
-        private static List<string> soldierCarNames;
         private static List<string> drivebyCarNames;
         private static List<Vector3> racingPosition;
+
         private static List<List<string>> models;
+        private static List<string> copModels;
+        private static List<string> copCarNames;
+        private static List<string> swatModels;
+        private static List<string> swatCarNames;
 
         private List<EntitySet> replacedList;
         private List<EntitySet> carjackerList;
@@ -30,45 +27,23 @@ namespace AdvancedWorld
         private List<EntitySet> gangList;
         private List<EntitySet> massacreList;
         private List<EntitySet> racerList;
-        private List<EntitySet> soldierList;
         private List<EntitySet> drivebyList;
+        private static List<EntitySet> dispatchList;
 
         private float radius;
         private int eventTimeChecker;
+        public enum CrimeType
+        {
+            AggressiveDriver,
+            Carjacker,
+            Driveby,
+            GangTeam,
+            Massacre,
+            Racer
+        }
 
         static AdvancedWorld()
         {
-            oldRelationships = new List<int>
-            {
-                Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "CIVFEMALE"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "SECURITY_GUARD"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_LOST"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_MEXICAN"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_FAMILY"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_BALLAS"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_MARABUNTE"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_CULT"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_SALVA"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_WEICHENG"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_HILLBILLY"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "GANG_1"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "GANG_2"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "GANG_9"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "GANG_10"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "DEALER"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "PRIVATE_SECURITY"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "PRISONER"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"),
-                Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC")
-            };
-
-            newRelationships = new List<int>();
-            copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-            playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
-            count = 0;
-
             addOnCarNames = new List<string>();
             racerCarNames = new List<string>
             {
@@ -79,6 +54,7 @@ namespace AdvancedWorld
                 "infernus",
                 "jester",
                 "sentinel2",
+                "turismor",
                 "vacca"
             };
             racerBikeNames = new List<string>
@@ -103,6 +79,7 @@ namespace AdvancedWorld
                 "daemon",
                 "dubsta",
                 "emperor",
+                "glendale",
                 "minivan",
                 "patriot",
                 "rancherxl",
@@ -110,11 +87,8 @@ namespace AdvancedWorld
                 "sadler",
                 "sanchez",
                 "superd",
-                "tailgater"
-            };
-            soldierCarNames = new List<string>
-            {
-                "rhino"
+                "tailgater",
+                "warrener"
             };
             racingPosition = new List<Vector3>
             {
@@ -160,6 +134,33 @@ namespace AdvancedWorld
                 new List<string> { "s_m_y_dealer_01", "u_m_y_tattoo_01", "u_m_y_sbike", "u_m_y_party_01", "u_m_y_hippie_01", "u_m_y_gunvend_01", "u_m_y_fibmugger_01", "u_m_y_guido_01" },
                 new List<string> { "s_f_y_hooker_01", "s_f_y_hooker_02", "s_f_y_hooker_03", "s_f_y_stripper_01", "s_f_y_stripper_02" }
             };
+            copModels = new List<string>
+            {
+                "s_f_y_cop_01",
+                "s_m_y_cop_01",
+                "s_m_y_hwaycop_01",
+                "s_f_y_sheriff_01",
+                "s_m_y_sheriff_01"
+            };
+            copCarNames = new List<string>
+            {
+                "police",
+                "police2",
+                "police3",
+                "policeb",
+                "sheriff",
+                "sheriff2"
+            };
+            swatModels = new List<string>
+            {
+                "s_m_y_swat_01"
+            };
+            swatCarNames = new List<string>
+            {
+                "policet",
+                "riot"
+            };
+            dispatchList = new List<EntitySet>();
 
             DLCCheck();
             SetUp();
@@ -198,11 +199,6 @@ namespace AdvancedWorld
                 drivebyCarNames.Add("wolfsbane");
             }
 
-            if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpbusiness")))
-            {
-                racerCarNames.Add("turismor");
-            }
-
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpbusiness2")))
             {
                 racerCarNames.Add("zentorno");
@@ -225,7 +221,7 @@ namespace AdvancedWorld
                 racerCarNames.Add("viseris");
                 racerCarNames.Add("z190");
                 drivebyCarNames.Add("hermes");
-                soldierCarNames.Add("khanjali");
+                swatCarNames.Add("riot2");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpexecutive")))
@@ -244,19 +240,12 @@ namespace AdvancedWorld
                 racerCarNames.Add("torero");
                 racerCarNames.Add("vagner");
                 racerCarNames.Add("xa21");
-                soldierCarNames.Add("apc");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpheist")))
             {
                 racerBikeNames.Add("lectro");
                 drivebyCarNames.Add("enduro");
-            }
-
-            if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mphipster")))
-            {
-                drivebyCarNames.Add("glendale");
-                drivebyCarNames.Add("warrener");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpimportexport")))
@@ -355,7 +344,128 @@ namespace AdvancedWorld
                 racerBikeNames.Add("nrg900");
                 drivebyCarNames.Add("huntley2");
                 drivebyCarNames.Add("marbelle");
-                soldierCarNames.Add("apc2");
+            }
+
+            if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "wov")))
+            {
+                copModels.Add("s_m_y_bcop_01");
+                copCarNames.Add("sheriff3");
+                swatModels.Add("s_m_y_swat_02");
+                swatModels.Add("s_m_y_swat_04");
+            }
+
+            if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "vwe")))
+            {
+                racerCarNames.Add("blista4");
+                racerCarNames.Add("cheetah4");
+                racerCarNames.Add("comet6");
+                racerCarNames.Add("deluxo2");
+                racerCarNames.Add("dominator4");
+                racerCarNames.Add("elegy4");
+                racerCarNames.Add("elegy5");
+                racerCarNames.Add("elegy6");
+                racerCarNames.Add("es550");
+                racerCarNames.Add("euros");
+                racerCarNames.Add("futo3");
+                racerCarNames.Add("gauntlet3");
+                racerCarNames.Add("gauntlet4");
+                racerCarNames.Add("gauntlet5");
+                racerCarNames.Add("hellhound");
+                racerCarNames.Add("rapidgt4");
+                racerCarNames.Add("requiem");
+                racerCarNames.Add("tyrus2");
+                racerCarNames.Add("vigero3");
+                racerBikeNames.Add("kenshin");
+                drivebyCarNames.Add("greenwood");
+                copCarNames.Add("bcso1");
+                copCarNames.Add("bcso2");
+                copCarNames.Add("bcso3");
+                copCarNames.Add("hwaycar5");
+                copCarNames.Add("hwaycar6");
+                copCarNames.Add("police18");
+                copCarNames.Add("police19");
+                copCarNames.Add("sheriff10");
+                copCarNames.Add("sheriff11");
+            }
+
+            if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dw")))
+            {
+                copCarNames.Add("bcso4");
+                copCarNames.Add("bcso5");
+                copCarNames.Add("bcso6");
+                copCarNames.Add("bpsp1");
+                copCarNames.Add("bpsp2");
+                copCarNames.Add("bulhway");
+                copCarNames.Add("bulhway2");
+                copCarNames.Add("bulpolice");
+                copCarNames.Add("bulpolice2");
+                copCarNames.Add("bulsheriff");
+                copCarNames.Add("coqhway");
+                copCarNames.Add("coqhway2");
+                copCarNames.Add("coqpolice");
+                copCarNames.Add("coqsheriff");
+                copCarNames.Add("facthway");
+                copCarNames.Add("infhway");
+                copCarNames.Add("infpolice");
+                copCarNames.Add("lealamo");
+                copCarNames.Add("leesperanto");
+                copCarNames.Add("pbp1");
+                copCarNames.Add("pcpd1");
+                copCarNames.Add("pcpd2");
+                copCarNames.Add("pcpd3");
+                copCarNames.Add("police9");
+                copCarNames.Add("police11");
+                copCarNames.Add("police12");
+                copCarNames.Add("police13");
+                copCarNames.Add("police15");
+                copCarNames.Add("police16");
+                copCarNames.Add("police17");
+                copCarNames.Add("police24");
+                copCarNames.Add("polizia1");
+                copCarNames.Add("pranger3");
+                copCarNames.Add("rpdcar1");
+                copCarNames.Add("rpdcar3");
+                copCarNames.Add("rpdsuv");
+                copCarNames.Add("rpdsuv2");
+                copCarNames.Add("sheriff7");
+                copCarNames.Add("sheriff9");
+                copCarNames.Add("uranushway");
+                copCarNames.Add("uranushway2");
+                copCarNames.Add("vcpd1");
+                copCarNames.Add("vighway");
+                copCarNames.Add("vigpolice");
+                copCarNames.Add("vigsheriff");
+                swatCarNames.Add("bpsp3");
+                swatCarNames.Add("police14");
+                swatCarNames.Add("policet2");
+                swatCarNames.Add("policet3");
+            }
+
+            if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dov")))
+            {
+                copModels.Add("d_o_v_dick_01");
+                copModels.Add("d_o_v_npatrol_01");
+                copModels.Add("d_o_v_npatrol_02");
+                copCarNames.Add("dovdtbuff");
+                copCarNames.Add("dovdtstan");
+                copCarNames.Add("dovfibkur");
+                copCarNames.Add("dovhpbuff2");
+                copCarNames.Add("dovhpgran");
+                copCarNames.Add("dovhpstan2");
+                copCarNames.Add("dovngran");
+                copCarNames.Add("dovpolesp");
+                copCarNames.Add("dovpolfugi");
+                copCarNames.Add("dovpolmerit");
+                copCarNames.Add("dovpolstan");
+                copCarNames.Add("dovshebuff");
+                copCarNames.Add("dovsheesp");
+                copCarNames.Add("dovsheranch");
+                copCarNames.Add("dovshestan");
+                copCarNames.Add("dovshetrans");
+                swatCarNames.Add("dovnboxv");
+                swatCarNames.Add("dovnrcv");
+                swatCarNames.Add("dovnstock");
+                swatCarNames.Add("dovnsurge");
             }
         }
 
@@ -374,57 +484,80 @@ namespace AdvancedWorld
 
             XmlElement element = doc.DocumentElement;
 
-            foreach (XmlElement e in element.SelectNodes("//Replace/model")) addOnCarNames.Add(e.GetAttribute("id"));
-            foreach (XmlElement e in element.SelectNodes("//RaceCar/model")) racerCarNames.Add(e.GetAttribute("id"));
-            foreach (XmlElement e in element.SelectNodes("//RaceBike/model")) racerBikeNames.Add(e.GetAttribute("id"));
-            foreach (XmlElement e in element.SelectNodes("//Driveby/model")) drivebyCarNames.Add(e.GetAttribute("id"));
+            foreach (XmlElement e in element.SelectNodes("//Replace/spawn")) addOnCarNames.Add(e.GetAttribute("name"));
+            foreach (XmlElement e in element.SelectNodes("//RaceCar/spawn")) racerCarNames.Add(e.GetAttribute("name"));
+            foreach (XmlElement e in element.SelectNodes("//RaceBike/spawn")) racerBikeNames.Add(e.GetAttribute("name"));
+            foreach (XmlElement e in element.SelectNodes("//Driveby/spawn")) drivebyCarNames.Add(e.GetAttribute("name"));
         }
 
-        public static int NewRelationship(int type)
+        public static void Dispatch(Entity target, CrimeType type)
         {
-            int newRel = World.AddRelationshipGroup(count.ToString());
-            newRelationships.Add(newRel);
-            count++;
-            World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
-
             switch (type)
             {
-                case 0: // carjacker, aggressive, racer
+                case CrimeType.AggressiveDriver:
+                case CrimeType.Carjacker:
+                case CrimeType.GangTeam:
                     {
-                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+
+                            if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                            else lspd.Restore();
+                        }
 
                         break;
                     }
 
-                case 1: // massacre, driveby
+                case CrimeType.Driveby:
                     {
-                        foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                            else lspd.Restore();
+                        }
+
+                        SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)]);
+
+                        if (swat.IsCreatedNear(target, swatModels)) dispatchList.Add(swat);
+                        else swat.Restore();
+
                         break;
                     }
 
-                case 2: // ganglist, solider
+                case CrimeType.Massacre:
                     {
-                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                            else lspd.Restore();
+                        }
+
+                        for (int i = 0; i < 2; i++)
+                        {
+                            SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)]);
+
+                            if (swat.IsCreatedNear(target, swatModels)) dispatchList.Add(swat);
+                            else swat.Restore();
+                        }
+
+                        break;
+                    }
+
+                case CrimeType.Racer:
+                    {
+                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+
+                        if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                        else lspd.Restore();
+
                         break;
                     }
             }
-
-            return newRel;
-        }
-
-        public static void CleanUpRelationship(int relationship)
-        {
-            World.RemoveRelationshipGroup(relationship);
-
-            if (newRelationships.Contains(relationship)) newRelationships.Remove(relationship);
         }
 
         public AdvancedWorld()
@@ -435,7 +568,6 @@ namespace AdvancedWorld
             gangList = new List<EntitySet>();
             massacreList = new List<EntitySet>();
             racerList = new List<EntitySet>();
-            soldierList = new List<EntitySet>();
             drivebyList = new List<EntitySet>();
 
             radius = 100.0f;
@@ -453,8 +585,8 @@ namespace AdvancedWorld
             CleanUp(gangList);
             CleanUp(massacreList);
             CleanUp(racerList);
-            CleanUp(soldierList);
             CleanUp(drivebyList);
+            CleanUp(dispatchList);
 
             if (eventTimeChecker == 15 || eventTimeChecker == 30 || eventTimeChecker == 45)
             {
@@ -578,14 +710,15 @@ namespace AdvancedWorld
 
                             if (teamANum == -1 || teamBNum == -1) break;
 
-                            int relationshipA = AdvancedWorld.NewRelationship(2);
-                            int relationshipB = AdvancedWorld.NewRelationship(2);
+                            int relationshipA = Util.NewRelationship(CrimeType.GangTeam);
+                            int relationshipB = Util.NewRelationship(CrimeType.GangTeam);
 
                             if (relationshipA == 0 || relationshipB == 0) break;
 
                             World.SetRelationshipBetweenGroups(Relationship.Hate, relationshipA, relationshipB);
 
-                            if (teamA.IsCreatedIn(radius, World.GetNextPositionOnSidewalk(safePosition.Around(5.0f)), models[teamANum], relationshipA, BlipColor.Green, "A Team") && teamB.IsCreatedIn(radius, World.GetNextPositionOnSidewalk(safePosition.Around(5.0f)), models[teamBNum], relationshipB, BlipColor.Red, "B Team"))
+                            if (teamA.IsCreatedIn(radius, World.GetNextPositionOnSidewalk(safePosition.Around(5.0f)), models[teamANum], relationshipA, BlipColor.Green, "A Team")
+                                && teamB.IsCreatedIn(radius, World.GetNextPositionOnSidewalk(safePosition.Around(5.0f)), models[teamBNum], relationshipB, BlipColor.Red, "B Team"))
                             {
                                 gangList.Add(teamA);
                                 gangList.Add(teamB);
@@ -611,7 +744,7 @@ namespace AdvancedWorld
                             if (safePosition.Equals(Vector3.Zero)) break;
 
                             Massacre ms = new Massacre();
-                            int relationship = AdvancedWorld.NewRelationship(1);
+                            int relationship = Util.NewRelationship(CrimeType.Massacre);
 
                             if (relationship == 0) break;
                             if (ms.IsCreatedIn(radius, safePosition, relationship))
@@ -653,35 +786,30 @@ namespace AdvancedWorld
 
                     case 7:
                         {
-                            Vector3 safePosition = Util.GetSafePositionIn(radius);
+                            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(Game.Player.Character.Position, radius);
 
-                            if (safePosition.Equals(Vector3.Zero)) break;
-
-                            Soldier sA = new Soldier(soldierCarNames[Util.GetRandomInt(soldierCarNames.Count)], soldierCarNames[Util.GetRandomInt(soldierCarNames.Count)]);
-                            Soldier sB = new Soldier(soldierCarNames[Util.GetRandomInt(soldierCarNames.Count)], soldierCarNames[Util.GetRandomInt(soldierCarNames.Count)]);
-
-                            int relationshipA = AdvancedWorld.NewRelationship(2);
-                            int relationshipB = AdvancedWorld.NewRelationship(2);
-
-                            if (relationshipA == 0 || relationshipB == 0) break;
-
-                            World.SetRelationshipBetweenGroups(Relationship.Hate, relationshipA, relationshipB);
-
-                            if (sA.IsCreatedIn(radius, safePosition, BlipColor.Green, relationshipA) && sB.IsCreatedIn(radius, safePosition, BlipColor.Red, relationshipB))
+                            if (nearbyVehicles.Length < 1)
                             {
-                                soldierList.Add(sA);
-                                soldierList.Add(sB);
-
-                                sA.PerformTask();
-                                sB.PerformTask();
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-                            }
-                            else
-                            {
-                                sA.Restore();
-                                sB.Restore();
+                                nearbyVehicles = null;
+                                break;
                             }
 
+                            for (int trycount = 0; trycount < 5; trycount++)
+                            {
+                                Vehicle tunedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
+
+                                if (Util.WeCanReplace(tunedVehicle) && !tunedVehicle.IsToggleModOn(VehicleToggleMod.Turbo))
+                                {
+                                    Util.AddBlipOn(tunedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)27, "Tuned " + tunedVehicle.FriendlyName);
+                                    Util.Tune(tunedVehicle, true, true);
+                                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                    break;
+                                }
+                                else tunedVehicle = null;
+                            }
+
+                            nearbyVehicles = null;
                             break;
                         }
 

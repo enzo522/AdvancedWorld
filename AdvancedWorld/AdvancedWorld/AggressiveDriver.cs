@@ -36,7 +36,7 @@ namespace AdvancedWorld
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             Util.Tune(spawnedVehicle, true, true);
-            relationship = AdvancedWorld.NewRelationship(0);
+            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.AggressiveDriver);
 
             if (relationship == 0)
             {
@@ -65,7 +65,7 @@ namespace AdvancedWorld
         {
             if (Util.ThereIs(spawnedPed)) spawnedPed.Delete();
             if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
-            if (relationship != 0) AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
+            if (relationship != 0) Util.CleanUpRelationship(spawnedPed.RelationshipGroup);
         }
 
         public override bool ShouldBeRemoved()
@@ -73,6 +73,8 @@ namespace AdvancedWorld
             if (!Util.ThereIs(spawnedPed))
             {
                 if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
+
                 return true;
             }
 
@@ -80,21 +82,23 @@ namespace AdvancedWorld
             {
                 if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
-                AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
                 return true;
             }
-
-            if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
+            
             if (spawnedPed.IsDead || !spawnedVehicle.IsDriveable || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
                 if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
-                AdvancedWorld.CleanUpRelationship(spawnedPed.RelationshipGroup);
                 return true;
             }
+
+            if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
+            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.AggressiveDriver);
 
             return false;
         }

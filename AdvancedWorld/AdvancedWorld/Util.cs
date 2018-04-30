@@ -1,7 +1,9 @@
 ﻿using GTA;
 using GTA.Math;
+using GTA.Native;
 using System;
 using System.Drawing;
+using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
@@ -12,9 +14,40 @@ namespace AdvancedWorld
         private static Array neonColors = Enum.GetValues(typeof(KnownColor));
         private static Array neonLights = Enum.GetValues(typeof(VehicleNeonLight));
         private static Array tints = Enum.GetValues(typeof(VehicleWindowTint));
+
         private static Random dice = new Random();
         private static int[] wheelTypes = { 0, 1, 2, 3, 4, 5, 7, 8, 9 };
         private static int[] wheelColors = { 156, 0, 1, 11, 2, 8, 122, 27, 30, 45, 35, 33, 136, 135, 36, 41, 138, 37, 99, 90, 95, 115, 109, 153, 154, 88, 89, 91, 55, 125, 53, 56, 151, 82, 64, 87, 70, 140, 81, 145, 142, 134 };
+        
+        private static List<int> oldRelationships = new List<int>
+        {
+            Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "CIVFEMALE"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "SECURITY_GUARD"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_LOST"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_MEXICAN"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_FAMILY"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_BALLAS"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_MARABUNTE"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_CULT"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_SALVA"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_WEICHENG"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_HILLBILLY"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "GANG_1"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "GANG_2"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "GANG_9"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "GANG_10"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "DEALER"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "PRIVATE_SECURITY"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "PRISONER"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC")
+        };
+        private static List<int> newRelationships = new List<int>();
+        private static int copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+        private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
+        private static int count = 0;
 
         public static int GetRandomInt(int maxValue)
         {
@@ -51,6 +84,21 @@ namespace AdvancedWorld
                 foreach (Entity en in nearbyEntities)
                 {
                     if (ThereIs(en) && !en.IsPersistent && (!en.IsOnScreen || SomethingIsBetween(en))) return en.Position;
+                }
+            }
+
+            return Vector3.Zero;
+        }
+
+        public static Vector3 GetSafePositionNear(Entity en)
+        {
+            Entity[] nearbyEntities = World.GetNearbyEntities(en.Position, 100.0f);
+
+            if (nearbyEntities.Length > 0)
+            {
+                foreach (Entity e in nearbyEntities)
+                {
+                    if (ThereIs(e) && !e.IsPersistent && (!e.IsOnScreen || SomethingIsBetween(e))) return e.Position;
                 }
             }
 
@@ -150,6 +198,60 @@ namespace AdvancedWorld
                     foreach (VehicleNeonLight n in neonLights) v.SetNeonLightsOn(n, true);
                 }
             }
+        }
+
+        public static int NewRelationship(AdvancedWorld.CrimeType type)
+        {
+            int newRel = World.AddRelationshipGroup((count++).ToString());
+
+            newRelationships.Add(newRel);
+            World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
+
+            switch (type)
+            {
+                case AdvancedWorld.CrimeType.AggressiveDriver:
+                case AdvancedWorld.CrimeType.Carjacker:
+                case AdvancedWorld.CrimeType.Racer:
+                    {
+                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+
+                        break;
+                    }
+
+                case AdvancedWorld.CrimeType.Driveby:
+                case AdvancedWorld.CrimeType.Massacre:
+                    {
+                        foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                        break;
+                    }
+
+                case AdvancedWorld.CrimeType.GangTeam:
+                    {
+                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                        break;
+                    }
+            }
+
+            return newRel;
+        }
+
+        public static void CleanUpRelationship(int relationship)
+        {
+            World.RemoveRelationshipGroup(relationship);
+
+            if (newRelationships.Contains(relationship)) newRelationships.Remove(relationship);
+        }
+
+        public static bool IsCopNear(Vector3 position)
+        {
+            return Function.Call<bool>(Hash.IS_COP_PED_IN_AREA_3D, position.X - 100.0f, position.Y - 100.0f, position.Z - 100.0f, position.X + 100.0f, position.Y + 100.0f, position.Z + 100.0f);
         }
     }
 }

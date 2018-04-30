@@ -78,7 +78,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (relationship != 0) AdvancedWorld.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -131,7 +131,8 @@ namespace AdvancedWorld
 
             if (members.Count < 1)
             {
-                AdvancedWorld.CleanUpRelationship(relationship);
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
+
                 return true;
             }
             else return false;
