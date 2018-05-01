@@ -4,16 +4,18 @@
     {
         protected int relationship;
         protected int dispatchCooldown;
+        protected AdvancedWorld.CrimeType type;
 
         public Criminal() : base()
         {
             this.relationship = 0;
-            this.dispatchCooldown = 0;
+            this.dispatchCooldown = 60;
+            this.type = AdvancedWorld.CrimeType.None;
         }
 
-        protected void CheckDispatch(AdvancedWorld.CrimeType type)
+        protected void CheckDispatch()
         {
-            if (dispatchCooldown < 30) dispatchCooldown++;
+            if (dispatchCooldown < 60) dispatchCooldown++;
             else
             {
                 dispatchCooldown = 0;

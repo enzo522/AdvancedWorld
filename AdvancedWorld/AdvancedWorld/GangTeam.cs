@@ -16,6 +16,7 @@ namespace AdvancedWorld
             this.members = new List<Ped>();
             this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.SwitchBlade, WeaponHash.BattleAxe, WeaponHash.Unarmed };
             this.standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Revolver, WeaponHash.MiniSMG, WeaponHash.PumpShotgunMk2, WeaponHash.DoubleBarrelShotgun };
+            this.type = AdvancedWorld.CrimeType.GangTeam;
         }
 
         public bool IsCreatedIn(float radius, Vector3 position, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
@@ -113,14 +114,14 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedPed) || members.Count < 1)
+            if (members.Count < 1)
             {
                 if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 return true;
             }
+            if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
-            CheckDispatch(AdvancedWorld.CrimeType.GangTeam);
             return false;
         }
     }

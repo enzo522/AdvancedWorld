@@ -14,12 +14,17 @@ namespace AdvancedWorld
         private static List<string> racerBikeNames;
         private static List<string> drivebyCarNames;
         private static List<Vector3> racingPosition;
-
         private static List<List<string>> models;
+
         private static List<string> copModels;
         private static List<string> copCarNames;
         private static List<string> swatModels;
         private static List<string> swatCarNames;
+        private static List<string> swatHeliNames;
+        private static List<string> emModels;
+        private static List<string> emCarNames;
+        private static List<string> fireModels;
+        private static List<string> fireCarNames;
 
         private List<EntitySet> replacedList;
         private List<EntitySet> carjackerList;
@@ -35,10 +40,12 @@ namespace AdvancedWorld
 
         public enum CrimeType
         {
+            None,
             AggressiveDriver,
             Carjacker,
             Driveby,
             GangTeam,
+            Fire,
             Massacre,
             Racer
         }
@@ -135,13 +142,16 @@ namespace AdvancedWorld
                 new List<string> { "s_m_y_dealer_01", "u_m_y_tattoo_01", "u_m_y_sbike", "u_m_y_party_01", "u_m_y_hippie_01", "u_m_y_gunvend_01", "u_m_y_fibmugger_01", "u_m_y_guido_01" },
                 new List<string> { "s_f_y_hooker_01", "s_f_y_hooker_02", "s_f_y_hooker_03", "s_f_y_stripper_01", "s_f_y_stripper_02" }
             };
+
             copModels = new List<string>
             {
                 "s_f_y_cop_01",
                 "s_m_y_cop_01",
                 "s_m_y_hwaycop_01",
                 "s_f_y_sheriff_01",
-                "s_m_y_sheriff_01"
+                "s_m_y_sheriff_01",
+                "s_f_y_ranger_01",
+                "s_m_y_ranger_01"
             };
             copCarNames = new List<string>
             {
@@ -161,6 +171,27 @@ namespace AdvancedWorld
                 "policet",
                 "riot"
             };
+            swatHeliNames = new List<string>
+            {
+                "annihilator",
+                "buzzard2"
+            };
+            emModels = new List<string>
+            {
+                "s_m_m_paramedic_01"
+            };
+            emCarNames = new List<string>
+            {
+                "ambulance"
+            };
+            fireModels = new List<string>
+            {
+                "s_m_y_fireman_01"
+            };
+            fireCarNames = new List<string>
+            {
+                "firetruck"
+            };
             dispatchList = new List<EntitySet>();
 
             DLCCheck();
@@ -173,6 +204,7 @@ namespace AdvancedWorld
             {
                 racerCarNames.Add("verlierer2");
                 drivebyCarNames.Add("baller3");
+                swatHeliNames.Add("valkyrie2");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpassault")))
@@ -247,6 +279,8 @@ namespace AdvancedWorld
             {
                 racerBikeNames.Add("lectro");
                 drivebyCarNames.Add("enduro");
+                swatHeliNames.Add("savage");
+                swatHeliNames.Add("valkyrie");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpimportexport")))
@@ -408,6 +442,7 @@ namespace AdvancedWorld
                 copCarNames.Add("facthway");
                 copCarNames.Add("infhway");
                 copCarNames.Add("infpolice");
+                copCarNames.Add("infpolice2");
                 copCarNames.Add("lealamo");
                 copCarNames.Add("leesperanto");
                 copCarNames.Add("pbp1");
@@ -432,6 +467,7 @@ namespace AdvancedWorld
                 copCarNames.Add("sheriff9");
                 copCarNames.Add("uranushway");
                 copCarNames.Add("uranushway2");
+                copCarNames.Add("vaccapol");
                 copCarNames.Add("vcpd1");
                 copCarNames.Add("vighway");
                 copCarNames.Add("vigpolice");
@@ -440,6 +476,12 @@ namespace AdvancedWorld
                 swatCarNames.Add("police14");
                 swatCarNames.Add("policet2");
                 swatCarNames.Add("policet3");
+                emCarNames.Add("ambulance2");
+                emCarNames.Add("ambulance3");
+                emCarNames.Add("emssuv");
+                emCarNames.Add("emsvan");
+                fireCarNames.Add("emertruk");
+                fireCarNames.Add("riot3");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dov")))
@@ -467,6 +509,8 @@ namespace AdvancedWorld
                 swatCarNames.Add("dovnstock");
                 swatCarNames.Add("dovnsurge");
                 swatCarNames.Add("dovshetrans");
+                emCarNames.Add("dovemambu");
+                fireCarNames.Add("dovemfihvy");
             }
         }
 
@@ -493,16 +537,16 @@ namespace AdvancedWorld
 
         public static void Dispatch(Entity target, CrimeType type)
         {
+            Vector3 safePosition = Util.GetSafePositionNear(target);
+
+            if (safePosition.Equals(Vector3.Zero)) return;
+
             switch (type)
             {
                 case CrimeType.AggressiveDriver:
                 case CrimeType.GangTeam:
                 case CrimeType.Racer:
                     {
-                        Vector3 safePosition = Util.GetSafePositionNear(target);
-
-                        if (safePosition.Equals(Vector3.Zero)) break;
-
                         for (int i = 0; i < 2; i++)
                         {
                             LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
@@ -516,10 +560,6 @@ namespace AdvancedWorld
 
                 case CrimeType.Carjacker:
                     {
-                        Vector3 safePosition = Util.GetSafePositionNear(target);
-
-                        if (safePosition.Equals(Vector3.Zero)) break;
-
                         LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
                         if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
@@ -530,10 +570,6 @@ namespace AdvancedWorld
 
                 case CrimeType.Driveby:
                     {
-                        Vector3 safePosition = Util.GetSafePositionNear(target);
-
-                        if (safePosition.Equals(Vector3.Zero)) break;
-
                         for (int i = 0; i < 2; i++)
                         {
                             LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
@@ -550,13 +586,27 @@ namespace AdvancedWorld
                         break;
                     }
 
+                case CrimeType.Fire:
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)]);
+
+                            if (ff.IsCreatedIn(safePosition, target, fireModels)) dispatchList.Add(ff);
+                            else ff.Restore();
+                        }
+
+                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)]);
+
+                        if (pm.IsCreatedIn(safePosition, target, emModels)) dispatchList.Add(pm);
+                        else pm.Restore();
+
+                        break;
+                    }
+
                 case CrimeType.Massacre:
                     {
-                        Vector3 safePosition = Util.GetSafePositionNear(target);
-
-                        if (safePosition.Equals(Vector3.Zero)) break;
-
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 2; i++)
                         {
                             LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
@@ -571,6 +621,11 @@ namespace AdvancedWorld
                             if (swat.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(swat);
                             else swat.Restore();
                         }
+
+                        SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)]);
+
+                        if (heli.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(heli);
+                        else heli.Restore();
 
                         break;
                     }
@@ -607,7 +662,7 @@ namespace AdvancedWorld
 
             if (eventTimeChecker == 15 || eventTimeChecker == 30 || eventTimeChecker == 45)
             {
-                if (replacedList.Count < 7)
+                if (replacedList.Count < 5)
                 {
                     ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomInt(addOnCarNames.Count)]);
 
@@ -671,6 +726,7 @@ namespace AdvancedWorld
                                 {
                                     Util.AddBlipOn(explosiveVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
                                     explosiveVehicle.Explode();
+                                    Dispatch(explosiveVehicle, CrimeType.Fire);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 
                                     break;
@@ -700,6 +756,7 @@ namespace AdvancedWorld
                                 {
                                     Util.AddBlipOn(undriveableVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
                                     undriveableVehicle.EngineHealth = -900.0f;
+                                    Dispatch(undriveableVehicle, CrimeType.Fire);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 
                                     break;
@@ -823,7 +880,8 @@ namespace AdvancedWorld
                                         Script.Wait(100);
                                     }
 
-                                    Util.AddBlipOn(tunedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)27, "Tuned " + tunedVehicle.FriendlyName);
+                                    string blipName = "Tuned " + (tunedVehicle.FriendlyName == "NULL" ? tunedVehicle.DisplayName : tunedVehicle.FriendlyName);
+                                    Util.AddBlipOn(tunedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)27, blipName);
                                     Util.Tune(tunedVehicle, true, true);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 

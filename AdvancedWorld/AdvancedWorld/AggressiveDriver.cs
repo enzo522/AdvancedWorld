@@ -11,6 +11,7 @@ namespace AdvancedWorld
         public AggressiveDriver(string name) : base()
         {
             this.name = name;
+            this.type = AdvancedWorld.CrimeType.AggressiveDriver;
         }
 
         public bool IsCreatedIn(float radius)
@@ -97,7 +98,7 @@ namespace AdvancedWorld
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
 
-            CheckDispatch(AdvancedWorld.CrimeType.AggressiveDriver);
+            CheckDispatch();
             return false;
         }
     }

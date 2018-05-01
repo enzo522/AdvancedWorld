@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class SWAT : Emergency
+    public class Paramedic : Emergency
     {
-        public SWAT(string name) : base(name) { }
+        public Paramedic(string name) : base(name) { }
 
         public override bool IsCreatedIn(Vector3 position, Entity target, List<string> models)
         {
@@ -15,7 +15,7 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
-            for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
+            for (int i = -1; i < 1; i++)
             {
                 if (spawnedVehicle.IsSeatFree((VehicleSeat)i)) members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
             }
@@ -28,14 +28,7 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                p.Weapons.Give(WeaponHash.SMG, 300, true, true);
-                p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
-                p.Weapons.Current.InfiniteAmmo = true;
-                p.ShootRate = 1000;
-                
-                p.Armor = 50;
-                p.CanSwitchWeapons = true;
-                Function.Call(Hash.SET_PED_AS_COP, p, true);
+                p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC");
             }
 
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
@@ -43,9 +36,8 @@ namespace AdvancedWorld
             foreach (Ped p in members)
             {
                 if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_CHASE, p, target);
-                else p.Task.FightAgainstHatedTargets(100.0f);
             }
-            
+
             return true;
         }
     }

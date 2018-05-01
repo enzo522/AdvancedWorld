@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class LSPD : Cop
+    public class LSPD : Emergency
     {
         public LSPD(string name) : base(name) { }
 

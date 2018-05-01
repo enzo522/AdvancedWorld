@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public abstract class Cop : EntitySet
+    public abstract class Emergency : EntitySet
     {
         protected List<Ped> members;
         protected string name;
 
-        public Cop(string name) : base()
+        public Emergency(string name) : base()
         {
             this.members = new List<Ped>();
             this.name = name;
@@ -32,6 +32,8 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
+            spawnedPed = null;
+
             for (int i = members.Count - 1; i >= 0; i--)
             {
                 if (!Util.ThereIs(members[i]))

@@ -12,6 +12,7 @@ namespace AdvancedWorld
         {
             this.radius = 0.0f;
             this.trycount = 0;
+            this.type = AdvancedWorld.CrimeType.Carjacker;
         }
 
         public bool IsCreatedIn(float radius)
@@ -33,8 +34,7 @@ namespace AdvancedWorld
                 Restore();
                 return false;
             }
-
-            spawnedPed.RelationshipGroup = relationship;
+            
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
 
@@ -110,9 +110,10 @@ namespace AdvancedWorld
             }
 
             if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
-            if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) radius += 50.0f;
+            if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle)) spawnedPed.RelationshipGroup = relationship;
+            else spawnedPed.RelationshipGroup = 0;
 
-            CheckDispatch(AdvancedWorld.CrimeType.Carjacker);
+            CheckDispatch();
             return false;
         }
     }

@@ -13,6 +13,7 @@ namespace AdvancedWorld
         {
             this.name = name;
             this.goal = goal;
+            this.type = AdvancedWorld.CrimeType.Racer;
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, int heading)
@@ -110,7 +111,7 @@ namespace AdvancedWorld
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
 
-            CheckDispatch(AdvancedWorld.CrimeType.Racer);
+            CheckDispatch();
             return false;
         }
     }

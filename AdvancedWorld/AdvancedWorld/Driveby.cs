@@ -14,6 +14,7 @@ namespace AdvancedWorld
         {
             this.members = new List<Ped>();
             this.name = name;
+            this.type = AdvancedWorld.CrimeType.Driveby;
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
@@ -201,7 +202,7 @@ namespace AdvancedWorld
             }
             else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) spawnedPed.Task.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
 
-            CheckDispatch(AdvancedWorld.CrimeType.Driveby);
+            CheckDispatch();
             return false;
         }
     }

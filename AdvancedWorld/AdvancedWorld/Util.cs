@@ -98,7 +98,7 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && (!en.IsOnScreen || SomethingIsBetween(en))) return en.Position;
+                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetween(en)) return en.Position;
                 }
             }
 

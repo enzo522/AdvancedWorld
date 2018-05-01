@@ -14,6 +14,7 @@ namespace AdvancedWorld
         {
             this.members = new List<Ped>();
             this.radius = 0.0f;
+            this.type = AdvancedWorld.CrimeType.Massacre;
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, int teamID)
@@ -127,14 +128,14 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedPed) || members.Count < 1)
+            if (members.Count < 1)
             {
                 if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 return true;
             }
+            if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
-            CheckDispatch(AdvancedWorld.CrimeType.Massacre);
             return false;
         }
     }
