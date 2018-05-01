@@ -549,9 +549,9 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
 
-                            if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
@@ -560,9 +560,9 @@ namespace AdvancedWorld
 
                 case CrimeType.Carjacker:
                     {
-                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
 
-                        if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
+                        if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
                         else lspd.Restore();
 
                         break;
@@ -572,34 +572,16 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
 
-                            if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
-                        SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)]);
+                        SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
 
-                        if (swat.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(swat);
+                        if (swat.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swat);
                         else swat.Restore();
-
-                        break;
-                    }
-
-                case CrimeType.Fire:
-                    {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)]);
-
-                            if (ff.IsCreatedIn(safePosition, target, fireModels)) dispatchList.Add(ff);
-                            else ff.Restore();
-                        }
-
-                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)]);
-
-                        if (pm.IsCreatedIn(safePosition, target, emModels)) dispatchList.Add(pm);
-                        else pm.Restore();
 
                         break;
                     }
@@ -608,23 +590,23 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
+                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
 
-                            if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
                         for (int i = 0; i < 2; i++)
                         {
-                            SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)]);
+                            SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
 
-                            if (swat.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(swat);
+                            if (swat.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swat);
                             else swat.Restore();
                         }
 
-                        SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)]);
+                        SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
 
-                        if (heli.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(heli);
+                        if (heli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(heli);
                         else heli.Restore();
 
                         break;

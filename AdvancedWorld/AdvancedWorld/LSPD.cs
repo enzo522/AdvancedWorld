@@ -7,9 +7,9 @@ namespace AdvancedWorld
 {
     public class LSPD : Emergency
     {
-        public LSPD(string name) : base(name) { }
+        public LSPD(string name, Entity target) : base(name, target) { }
 
-        public override bool IsCreatedIn(Vector3 position, Entity target, List<string> models)
+        public override bool IsCreatedIn(Vector3 position, List<string> models)
         {
             spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(position, true), target.Heading, false);
 

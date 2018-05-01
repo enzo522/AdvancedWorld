@@ -1,6 +1,5 @@
 ﻿using GTA;
 using GTA.Math;
-using GTA.Native;
 using System.Collections.Generic;
 
 namespace AdvancedWorld
@@ -9,14 +8,16 @@ namespace AdvancedWorld
     {
         protected List<Ped> members;
         protected string name;
+        protected Entity target;
 
-        public Emergency(string name) : base()
+        public Emergency(string name, Entity target) : base()
         {
             this.members = new List<Ped>();
             this.name = name;
+            this.target = target;
         }
 
-        public abstract bool IsCreatedIn(Vector3 position, Entity target, List<string> models);
+        public abstract bool IsCreatedIn(Vector3 position, List<string> models);
 
         public override void Restore()
         {
@@ -45,7 +46,7 @@ namespace AdvancedWorld
                 if (members[i].Equals(spawnedVehicle.Driver) && !members[i].IsDead) spawnedPed = members[i];
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !Util.ThereIs(spawnedPed) || !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 362) || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !Util.ThereIs(spawnedPed) || spawnedPed.IsInRangeOf(target.Position, 50.0f) || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 foreach (Ped p in members)
                 {

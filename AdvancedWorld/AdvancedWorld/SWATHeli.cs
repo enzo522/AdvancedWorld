@@ -7,11 +7,11 @@ namespace AdvancedWorld
 {
     public class SWATHeli : Emergency
     {
-        public SWATHeli(string name) : base(name) { }
+        public SWATHeli(string name, Entity target) : base(name, target) { }
 
-        public override bool IsCreatedIn(Vector3 position, Entity target, List<string> models)
+        public override bool IsCreatedIn(Vector3 position, List<string> models)
         {
-            spawnedVehicle = Util.Create(name, new Vector3(position.X, position.Y, 500.0f), target.Heading, false);
+            spawnedVehicle = Util.Create(name, new Vector3(position.X, position.Y, position.Z + 50.0f), target.Heading, false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -38,9 +38,12 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_AS_COP, p, true);
             }
             
+            spawnedVehicle.EngineRunning = true;
+            Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
+
             foreach (Ped p in members)
             {
-                if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_HELI_MISSION, p, spawnedVehicle, target, 0, target.Position.X, target.Position.Y, target.Position.Z, 4, 50.0f, 10.0f, (target.Position - spawnedVehicle.Position).ToHeading(), -1, -1, -1, 4096);
+                if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_HELI_MISSION, p, spawnedVehicle, 0, target, 0.0f, 0.0f, 0.0f, 9, 50.0f, 10.0f, (target.Position - spawnedVehicle.Position).ToHeading(), 15, 15, -1.0f, 4096);
                 else p.Task.FightAgainstHatedTargets(100.0f);
             }
 

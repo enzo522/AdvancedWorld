@@ -92,7 +92,7 @@ namespace AdvancedWorld
 
         public static Vector3 GetSafePositionNear(Entity entity)
         {
-            Entity[] nearbyEntities = World.GetNearbyEntities(entity.Position, 50.0f);
+            Entity[] nearbyEntities = World.GetNearbyEntities(entity.Position, 100.0f);
 
             if (nearbyEntities.Length > 0)
             {
