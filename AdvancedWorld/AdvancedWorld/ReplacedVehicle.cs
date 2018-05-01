@@ -20,7 +20,7 @@ namespace AdvancedWorld
             {
                 Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
 
-                if (Util.WeCanReplace(selectedVehicle) && !selectedVehicle.IsPersistent && !Function.Call<bool>(Hash.IS_VEHICLE_ATTACHED_TO_TRAILER, selectedVehicle) && (!selectedVehicle.IsOnScreen || Util.SomethingIsBetween(selectedVehicle)))
+                if (Util.WeCanReplace(selectedVehicle) && !selectedVehicle.IsPersistent && !Function.Call<bool>(Hash.IS_VEHICLE_ATTACHED_TO_TRAILER, selectedVehicle) && Util.SomethingIsBetween(selectedVehicle))
                 {
                     Vector3 selectedPosition = selectedVehicle.Position;
                     float selectedHeading = selectedVehicle.Heading;
@@ -30,7 +30,7 @@ namespace AdvancedWorld
                     BlipColor selectedBlipColor;
 
                     selectedVehicle.Delete();
-                    spawnedVehicle = Util.Create(name, selectedPosition, selectedHeading);
+                    spawnedVehicle = Util.Create(name, selectedPosition, selectedHeading, true);
 
                     if (!Util.ThereIs(spawnedVehicle)) return false;
                     if (selectedEngineRunning)

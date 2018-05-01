@@ -5,19 +5,17 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class GangTeam : EntitySet
+    public class GangTeam : Criminal
     {
         private List<Ped> members;
         private List<WeaponHash> closeWeapons;
         private List<WeaponHash> standoffWeapons;
-        private int relationship;
 
         public GangTeam() : base()
         {
             this.members = new List<Ped>();
             this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.SwitchBlade, WeaponHash.BattleAxe, WeaponHash.Unarmed };
             this.standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Revolver, WeaponHash.MiniSMG, WeaponHash.PumpShotgunMk2, WeaponHash.DoubleBarrelShotgun };
-            this.relationship = 0;
         }
 
         public bool IsCreatedIn(float radius, Vector3 position, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
@@ -93,6 +91,8 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
+            spawnedPed = null;
+
             for (int i = members.Count - 1; i >= 0; i--)
             {
                 if (!Util.ThereIs(members[i]))
@@ -113,15 +113,14 @@ namespace AdvancedWorld
                 }
             }
 
-            if (members.Count < 1)
+            if (!Util.ThereIs(spawnedPed) || members.Count < 1)
             {
                 if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 return true;
             }
 
-            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.GangTeam);
-            
+            CheckDispatch(AdvancedWorld.CrimeType.GangTeam);
             return false;
         }
     }

@@ -32,6 +32,7 @@ namespace AdvancedWorld
 
         private float radius;
         private int eventTimeChecker;
+
         public enum CrimeType
         {
             AggressiveDriver,
@@ -461,11 +462,11 @@ namespace AdvancedWorld
                 copCarNames.Add("dovsheesp");
                 copCarNames.Add("dovsheranch");
                 copCarNames.Add("dovshestan");
-                copCarNames.Add("dovshetrans");
                 swatCarNames.Add("dovnboxv");
                 swatCarNames.Add("dovnrcv");
                 swatCarNames.Add("dovnstock");
                 swatCarNames.Add("dovnsurge");
+                swatCarNames.Add("dovshetrans");
             }
         }
 
@@ -498,11 +499,15 @@ namespace AdvancedWorld
                 case CrimeType.GangTeam:
                 case CrimeType.Racer:
                     {
+                        Vector3 safePosition = Util.GetSafePositionNear(target);
+
+                        if (safePosition.Equals(Vector3.Zero)) break;
+
                         for (int i = 0; i < 2; i++)
                         {
                             LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
-                            if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
@@ -511,9 +516,13 @@ namespace AdvancedWorld
 
                 case CrimeType.Carjacker:
                     {
+                        Vector3 safePosition = Util.GetSafePositionNear(target);
+
+                        if (safePosition.Equals(Vector3.Zero)) break;
+
                         LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
-                        if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                        if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
                         else lspd.Restore();
 
                         break;
@@ -521,17 +530,21 @@ namespace AdvancedWorld
 
                 case CrimeType.Driveby:
                     {
+                        Vector3 safePosition = Util.GetSafePositionNear(target);
+
+                        if (safePosition.Equals(Vector3.Zero)) break;
+
                         for (int i = 0; i < 2; i++)
                         {
                             LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
-                            if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
                         SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)]);
 
-                        if (swat.IsCreatedNear(target, swatModels)) dispatchList.Add(swat);
+                        if (swat.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(swat);
                         else swat.Restore();
 
                         break;
@@ -539,11 +552,15 @@ namespace AdvancedWorld
 
                 case CrimeType.Massacre:
                     {
+                        Vector3 safePosition = Util.GetSafePositionNear(target);
+
+                        if (safePosition.Equals(Vector3.Zero)) break;
+
                         for (int i = 0; i < 4; i++)
                         {
                             LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)]);
 
-                            if (lspd.IsCreatedNear(target, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, target, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
@@ -551,7 +568,7 @@ namespace AdvancedWorld
                         {
                             SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)]);
 
-                            if (swat.IsCreatedNear(target, swatModels)) dispatchList.Add(swat);
+                            if (swat.IsCreatedIn(safePosition, target, swatModels)) dispatchList.Add(swat);
                             else swat.Restore();
                         }
 
@@ -798,8 +815,14 @@ namespace AdvancedWorld
                             {
                                 Vehicle tunedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
 
-                                if (Util.WeCanReplace(tunedVehicle) && (!tunedVehicle.IsOnScreen || Util.SomethingIsBetween(tunedVehicle)) && !tunedVehicle.IsToggleModOn(VehicleToggleMod.Turbo))
+                                if (Util.WeCanReplace(tunedVehicle) && Util.SomethingIsBetween(tunedVehicle) && !tunedVehicle.IsToggleModOn(VehicleToggleMod.Turbo))
                                 {
+                                    if (Util.BlipIsOn(tunedVehicle))
+                                    {
+                                        tunedVehicle.CurrentBlip.Remove();
+                                        Script.Wait(100);
+                                    }
+
                                     Util.AddBlipOn(tunedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)27, "Tuned " + tunedVehicle.FriendlyName);
                                     Util.Tune(tunedVehicle, true, true);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);

@@ -71,7 +71,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return (r.DitHitAnything && r.HitCoords.DistanceTo(en.Position) > 10.0f);
+                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(en.Position) > 10.0f);
             }
         }
 
@@ -83,22 +83,22 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && (!en.IsOnScreen || SomethingIsBetween(en))) return en.Position;
+                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetween(en)) return en.Position;
                 }
             }
 
             return Vector3.Zero;
         }
 
-        public static Vector3 GetSafePositionNear(Entity en)
+        public static Vector3 GetSafePositionNear(Entity entity)
         {
-            Entity[] nearbyEntities = World.GetNearbyEntities(en.Position, 100.0f);
+            Entity[] nearbyEntities = World.GetNearbyEntities(entity.Position, 50.0f);
 
             if (nearbyEntities.Length > 0)
             {
-                foreach (Entity e in nearbyEntities)
+                foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(e) && !e.IsPersistent && (!e.IsOnScreen || SomethingIsBetween(e))) return e.Position;
+                    if (ThereIs(en) && !en.IsPersistent && (!en.IsOnScreen || SomethingIsBetween(en))) return en.Position;
                 }
             }
 
@@ -130,7 +130,6 @@ namespace AdvancedWorld
             if (m.IsValid && !v3.Equals(Vector3.Zero))
             {
                 Ped p = World.CreatePed(m, v3);
-                Script.Wait(100);
                 m.MarkAsNoLongerNeeded();
 
                 if (ThereIs(p)) return p;
@@ -139,7 +138,7 @@ namespace AdvancedWorld
             return null;
         }
 
-        public static Vehicle Create(Model m, Vector3 v3, float h)
+        public static Vehicle Create(Model m, Vector3 v3, float h, bool colorNeeded)
         {
             if (m.IsValid && !v3.Equals(Vector3.Zero))
             {
@@ -147,7 +146,16 @@ namespace AdvancedWorld
                 Script.Wait(100);
                 m.MarkAsNoLongerNeeded();
 
-                if (ThereIs(v)) return v;
+                if (ThereIs(v))
+                {
+                    if (colorNeeded)
+                    {
+                        v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
+                        v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
+                    }
+
+                    return v;
+                }
             }
 
             return null;
@@ -160,9 +168,6 @@ namespace AdvancedWorld
                 v.InstallModKit();
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
-
-                v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
-                v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
 
                 foreach (VehicleMod m in mods)
                 {
@@ -246,9 +251,18 @@ namespace AdvancedWorld
             if (newRelationships.Contains(relationship)) newRelationships.Remove(relationship);
         }
 
-        public static bool IsCopNear(Vector3 position)
+        public static bool CopIsNear(Vector3 position)
         {
-            return Function.Call<bool>(Hash.IS_COP_PED_IN_AREA_3D, position.X - 100.0f, position.Y - 100.0f, position.Z - 100.0f, position.X + 100.0f, position.Y + 100.0f, position.Z + 100.0f);
+            Ped[] nearbyPeds = World.GetNearbyPeds(position, 100.0f);
+
+            if (nearbyPeds.Length < 1) return false;
+
+            foreach (Ped p in nearbyPeds)
+            {
+                if (p.RelationshipGroup == copID && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
+            }
+
+            return false;
         }
     }
 }

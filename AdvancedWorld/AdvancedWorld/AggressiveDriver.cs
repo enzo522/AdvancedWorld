@@ -4,15 +4,13 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class AggressiveDriver : EntitySet
+    public class AggressiveDriver : Criminal
     {
         private string name;
-        private int relationship;
 
         public AggressiveDriver(string name) : base()
         {
             this.name = name;
-            this.relationship = 0;
         }
 
         public bool IsCreatedIn(float radius)
@@ -21,7 +19,7 @@ namespace AdvancedWorld
 
             if (safePosition.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360));
+            spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360), true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -98,8 +96,8 @@ namespace AdvancedWorld
             }
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
-            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.AggressiveDriver);
 
+            CheckDispatch(AdvancedWorld.CrimeType.AggressiveDriver);
             return false;
         }
     }

@@ -5,17 +5,15 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Driveby : EntitySet
+    public class Driveby : Criminal
     {
         private List<Ped> members;
         private string name;
-        private int relationship;
 
         public Driveby(string name) : base()
         {
             this.members = new List<Ped>();
             this.name = name;
-            this.relationship = 0;
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
@@ -24,7 +22,7 @@ namespace AdvancedWorld
 
             if (safePosition.Equals(Vector3.Zero) || selectedModels == null) return false;
 
-            spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360));
+            spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360), true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -157,8 +155,7 @@ namespace AdvancedWorld
                 members.Clear();
                 return true;
             }
-
-            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.Driveby);
+            
             if (spawnedPed.IsSittingInVehicle(spawnedVehicle) && spawnedPed.Equals(spawnedVehicle.Driver))
             {
                 if (EveryoneIsSitting())
@@ -204,6 +201,7 @@ namespace AdvancedWorld
             }
             else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) spawnedPed.Task.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
 
+            CheckDispatch(AdvancedWorld.CrimeType.Driveby);
             return false;
         }
     }

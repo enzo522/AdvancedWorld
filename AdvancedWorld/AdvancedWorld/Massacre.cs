@@ -5,16 +5,14 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Massacre : EntitySet
+    public class Massacre : Criminal
     {
         private List<Ped> members;
-        private int relationship;
         private float radius;
 
         public Massacre() : base()
         {
             this.members = new List<Ped>();
-            this.relationship = 0;
             this.radius = 0.0f;
         }
 
@@ -107,6 +105,8 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
+            spawnedPed = null;
+
             for (int i = members.Count - 1; i >= 0; i--)
             {
                 if (!Util.ThereIs(members[i]))
@@ -127,24 +127,14 @@ namespace AdvancedWorld
                 }
             }
 
-            if (members.Count < 1)
+            if (!Util.ThereIs(spawnedPed) || members.Count < 1)
             {
                 if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 return true;
             }
 
-            if (!Util.IsCopNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, AdvancedWorld.CrimeType.Massacre);
-            foreach (Ped p in members)
-            {
-                if (!p.IsInCombat)
-                {
-                    radius += 50.0f;
-                    PerformTask();
-                    break;
-                }
-            }
-            
+            CheckDispatch(AdvancedWorld.CrimeType.Massacre);
             return false;
         }
     }
