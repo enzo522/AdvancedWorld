@@ -1,5 +1,6 @@
 ﻿using GTA;
 using GTA.Math;
+using GTA.Native;
 using System.Collections.Generic;
 
 namespace AdvancedWorld
@@ -33,8 +34,6 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
-            spawnedPed = null;
-
             for (int i = members.Count - 1; i >= 0; i--)
             {
                 if (!Util.ThereIs(members[i]))
@@ -43,10 +42,18 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].Equals(spawnedVehicle.Driver) && !members[i].IsDead) spawnedPed = members[i];
+                if (members[i].IsInRangeOf(target.Position, 50.0f))
+                {
+                    members[i].AlwaysKeepTask = false;
+                    members[i].BlockPermanentEvents = false;
+                    Function.Call(Hash.SET_PED_AS_COP, members[i], true);
+
+                    members[i].MarkAsNoLongerNeeded();
+                    members.RemoveAt(i);
+                }
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !Util.ThereIs(spawnedPed) || spawnedPed.IsInRangeOf(target.Position, 50.0f) || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 foreach (Ped p in members)
                 {

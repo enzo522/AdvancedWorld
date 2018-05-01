@@ -570,18 +570,20 @@ namespace AdvancedWorld
 
                 case CrimeType.Driveby:
                     {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
+                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
 
-                            if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
-                            else lspd.Restore();
-                        }
+                        if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
+                        else lspd.Restore();
 
                         SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
 
                         if (swat.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swat);
                         else swat.Restore();
+
+                        SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
+
+                        if (heli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(heli);
+                        else heli.Restore();
 
                         break;
                     }
@@ -594,10 +596,7 @@ namespace AdvancedWorld
 
                             if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
                             else lspd.Restore();
-                        }
 
-                        for (int i = 0; i < 2; i++)
-                        {
                             SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
 
                             if (swat.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swat);
@@ -704,11 +703,16 @@ namespace AdvancedWorld
                             {
                                 Vehicle explosiveVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
 
-                                if (Util.WeCanReplace(explosiveVehicle) && !Util.BlipIsOn(explosiveVehicle))
+                                if (Util.WeCanReplace(explosiveVehicle))
                                 {
+                                    if (Util.BlipIsOn(explosiveVehicle))
+                                    {
+                                        explosiveVehicle.CurrentBlip.Remove();
+                                        Script.Wait(100);
+                                    }
+
                                     Util.AddBlipOn(explosiveVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
                                     explosiveVehicle.Explode();
-                                    Dispatch(explosiveVehicle, CrimeType.Fire);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 
                                     break;
@@ -734,11 +738,16 @@ namespace AdvancedWorld
                             {
                                 Vehicle undriveableVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
 
-                                if (Util.WeCanReplace(undriveableVehicle) && !Util.BlipIsOn(undriveableVehicle))
+                                if (Util.WeCanReplace(undriveableVehicle))
                                 {
+                                    if (Util.BlipIsOn(undriveableVehicle))
+                                    {
+                                        undriveableVehicle.CurrentBlip.Remove();
+                                        Script.Wait(100);
+                                    }
+
                                     Util.AddBlipOn(undriveableVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
                                     undriveableVehicle.EngineHealth = -900.0f;
-                                    Dispatch(undriveableVehicle, CrimeType.Fire);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 
                                     break;

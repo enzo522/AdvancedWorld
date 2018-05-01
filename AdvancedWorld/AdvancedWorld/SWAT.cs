@@ -35,7 +35,10 @@ namespace AdvancedWorld
                 
                 p.Armor = 50;
                 p.CanSwitchWeapons = true;
-                Function.Call(Hash.SET_PED_AS_COP, p, true);
+
+                Function.Call(Hash.SET_PED_AS_COP, p, false);
+                p.AlwaysKeepTask = true;
+                p.BlockPermanentEvents = true;
             }
 
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
