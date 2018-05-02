@@ -69,7 +69,7 @@ namespace AdvancedWorld
         {
             if (Util.ThereIs(p))
             {
-                if (!p.Equals(spawnedVehicle.Driver) && !target.IsDead) return;
+                if (p.Equals(spawnedVehicle.Driver) && !target.IsDead) return;
 
                 p.AlwaysKeepTask = false;
                 p.BlockPermanentEvents = false;

@@ -109,7 +109,6 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
             if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle)) spawnedPed.RelationshipGroup = relationship;
-            else spawnedPed.RelationshipGroup = 0;
 
             CheckDispatch();
             return false;
