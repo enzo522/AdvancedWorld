@@ -53,6 +53,7 @@
     <Compile Include="Criminal.cs" />
     <Compile Include="Driveby.cs" />
     <Compile Include="EntitySet.cs" />
+    <Compile Include="FIB.cs" />
     <Compile Include="Firefighter.cs" />
     <Compile Include="GangTeam.cs" />
     <Compile Include="LSPD.cs" />

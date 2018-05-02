@@ -10,11 +10,10 @@ namespace AdvancedWorld
         private List<Ped> members;
         private string name;
 
-        public Driveby(string name) : base()
+        public Driveby(string name) : base(AdvancedWorld.CrimeType.Driveby)
         {
             this.members = new List<Ped>();
             this.name = name;
-            this.type = AdvancedWorld.CrimeType.Driveby;
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
@@ -23,7 +22,11 @@ namespace AdvancedWorld
 
             if (safePosition.Equals(Vector3.Zero) || selectedModels == null) return false;
 
-            spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360), true);
+            Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+
+            if (position.Equals(Vector3.Zero)) return false;
+
+            spawnedVehicle = Util.Create(name, position, Util.GetRandomInt(360), true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -39,7 +42,11 @@ namespace AdvancedWorld
 
             for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
             {
-                if (spawnedVehicle.IsSeatFree((VehicleSeat)i)) members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModels[Util.GetRandomInt(selectedModels.Count)]));
+                if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                {
+                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModels[Util.GetRandomInt(selectedModels.Count)]));
+                    Script.Wait(50);
+                }
             }
 
             foreach (Ped p in members)

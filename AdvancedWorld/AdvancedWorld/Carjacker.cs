@@ -1,5 +1,4 @@
 ﻿using GTA;
-using GTA.Native;
 
 namespace AdvancedWorld
 {
@@ -8,11 +7,10 @@ namespace AdvancedWorld
         private float radius;
         private int trycount;
 
-        public Carjacker() : base()
+        public Carjacker() : base(AdvancedWorld.CrimeType.Carjacker)
         {
             this.radius = 0.0f;
             this.trycount = 0;
-            this.type = AdvancedWorld.CrimeType.Carjacker;
         }
 
         public bool IsCreatedIn(float radius)

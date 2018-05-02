@@ -17,7 +17,11 @@ namespace AdvancedWorld
 
             for (int i = -1; i < 1; i++)
             {
-                if (spawnedVehicle.IsSeatFree((VehicleSeat)i)) members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                {
+                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                    Script.Wait(50);
+                }
             }
 
             foreach (Ped p in members)

@@ -10,11 +10,10 @@ namespace AdvancedWorld
         private List<Ped> members;
         private float radius;
 
-        public Massacre() : base()
+        public Massacre() : base(AdvancedWorld.CrimeType.Massacre)
         {
             this.members = new List<Ped>();
             this.radius = 0.0f;
-            this.type = AdvancedWorld.CrimeType.Massacre;
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, int teamID)
@@ -22,6 +21,8 @@ namespace AdvancedWorld
             this.relationship = teamID;
             this.radius = radius;
             Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
+
+            if (position.Equals(Vector3.Zero)) return false;
 
             for (int i = 0; i < 4; i++)
             {

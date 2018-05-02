@@ -9,11 +9,10 @@ namespace AdvancedWorld
         private string name;
         private Vector3 goal;
 
-        public Racer(string name, Vector3 goal) : base()
+        public Racer(string name, Vector3 goal) : base(AdvancedWorld.CrimeType.Racer)
         {
             this.name = name;
             this.goal = goal;
-            this.type = AdvancedWorld.CrimeType.Racer;
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, int heading)
@@ -30,6 +29,7 @@ namespace AdvancedWorld
                 return false;
             }
 
+            Script.Wait(50);
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             Util.Tune(spawnedVehicle, true, true);

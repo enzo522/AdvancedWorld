@@ -130,6 +130,7 @@ namespace AdvancedWorld
             if (m.IsValid && !v3.Equals(Vector3.Zero))
             {
                 Ped p = World.CreatePed(m, v3);
+                Script.Wait(50);
                 m.MarkAsNoLongerNeeded();
 
                 if (ThereIs(p)) return p;

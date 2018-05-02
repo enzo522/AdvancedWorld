@@ -39,6 +39,7 @@ namespace AdvancedWorld
 
                         if (Util.ThereIs(spawnedPed))
                         {
+                            Script.Wait(50);
                             spawnedVehicle.EngineRunning = true;
                             spawnedVehicle.Speed = selectedSpeed;
                             spawnedPed.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIV" + spawnedPed.Gender.ToString().ToUpper());

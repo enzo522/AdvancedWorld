@@ -18,7 +18,7 @@ namespace AdvancedWorld
             this.target = target;
         }
 
-        public abstract bool IsCreatedIn(Vector3 position, List<string> models);
+        public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
 
         public override void Restore()
         {
@@ -32,6 +32,16 @@ namespace AdvancedWorld
             members.Clear();
         }
 
+        private void SetPedAsCop(Ped p)
+        {
+            if (Util.ThereIs(p))
+            {
+                p.AlwaysKeepTask = false;
+                p.BlockPermanentEvents = false;
+                Function.Call(Hash.SET_PED_AS_COP, p, true);
+            }
+        }
+
         public override bool ShouldBeRemoved()
         {
             for (int i = members.Count - 1; i >= 0; i--)
@@ -42,22 +52,18 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].IsInRangeOf(target.Position, 50.0f))
-                {
-                    members[i].AlwaysKeepTask = false;
-                    members[i].BlockPermanentEvents = false;
-                    Function.Call(Hash.SET_PED_AS_COP, members[i], true);
-
-                    members[i].MarkAsNoLongerNeeded();
-                    members.RemoveAt(i);
-                }
+                if (members[i].IsInRangeOf(target.Position, 50.0f)) SetPedAsCop(members[i]);
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || target.IsDead || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
+                    if (Util.ThereIs(p))
+                    {
+                        SetPedAsCop(p);
+                        p.MarkAsNoLongerNeeded();
+                    }
                 }
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();

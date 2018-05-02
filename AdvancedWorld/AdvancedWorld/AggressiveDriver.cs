@@ -8,10 +8,9 @@ namespace AdvancedWorld
     {
         private string name;
 
-        public AggressiveDriver(string name) : base()
+        public AggressiveDriver(string name) : base(AdvancedWorld.CrimeType.AggressiveDriver)
         {
             this.name = name;
-            this.type = AdvancedWorld.CrimeType.AggressiveDriver;
         }
 
         public bool IsCreatedIn(float radius)
@@ -20,7 +19,11 @@ namespace AdvancedWorld
 
             if (safePosition.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, World.GetNextPositionOnStreet(safePosition, true), Util.GetRandomInt(360), true);
+            Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+
+            if (position.Equals(Vector3.Zero)) return false;
+
+            spawnedVehicle = Util.Create(name, position, Util.GetRandomInt(360), true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -32,6 +35,7 @@ namespace AdvancedWorld
                 return false;
             }
 
+            Script.Wait(50);
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             Util.Tune(spawnedVehicle, true, true);

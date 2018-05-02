@@ -16,8 +16,10 @@ namespace AdvancedWorld
         private static List<Vector3> racingPosition;
         private static List<List<string>> models;
 
-        private static List<string> copModels;
-        private static List<string> copCarNames;
+        private static List<List<string>> copModels;
+        private static List<List<string>> copCarNames;
+        private static List<string> fibModels;
+        private static List<string> fibCarNames;
         private static List<string> swatModels;
         private static List<string> swatCarNames;
         private static List<string> swatHeliNames;
@@ -143,24 +145,28 @@ namespace AdvancedWorld
                 new List<string> { "s_f_y_hooker_01", "s_f_y_hooker_02", "s_f_y_hooker_03", "s_f_y_stripper_01", "s_f_y_stripper_02" }
             };
 
-            copModels = new List<string>
+            copModels = new List<List<string>>
             {
-                "s_f_y_cop_01",
-                "s_m_y_cop_01",
-                "s_m_y_hwaycop_01",
-                "s_f_y_sheriff_01",
-                "s_m_y_sheriff_01",
-                "s_f_y_ranger_01",
-                "s_m_y_ranger_01"
+                new List<string> { "s_f_y_cop_01", "s_m_y_cop_01" },
+                new List<string> { "s_m_y_hwaycop_01", "s_f_y_sheriff_01", "s_m_y_sheriff_01", "s_f_y_ranger_01", "s_m_y_ranger_01" },
+                new List<string> { "s_m_y_doorman_01" }
             };
-            copCarNames = new List<string>
+            copCarNames = new List<List<string>>
             {
-                "police",
-                "police2",
-                "police3",
-                "policeb",
-                "sheriff",
-                "sheriff2"
+                new List<string> { "police", "police2", "police3", "policeb" },
+                new List<string> { "sheriff", "sheriff2" },
+                new List<string> { "police4" }
+            };
+            fibModels = new List<string>
+            {
+                "s_m_m_fiboffice_01",
+                "s_m_m_fiboffice_02",
+                "s_m_m_ciasec_01"
+            };
+            fibCarNames = new List<string>
+            {
+                "fbi",
+                "fbi2"
             };
             swatModels = new List<string>
             {
@@ -279,6 +285,8 @@ namespace AdvancedWorld
             {
                 racerBikeNames.Add("lectro");
                 drivebyCarNames.Add("enduro");
+                fibModels.Add("s_m_m_fibsec_01");
+                fibModels.Add("u_m_m_doa_01");
                 swatHeliNames.Add("savage");
                 swatHeliNames.Add("valkyrie");
             }
@@ -379,12 +387,14 @@ namespace AdvancedWorld
                 racerBikeNames.Add("nrg900");
                 drivebyCarNames.Add("huntley2");
                 drivebyCarNames.Add("marbelle");
+                copCarNames[0].Add("police6");
+                copCarNames[0].Add("police8");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "wov")))
             {
-                copModels.Add("s_m_y_bcop_01");
-                copCarNames.Add("sheriff3");
+                copModels[0].Add("s_m_y_bcop_01");
+                copCarNames[1].Add("sheriff3");
                 swatModels.Add("s_m_y_swat_02");
                 swatModels.Add("s_m_y_swat_04");
             }
@@ -412,66 +422,69 @@ namespace AdvancedWorld
                 racerCarNames.Add("vigero3");
                 racerBikeNames.Add("kenshin");
                 drivebyCarNames.Add("greenwood");
-                copCarNames.Add("bcso1");
-                copCarNames.Add("bcso2");
-                copCarNames.Add("bcso3");
-                copCarNames.Add("hwaycar5");
-                copCarNames.Add("hwaycar6");
-                copCarNames.Add("police18");
-                copCarNames.Add("police19");
-                copCarNames.Add("sheriff10");
-                copCarNames.Add("sheriff11");
+                copCarNames[1].Add("bcso1");
+                copCarNames[1].Add("bcso2");
+                copCarNames[1].Add("bcso3");
+                copCarNames[0].Add("hwaycar5");
+                copCarNames[0].Add("hwaycar6");
+                copCarNames[0].Add("police18");
+                copCarNames[0].Add("police19");
+                copCarNames[1].Add("sheriff10");
+                copCarNames[1].Add("sheriff11");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dw")))
             {
-                copCarNames.Add("bcso4");
-                copCarNames.Add("bcso5");
-                copCarNames.Add("bcso6");
-                copCarNames.Add("bpsp1");
-                copCarNames.Add("bpsp2");
-                copCarNames.Add("bulhway");
-                copCarNames.Add("bulhway2");
-                copCarNames.Add("bulpolice");
-                copCarNames.Add("bulpolice2");
-                copCarNames.Add("bulsheriff");
-                copCarNames.Add("coqhway");
-                copCarNames.Add("coqhway2");
-                copCarNames.Add("coqpolice");
-                copCarNames.Add("coqsheriff");
-                copCarNames.Add("facthway");
-                copCarNames.Add("infhway");
-                copCarNames.Add("infpolice");
-                copCarNames.Add("infpolice2");
-                copCarNames.Add("lealamo");
-                copCarNames.Add("leesperanto");
-                copCarNames.Add("pbp1");
-                copCarNames.Add("pcpd1");
-                copCarNames.Add("pcpd2");
-                copCarNames.Add("pcpd3");
-                copCarNames.Add("police9");
-                copCarNames.Add("police11");
-                copCarNames.Add("police12");
-                copCarNames.Add("police13");
-                copCarNames.Add("police15");
-                copCarNames.Add("police16");
-                copCarNames.Add("police17");
-                copCarNames.Add("police24");
-                copCarNames.Add("polizia1");
-                copCarNames.Add("pranger3");
-                copCarNames.Add("rpdcar1");
-                copCarNames.Add("rpdcar3");
-                copCarNames.Add("rpdsuv");
-                copCarNames.Add("rpdsuv2");
-                copCarNames.Add("sheriff7");
-                copCarNames.Add("sheriff9");
-                copCarNames.Add("uranushway");
-                copCarNames.Add("uranushway2");
-                copCarNames.Add("vaccapol");
-                copCarNames.Add("vcpd1");
-                copCarNames.Add("vighway");
-                copCarNames.Add("vigpolice");
-                copCarNames.Add("vigsheriff");
+                copCarNames[1].Add("bcso4");
+                copCarNames[1].Add("bcso5");
+                copCarNames[1].Add("bcso6");
+                copCarNames[0].Add("bpsp1");
+                copCarNames[0].Add("bpsp2");
+                copCarNames[0].Add("bulhway");
+                copCarNames[0].Add("bulhway2");
+                copCarNames[0].Add("bulpolice");
+                copCarNames[0].Add("bulpolice2");
+                copCarNames[1].Add("bulsheriff");
+                copCarNames[0].Add("coqhway");
+                copCarNames[0].Add("coqhway2");
+                copCarNames[0].Add("coqpolice");
+                copCarNames[1].Add("coqsheriff");
+                copCarNames[0].Add("facthway");
+                copCarNames[0].Add("infhway");
+                copCarNames[0].Add("infpolice");
+                copCarNames[0].Add("leesperanto");
+                copCarNames[0].Add("pbp1");
+                copCarNames[0].Add("pcpd1");
+                copCarNames[0].Add("pcpd2");
+                copCarNames[0].Add("pcpd3");
+                copCarNames[0].Add("police9");
+                copCarNames[0].Add("police11");
+                copCarNames[0].Add("police12");
+                copCarNames[0].Add("police13");
+                copCarNames[0].Add("police15");
+                copCarNames[0].Add("police16");
+                copCarNames[0].Add("police17");
+                copCarNames[0].Add("police24");
+                copCarNames[0].Add("polizia1");
+                copCarNames[1].Add("pranger3");
+                copCarNames[0].Add("rpdcar1");
+                copCarNames[2].Add("rpdcar2");
+                copCarNames[1].Add("rpdcar3");
+                copCarNames[0].Add("rpdsuv");
+                copCarNames[0].Add("rpdsuv2");
+                copCarNames[1].Add("sheriff7");
+                copCarNames[1].Add("sheriff9");
+                copCarNames[1].Add("uranushway");
+                copCarNames[1].Add("uranushway2");
+                copCarNames[0].Add("vighway");
+                copCarNames[0].Add("vigpolice");
+                copCarNames[1].Add("vigsheriff");
+                fibCarNames.Add("fbi6");
+                fibCarNames.Add("fbi7");
+                fibCarNames.Add("fbi8");
+                fibCarNames.Add("infpolice2");
+                fibCarNames.Add("vaccapol");
+                fibCarNames.Add("vcpd1");
                 swatCarNames.Add("bpsp3");
                 swatCarNames.Add("police14");
                 swatCarNames.Add("policet2");
@@ -486,24 +499,27 @@ namespace AdvancedWorld
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dov")))
             {
-                copModels.Add("d_o_v_dick_01");
-                copModels.Add("d_o_v_npatrol_01");
-                copModels.Add("d_o_v_npatrol_02");
-                copCarNames.Add("dovdtbuff");
-                copCarNames.Add("dovdtstan");
-                copCarNames.Add("dovfibkur");
-                copCarNames.Add("dovhpbuff2");
-                copCarNames.Add("dovhpgran");
-                copCarNames.Add("dovhpstan2");
-                copCarNames.Add("dovngran");
-                copCarNames.Add("dovpolesp");
-                copCarNames.Add("dovpolfugi");
-                copCarNames.Add("dovpolmerit");
-                copCarNames.Add("dovpolstan");
-                copCarNames.Add("dovshebuff");
-                copCarNames.Add("dovsheesp");
-                copCarNames.Add("dovsheranch");
-                copCarNames.Add("dovshestan");
+                copModels[2].Add("d_o_v_dick_01");
+                copModels[0].Add("d_o_v_npatrol_01");
+                copModels[0].Add("d_o_v_npatrol_02");
+                copCarNames[2].Add("dovdtbuff");
+                copCarNames[2].Add("dovdtfugi");
+                copCarNames[2].Add("dovdtstan");
+                copCarNames[0].Add("dovhpbuff2");
+                copCarNames[0].Add("dovhpgran");
+                copCarNames[0].Add("dovhpstan2");
+                copCarNames[0].Add("dovngran");
+                copCarNames[0].Add("dovpolesp");
+                copCarNames[0].Add("dovpolfugi");
+                copCarNames[0].Add("dovpolmerit");
+                copCarNames[0].Add("dovpolstan");
+                copCarNames[1].Add("dovshebuff");
+                copCarNames[1].Add("dovsheesp");
+                copCarNames[1].Add("dovsheranch");
+                copCarNames[1].Add("dovshestan");
+                fibCarNames.Add("dovfibkur");
+                fibCarNames.Add("dovfibranch");
+                fibCarNames.Add("dovfibwash");
                 swatCarNames.Add("dovnboxv");
                 swatCarNames.Add("dovnrcv");
                 swatCarNames.Add("dovnstock");
@@ -549,9 +565,10 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
+                            int selectedType = Util.GetRandomInt(copCarNames.Count);
+                            LSPD lspd = new LSPD(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target);
 
-                            if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) dispatchList.Add(lspd);
                             else lspd.Restore();
                         }
 
@@ -560,9 +577,10 @@ namespace AdvancedWorld
 
                 case CrimeType.Carjacker:
                     {
-                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
+                        int selectedType = Util.GetRandomInt(copCarNames.Count);
+                        LSPD lspd = new LSPD(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target);
 
-                        if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
+                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) dispatchList.Add(lspd);
                         else lspd.Restore();
 
                         break;
@@ -570,9 +588,10 @@ namespace AdvancedWorld
 
                 case CrimeType.Driveby:
                     {
-                        LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
+                        int selectedType = Util.GetRandomInt(copCarNames.Count);
+                        LSPD lspd = new LSPD(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target);
 
-                        if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
+                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) dispatchList.Add(lspd);
                         else lspd.Restore();
 
                         SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
@@ -580,10 +599,13 @@ namespace AdvancedWorld
                         if (swat.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swat);
                         else swat.Restore();
 
-                        SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
+                        if (((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
+                        {
+                            SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
 
-                        if (heli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(heli);
-                        else heli.Restore();
+                            if (heli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(heli);
+                            else heli.Restore();
+                        }
 
                         break;
                     }
@@ -592,10 +614,10 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            LSPD lspd = new LSPD(copCarNames[Util.GetRandomInt(copCarNames.Count)], target);
+                            FIB fib = new FIB(fibCarNames[Util.GetRandomInt(fibCarNames.Count)], target);
 
-                            if (lspd.IsCreatedIn(safePosition, copModels)) dispatchList.Add(lspd);
-                            else lspd.Restore();
+                            if (fib.IsCreatedIn(safePosition, fibModels)) dispatchList.Add(fib);
+                            else fib.Restore();
 
                             SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
 
@@ -781,9 +803,13 @@ namespace AdvancedWorld
                             if (relationshipA == 0 || relationshipB == 0) break;
 
                             World.SetRelationshipBetweenGroups(Relationship.Hate, relationshipA, relationshipB);
+                            Vector3 position1 = World.GetNextPositionOnSidewalk(safePosition.Around(5.0f));
+                            Vector3 position2 = World.GetNextPositionOnSidewalk(safePosition.Around(5.0f));
 
-                            if (teamA.IsCreatedIn(radius, World.GetNextPositionOnSidewalk(safePosition.Around(5.0f)), models[teamANum], relationshipA, BlipColor.Green, "A Team")
-                                && teamB.IsCreatedIn(radius, World.GetNextPositionOnSidewalk(safePosition.Around(5.0f)), models[teamBNum], relationshipB, BlipColor.Red, "B Team"))
+                            if (position1.Equals(Vector3.Zero) || position2.Equals(Vector3.Zero)) break;
+
+                            if (teamA.IsCreatedIn(radius, position1, models[teamANum], relationshipA, BlipColor.Green, "A Team")
+                                && teamB.IsCreatedIn(radius, position2, models[teamBNum], relationshipB, BlipColor.Red, "B Team"))
                             {
                                 gangList.Add(teamA);
                                 gangList.Add(teamB);
@@ -838,7 +864,9 @@ namespace AdvancedWorld
                                 if (random == 0) r = new Racer(racerBikeNames[Util.GetRandomInt(racerBikeNames.Count)], goal);
                                 else r = new Racer(racerCarNames[Util.GetRandomInt(racerCarNames.Count)], goal);
 
-                                if (r.IsCreatedIn(radius, World.GetNextPositionOnStreet(safePosition, true), heading))
+                                Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+
+                                if (!position.Equals(Vector3.Zero) && r.IsCreatedIn(radius, position, heading))
                                 {
                                     racerList.Add(r);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
