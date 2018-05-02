@@ -61,7 +61,7 @@ namespace AdvancedWorld
             {
                 if (p.Equals(spawnedVehicle.Driver))
                 {
-                    if (((Ped)target).IsInVehicle()) Function.Call(Hash._TASK_VEHICLE_FOLLOW, p, spawnedVehicle, target, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely, 10.0f);
+                    if (((Ped)target).IsInVehicle()) Function.Call(Hash.TASK_VEHICLE_CHASE, p, target);
                     else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                 }
                 else p.Task.FightAgainstHatedTargets(100.0f);

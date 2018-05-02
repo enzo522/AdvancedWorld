@@ -160,7 +160,6 @@ namespace AdvancedWorld
             };
             copHeliNames = new List<string>
             {
-                "buzzard",
                 "polmav"
             };
             fibModels = new List<string>
@@ -186,6 +185,7 @@ namespace AdvancedWorld
             swatHeliNames = new List<string>
             {
                 "annihilator",
+                "buzzard",
                 "buzzard2"
             };
             emModels = new List<string>
