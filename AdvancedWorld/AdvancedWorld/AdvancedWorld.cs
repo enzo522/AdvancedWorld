@@ -18,6 +18,7 @@ namespace AdvancedWorld
 
         private static List<List<string>> copModels;
         private static List<List<string>> copCarNames;
+        private static List<string> copHeliNames;
         private static List<string> fibModels;
         private static List<string> fibCarNames;
         private static List<string> swatModels;
@@ -156,6 +157,11 @@ namespace AdvancedWorld
                 new List<string> { "police", "police2", "police3", "policeb" },
                 new List<string> { "sheriff", "sheriff2" },
                 new List<string> { "police4" }
+            };
+            copHeliNames = new List<string>
+            {
+                "buzzard",
+                "polmav"
             };
             fibModels = new List<string>
             {
@@ -389,12 +395,15 @@ namespace AdvancedWorld
                 drivebyCarNames.Add("marbelle");
                 copCarNames[0].Add("police6");
                 copCarNames[0].Add("police8");
+                swatCarNames.Add("nstockade");
+                swatCarNames.Add("pstockade");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "wov")))
             {
                 copModels[0].Add("s_m_y_bcop_01");
                 copCarNames[1].Add("sheriff3");
+                copHeliNames.Add("shemav");
                 swatModels.Add("s_m_y_swat_02");
                 swatModels.Add("s_m_y_swat_04");
             }
@@ -517,6 +526,8 @@ namespace AdvancedWorld
                 copCarNames[1].Add("dovsheesp");
                 copCarNames[1].Add("dovsheranch");
                 copCarNames[1].Add("dovshestan");
+                copHeliNames.Add("dovpolmav");
+                copHeliNames.Add("dovshemav");
                 fibCarNames.Add("dovfibkur");
                 fibCarNames.Add("dovfibranch");
                 fibCarNames.Add("dovfibwash");
@@ -572,6 +583,11 @@ namespace AdvancedWorld
                             else lspd.Restore();
                         }
 
+                        LSPDHeli lspdheli = new LSPDHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target);
+
+                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) dispatchList.Add(lspdheli);
+                        else lspdheli.Restore();
+
                         break;
                     }
 
@@ -601,10 +617,10 @@ namespace AdvancedWorld
 
                         if (((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
-                            SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
+                            SWATHeli swatheli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
 
-                            if (heli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(heli);
-                            else heli.Restore();
+                            if (swatheli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swatheli);
+                            else swatheli.Restore();
                         }
 
                         break;
@@ -625,10 +641,10 @@ namespace AdvancedWorld
                             else swat.Restore();
                         }
 
-                        SWATHeli heli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
+                        SWATHeli swatheli = new SWATHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target);
 
-                        if (heli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(heli);
-                        else heli.Restore();
+                        if (swatheli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swatheli);
+                        else swatheli.Restore();
 
                         break;
                     }

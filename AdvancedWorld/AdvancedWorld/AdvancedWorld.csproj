@@ -49,6 +49,7 @@
     <Compile Include="AdvancedWorld.cs" />
     <Compile Include="AggressiveDriver.cs" />
     <Compile Include="Carjacker.cs" />
+    <Compile Include="LSPDHeli.cs" />
     <Compile Include="Emergency.cs" />
     <Compile Include="Criminal.cs" />
     <Compile Include="Driveby.cs" />

@@ -9,7 +9,7 @@
         public Criminal(AdvancedWorld.CrimeType type) : base()
         {
             this.relationship = 0;
-            this.dispatchCooldown = 60;
+            this.dispatchCooldown = 0;
             this.type = type;
         }
 

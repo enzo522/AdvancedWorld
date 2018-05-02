@@ -22,8 +22,7 @@ namespace AdvancedWorld
             spawnedPed = nearbyPeds[Util.GetRandomInt(nearbyPeds.Length)];
 
             if (!Util.ThereIs(spawnedPed) || spawnedPed.IsPersistent || spawnedPed.Equals(Game.Player.Character) || !spawnedPed.IsHuman || spawnedPed.IsDead) return false;
-
-            this.dispatchCooldown = 0;
+            
             this.radius = radius;
             spawnedPed.IsPersistent = true;
             relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Carjacker);
