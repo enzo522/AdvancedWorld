@@ -32,7 +32,7 @@ namespace AdvancedWorld
             members.Clear();
         }
 
-        private void SetPedAsCop(Ped p)
+        protected void SetPedAsCop(Ped p)
         {
             if (Util.ThereIs(p))
             {
@@ -53,6 +53,11 @@ namespace AdvancedWorld
                 }
 
                 if (members[i].IsInRangeOf(target.Position, 50.0f)) SetPedAsCop(members[i]);
+                if (members[i].IsDead)
+                {
+                    members[i].MarkAsNoLongerNeeded();
+                    members.RemoveAt(i);
+                }
             }
 
             if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || target.IsDead || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
@@ -69,7 +74,6 @@ namespace AdvancedWorld
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
 
                 members.Clear();
-
                 return true;
             }
 

@@ -101,8 +101,8 @@ namespace AdvancedWorld
             }
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
+            if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
-            CheckDispatch();
             return false;
         }
     }

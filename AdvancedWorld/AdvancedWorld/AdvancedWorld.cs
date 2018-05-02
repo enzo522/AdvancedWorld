@@ -893,6 +893,9 @@ namespace AdvancedWorld
 
                                 if (Util.WeCanReplace(tunedVehicle) && Util.SomethingIsBetween(tunedVehicle) && !tunedVehicle.IsToggleModOn(VehicleToggleMod.Turbo))
                                 {
+                                    if (tunedVehicle.ClassType != VehicleClass.Sports && tunedVehicle.ClassType != VehicleClass.Super
+                                        && tunedVehicle.ClassType != VehicleClass.SportsClassics && tunedVehicle.ClassType != VehicleClass.Coupes) continue;
+
                                     if (Util.BlipIsOn(tunedVehicle))
                                     {
                                         tunedVehicle.CurrentBlip.Remove();

@@ -108,13 +108,17 @@ namespace AdvancedWorld
                 else
                 {
                     if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-                    if (spawnedVehicle.Model.IsCar && p.IsSittingInVehicle(spawnedVehicle) && p.Equals(spawnedVehicle.Driver) && spawnedVehicle.IsStopped)
+                    if (p.Equals(spawnedVehicle.Driver))
                     {
-                        spawnedVehicle.OpenDoor(VehicleDoor.FrontLeftDoor, false, true);
-                        Script.Wait(100);
-                        Vector3 offset = p.Position + (p.RightVector * (-1.01f));
-                        p.Position = new Vector3(offset.X, offset.Y, offset.Z - 0.5f);
+                        if (spawnedVehicle.Model.IsCar && p.IsSittingInVehicle(spawnedVehicle) && spawnedVehicle.IsStopped)
+                        {
+                            spawnedVehicle.OpenDoor(VehicleDoor.FrontLeftDoor, false, true);
+                            Script.Wait(100);
+                            Vector3 offset = p.Position + (p.RightVector * (-1.01f));
+                            p.Position = new Vector3(offset.X, offset.Y, offset.Z - 0.5f);
+                        }
                     }
+                    else p.MarkAsNoLongerNeeded();
                 }
 
                 if (Util.ThereIs(spawnedPed))
@@ -209,7 +213,8 @@ namespace AdvancedWorld
             }
             else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) spawnedPed.Task.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
 
-            CheckDispatch();
+            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+
             return false;
         }
     }

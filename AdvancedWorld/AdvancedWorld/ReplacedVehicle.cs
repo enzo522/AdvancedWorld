@@ -46,7 +46,7 @@ namespace AdvancedWorld
                             spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
                         }
                     }
-
+                    
                     if (Util.GetRandomInt(3) == 1)
                     {
                         selectedBlipName = "Tuned ";

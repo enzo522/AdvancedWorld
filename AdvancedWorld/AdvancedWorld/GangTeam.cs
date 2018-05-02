@@ -102,7 +102,14 @@ namespace AdvancedWorld
                 }
 
                 if (!members[i].IsDead) spawnedPed = members[i];
-                else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                else
+                {
+                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+
+                    members[i].MarkAsNoLongerNeeded();
+                    members.RemoveAt(i);
+                    continue;
+                }
 
                 if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {

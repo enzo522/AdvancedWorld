@@ -23,6 +23,7 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedPed) || spawnedPed.IsPersistent || spawnedPed.Equals(Game.Player.Character) || !spawnedPed.IsHuman || spawnedPed.IsDead) return false;
 
+            this.dispatchCooldown = 0;
             this.radius = radius;
             spawnedPed.IsPersistent = true;
             relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Carjacker);
@@ -109,8 +110,8 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
             if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle)) spawnedPed.RelationshipGroup = relationship;
+            if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
-            CheckDispatch();
             return false;
         }
     }
