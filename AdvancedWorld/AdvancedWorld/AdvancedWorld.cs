@@ -103,34 +103,35 @@ namespace AdvancedWorld
             };
             racingPosition = new List<Vector3>
             {
-                new Vector3(1411.75f, 3012.3f, 41.1f),
-                new Vector3(-981.0f, -2995.0f, 13.1f),
-                new Vector3(2119.5f, 4806.3f, 41.2f),
-                new Vector3(-80.7f, -1761.8f, 29.8f),
-                new Vector3(-518.8f, -1210.0f, 18.33f),
-                new Vector3(-714.85f, -932.65f, 19.2f),
-                new Vector3(273.25f, -1261.05f, 29.3f),
-                new Vector3(811.285f, -1030.9f, 26.4f),
-                new Vector3(1212.5f, -1403.6f, 35.38f),
-                new Vector3(2574.15f, 359.1f, 108.5f),
-                new Vector3(1183.0f, -320.42f, 69.3f),
-                new Vector3(629.05f, 274.0f, 103.0f),
-                new Vector3(-1429.65f, -279.35f, 46.3f),
-                new Vector3(-2087.57f, -321.15f, 13.1f),
-                new Vector3(-1796.55f, 811.7f, 138.7f),
-                new Vector3(-2558.05f, 2327.3f, 33.0f),
-                new Vector3(48.188f, 2779.2f, 58.0f),
-                new Vector3(263.0f, 2607.35f, 50.0f),
-                new Vector3(1209.9f, 2658.7f, 37.9f),
-                new Vector3(2539.25f, 2594.6f, 37.9f),
-                new Vector3(2681.7f, 3266.4f, 55.2f),
-                new Vector3(2009.1f, 3777.6f, 32.4f),
-                new Vector3(1684.1f, 4932.15f, 42.2f),
-                new Vector3(1705.5f, 6414.05f, 32.7f),
-                new Vector3(171.62f, 6603.35f, 32.0f),
-                new Vector3(-91.7f, 6423.2f, 31.6f),
-                new Vector3(1043.25f, 2668.5f, 39.7f),
-                new Vector3(-594.2f, 5025.4f, 140.3f)
+                new Vector3(811.49f, 1275.29f, 360.51f),
+                new Vector3(-410.44f, 1174.3f, 325.64f),
+                new Vector3(-2318.34f, 283.7f, 169.47f),
+                new Vector3(-3019.15f, 89.12f, 11.61f),
+                new Vector3(1673.18f, -66.4f, 173.68f),
+                new Vector3(2509.46f, -285.34f, 92.99f),
+                new Vector3(2774.5f, -710.7f, 6.18f),
+                new Vector3(2718.0f, 1352.04f, 24.52f),
+                new Vector3(2310.91f, 2571.45f, 46.67f),
+                new Vector3(2413.66f, 3100.91f, 48.15f),
+                new Vector3(2478.14f, 3823.33f, 40.52f),
+                new Vector3(3326.59f, 5152.29f, 18.29f),
+                new Vector3(-1121.59f, 4925.97f, 218.6f),
+                new Vector3(2203.89f, 5574.07f, 53.72f),
+                new Vector3(1598.11f, 6551.38f, 14.0f),
+                new Vector3(39.24f, 6287.88f, 31.26f),
+                new Vector3(-1579.7f, 5167.46f, 19.55f),
+                new Vector3(-2349.96f, 3421.71f, 29.06f),
+                new Vector3(-1577.33f, 2102.62f, 67.95f),
+                new Vector3(-1610.24f, 178.93f, 59.67f),
+                new Vector3(-1734.18f, -1108.4f, 13.07f),
+                new Vector3(1193.08f, -2908.43f, 5.47f),
+                new Vector3(1753.45f, -1537.28f, 112.14f),
+                new Vector3(-3152.32f, 1093.24f, 20.71f),
+                new Vector3(-9.46f, 3042.79f, 40.72f),
+                new Vector3(-546.07f, -2812.95f, 5.57f),
+                new Vector3(-962.02f, -3006.96f, 13.95f),
+                new Vector3(1411.63f, 3012.39f, 40.53f),
+                new Vector3(338.6f, 3564.52f, 33.5f)
             };
             models = new List<List<string>>
             {
@@ -494,7 +495,6 @@ namespace AdvancedWorld
                 fibCarNames.Add("infpolice2");
                 fibCarNames.Add("vaccapol");
                 fibCarNames.Add("vcpd1");
-                swatCarNames.Add("bpsp3");
                 swatCarNames.Add("police14");
                 swatCarNames.Add("policet2");
                 swatCarNames.Add("policet3");

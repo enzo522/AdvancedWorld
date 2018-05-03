@@ -8,7 +8,6 @@ namespace AdvancedWorld
     public abstract class Nitroable : Criminal
     {
         private List<string> exhausts;
-        private bool isNitroOn;
         private int nitroAmount;
 
         public Nitroable(AdvancedWorld.CrimeType type) : base(type)
@@ -32,23 +31,19 @@ namespace AdvancedWorld
                 "exhaust_15",
                 "exhaust_16"
             };
-            isNitroOn = false;
             nitroAmount = 300;
         }
 
-        private bool NitroSafe(Vector3 v1, Vector3 v2)
+        private bool CanSafelyUseNitroBetween(Vector3 v1, Vector3 v2)
         {
             RaycastResult r = World.Raycast(v1, v2, IntersectOptions.Everything);
 
-            return !r.DitHitAnything || r.HitCoords.DistanceTo(v1) > 15.0f;
+            return !r.DitHitAnything;
         }
 
         public void CheckNitroable()
         {
-            if (NitroSafe(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 20.0f)) isNitroOn = true;
-            else isNitroOn = false;
-
-            if (isNitroOn)
+            if (spawnedVehicle.Speed > 15.0f && spawnedVehicle.CurrentGear > 0 && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 1.5f))
             {
                 if (nitroAmount > 0)
                 {
@@ -80,7 +75,6 @@ namespace AdvancedWorld
                     spawnedVehicle.EnginePowerMultiplier = 1.0f;
                     spawnedVehicle.EngineTorqueMultiplier = 1.0f;
                     nitroAmount = 0;
-                    isNitroOn = false;
                 }
             }
             else
