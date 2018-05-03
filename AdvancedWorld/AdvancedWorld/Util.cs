@@ -71,7 +71,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(en.Position) > 10.0f);
+                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) > 30.0f);
             }
         }
 

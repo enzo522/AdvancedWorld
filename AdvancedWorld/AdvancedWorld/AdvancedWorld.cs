@@ -160,6 +160,7 @@ namespace AdvancedWorld
             };
             copHeliNames = new List<string>
             {
+                "buzzard2",
                 "polmav"
             };
             fibModels = new List<string>
@@ -185,8 +186,7 @@ namespace AdvancedWorld
             swatHeliNames = new List<string>
             {
                 "annihilator",
-                "buzzard",
-                "buzzard2"
+                "buzzard"
             };
             emModels = new List<string>
             {
@@ -663,25 +663,29 @@ namespace AdvancedWorld
 
             radius = 100.0f;
             eventTimeChecker = 0;
-
-            Interval = 500;
             Tick += OnTick;
         }
 
         private void OnTick(Object sender, EventArgs e)
         {
-            CleanUp(replacedList);
-            CleanUp(carjackerList);
-            CleanUp(aggressiveList);
-            CleanUp(gangList);
-            CleanUp(massacreList);
-            CleanUp(racerList);
-            CleanUp(drivebyList);
-            CleanUp(dispatchList);
-
-            if (eventTimeChecker == 15 || eventTimeChecker == 30 || eventTimeChecker == 45)
+            if (eventTimeChecker % 100 == 0)
             {
-                if (replacedList.Count < 5)
+                CleanUp(replacedList);
+                CleanUp(carjackerList);
+                CleanUp(aggressiveList);
+                CleanUp(gangList);
+                CleanUp(massacreList);
+                CleanUp(racerList);
+                CleanUp(drivebyList);
+                CleanUp(dispatchList);
+            }
+            
+            foreach (Nitroable en in aggressiveList) en.CheckNitroable();
+            foreach (Nitroable en in racerList) en.CheckNitroable();
+
+            if (eventTimeChecker == 800 || eventTimeChecker == 1600 || eventTimeChecker == 2400 || eventTimeChecker == 3600)
+            {
+                if (replacedList.Count < 7)
                 {
                     ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomInt(addOnCarNames.Count)]);
 
@@ -695,7 +699,7 @@ namespace AdvancedWorld
 
                 eventTimeChecker++;
             }
-            else if (eventTimeChecker == 60)
+            else if (eventTimeChecker == 4000)
             {
                 switch (Util.GetRandomInt(9))
                 {

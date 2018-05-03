@@ -59,6 +59,7 @@
     <Compile Include="GangTeam.cs" />
     <Compile Include="LSPD.cs" />
     <Compile Include="Massacre.cs" />
+    <Compile Include="Nitroable.cs" />
     <Compile Include="Paramedic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Racer.cs" />

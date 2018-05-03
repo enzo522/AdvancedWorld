@@ -4,7 +4,7 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class Racer : Criminal
+    public class Racer : Nitroable
     {
         private string name;
         private Vector3 goal;

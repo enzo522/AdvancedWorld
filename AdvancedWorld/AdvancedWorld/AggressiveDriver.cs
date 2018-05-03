@@ -4,7 +4,7 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class AggressiveDriver : Criminal
+    public class AggressiveDriver : Nitroable
     {
         private string name;
 
