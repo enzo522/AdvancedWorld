@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class SWATHeli : Emergency
+    public class ArmyHeli : Emergency
     {
-        public SWATHeli(string name, Entity target) : base(name, target) { }
+        public ArmyHeli(string name, Entity target) : base(name, target) { }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -36,13 +36,13 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                p.Weapons.Give(WeaponHash.SMG, 300, true, true);
-                p.Weapons.Give(WeaponHash.SniperRifle, 30, false, false);
+                p.Weapons.Give(WeaponHash.CarbineRifle, 300, true, true);
+                p.Weapons.Give(WeaponHash.HeavySniper, 30, false, false);
                 p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.ShootRate = 1000;
 
-                p.Armor = 70;
+                p.Armor = 100;
                 p.CanSwitchWeapons = true;
                 Function.Call(Hash.SET_PED_ID_RANGE, p, 1000.0f);
                 Function.Call(Hash.SET_PED_SEEING_RANGE, p, 1000.0f);
@@ -53,9 +53,8 @@ namespace AdvancedWorld
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
             }
-            
+
             spawnedVehicle.EngineRunning = true;
-            spawnedVehicle.Livery = 0;
             Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
 
             if (Util.ThereIs(spawnedVehicle.Driver))

@@ -46,6 +46,7 @@ namespace AdvancedWorld
         };
         private static List<int> newRelationships = new List<int>();
         private static int copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+        private static int armyID = Function.Call<int>(Hash.GET_HASH_KEY, "ARMY");
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
         private static int count = 0;
 
@@ -223,6 +224,7 @@ namespace AdvancedWorld
 
                 case AdvancedWorld.CrimeType.Driveby:
                 case AdvancedWorld.CrimeType.Massacre:
+                case AdvancedWorld.CrimeType.Terrorist:
                     {
                         foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
@@ -260,7 +262,7 @@ namespace AdvancedWorld
 
             foreach (Ped p in nearbyPeds)
             {
-                if (p.RelationshipGroup == copID && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
+                if ((p.RelationshipGroup == copID || p.RelationshipGroup == armyID) && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
             }
 
             return false;

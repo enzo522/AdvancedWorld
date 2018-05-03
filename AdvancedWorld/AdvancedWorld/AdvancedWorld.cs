@@ -13,8 +13,9 @@ namespace AdvancedWorld
         private static List<string> racerCarNames;
         private static List<string> racerBikeNames;
         private static List<string> drivebyCarNames;
+        private static List<string> terroristCarNames;
         private static List<Vector3> racingPosition;
-        private static List<List<string>> models;
+        private static List<List<string>> gangModels;
 
         private static List<List<string>> copModels;
         private static List<List<string>> copCarNames;
@@ -24,6 +25,9 @@ namespace AdvancedWorld
         private static List<string> swatModels;
         private static List<string> swatCarNames;
         private static List<string> swatHeliNames;
+        private static List<string> armyModels;
+        private static List<string> armyCarNames;
+        private static List<string> armyHeliNames;
         private static List<string> emModels;
         private static List<string> emCarNames;
         private static List<string> fireModels;
@@ -36,6 +40,7 @@ namespace AdvancedWorld
         private List<EntitySet> massacreList;
         private List<EntitySet> racerList;
         private List<EntitySet> drivebyList;
+        private List<EntitySet> terroristList;
         private static List<EntitySet> dispatchList;
 
         private float radius;
@@ -50,7 +55,8 @@ namespace AdvancedWorld
             GangTeam,
             Fire,
             Massacre,
-            Racer
+            Racer,
+            Terrorist
         }
 
         static AdvancedWorld()
@@ -101,6 +107,10 @@ namespace AdvancedWorld
                 "tailgater",
                 "warrener"
             };
+            terroristCarNames = new List<string>
+            {
+                "rhino"
+            };
             racingPosition = new List<Vector3>
             {
                 new Vector3(811.49f, 1275.29f, 360.51f),
@@ -133,7 +143,7 @@ namespace AdvancedWorld
                 new Vector3(1411.63f, 3012.39f, 40.53f),
                 new Vector3(338.6f, 3564.52f, 33.5f)
             };
-            models = new List<List<string>>
+            gangModels = new List<List<string>>
             {
                 new List<string> { "a_m_m_og_boss_01", "mp_m_famdd_01", "g_f_y_families_01", "g_m_y_famca_01", "g_m_y_famdnf_01", "g_m_y_famfor_01" },
                 new List<string> { "g_f_y_ballas_01", "g_m_y_ballaeast_01", "g_m_y_ballaorig_01", "g_m_y_ballasout_01" },
@@ -186,8 +196,24 @@ namespace AdvancedWorld
             };
             swatHeliNames = new List<string>
             {
-                "annihilator",
-                "buzzard"
+                "buzzard",
+                "frogger"
+            };
+            armyModels = new List<string>
+            {
+                "s_m_y_blackops_01",
+                "s_m_y_blackops_02",
+                "s_m_y_marine_01",
+                "s_m_y_marine_03"
+            };
+            armyCarNames = new List<string>
+            {
+                "barracks",
+                "crusader"
+            };
+            armyHeliNames = new List<string>
+            {
+                "annihilator"
             };
             emModels = new List<string>
             {
@@ -217,7 +243,7 @@ namespace AdvancedWorld
             {
                 racerCarNames.Add("verlierer2");
                 drivebyCarNames.Add("baller3");
-                swatHeliNames.Add("valkyrie2");
+                armyHeliNames.Add("valkyrie2");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpassault")))
@@ -267,7 +293,10 @@ namespace AdvancedWorld
                 racerCarNames.Add("viseris");
                 racerCarNames.Add("z190");
                 drivebyCarNames.Add("hermes");
+                terroristCarNames.Add("khanjali");
                 swatCarNames.Add("riot2");
+                armyCarNames.Add("barrage");
+                armyHeliNames.Add("akula");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpexecutive")))
@@ -286,6 +315,10 @@ namespace AdvancedWorld
                 racerCarNames.Add("torero");
                 racerCarNames.Add("vagner");
                 racerCarNames.Add("xa21");
+                terroristCarNames.Add("apc");
+                swatCarNames.Add("nightshark");
+                armyCarNames.Add("halftrack");
+                armyCarNames.Add("insurgent3");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpheist")))
@@ -294,8 +327,11 @@ namespace AdvancedWorld
                 drivebyCarNames.Add("enduro");
                 fibModels.Add("s_m_m_fibsec_01");
                 fibModels.Add("u_m_m_doa_01");
-                swatHeliNames.Add("savage");
-                swatHeliNames.Add("valkyrie");
+                armyCarNames.Add("barracks3");
+                armyCarNames.Add("insurgent");
+                armyCarNames.Add("insurgent2");
+                armyHeliNames.Add("savage");
+                armyHeliNames.Add("valkyrie");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpimportexport")))
@@ -358,6 +394,7 @@ namespace AdvancedWorld
                 racerCarNames.Add("cyclone");
                 racerCarNames.Add("rapidgt3");
                 racerCarNames.Add("visione");
+                armyHeliNames.Add("hunter");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpspecialraces")))
@@ -394,6 +431,7 @@ namespace AdvancedWorld
                 racerBikeNames.Add("nrg900");
                 drivebyCarNames.Add("huntley2");
                 drivebyCarNames.Add("marbelle");
+                terroristCarNames.Add("apc2");
                 copCarNames[0].Add("police6");
                 copCarNames[0].Add("police8");
                 swatCarNames.Add("nstockade");
@@ -508,6 +546,7 @@ namespace AdvancedWorld
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dov")))
             {
+                terroristCarNames.Add("dovnapc");
                 copModels[2].Add("d_o_v_dick_01");
                 copModels[0].Add("d_o_v_npatrol_01");
                 copModels[0].Add("d_o_v_npatrol_02");
@@ -583,10 +622,13 @@ namespace AdvancedWorld
                             else lspd.Restore();
                         }
 
-                        LSPDHeli lspdheli = new LSPDHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target);
+                        if (((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
+                        {
+                            LSPDHeli lspdheli = new LSPDHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target);
 
-                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) dispatchList.Add(lspdheli);
-                        else lspdheli.Restore();
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) dispatchList.Add(lspdheli);
+                            else lspdheli.Restore();
+                        }
 
                         break;
                     }
@@ -648,6 +690,24 @@ namespace AdvancedWorld
 
                         break;
                     }
+
+                case CrimeType.Terrorist:
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Army army = new Army(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target);
+
+                            if (army.IsCreatedIn(safePosition, armyModels)) dispatchList.Add(army);
+                            else army.Restore();
+                        }
+
+                        ArmyHeli armyheli = new ArmyHeli(armyHeliNames[Util.GetRandomInt(armyHeliNames.Count)], target);
+
+                        if (armyheli.IsCreatedIn(safePosition, armyModels)) dispatchList.Add(armyheli);
+                        else armyheli.Restore();
+
+                        break;
+                    }
             }
         }
 
@@ -660,6 +720,7 @@ namespace AdvancedWorld
             massacreList = new List<EntitySet>();
             racerList = new List<EntitySet>();
             drivebyList = new List<EntitySet>();
+            terroristList = new List<EntitySet>();
 
             radius = 100.0f;
             eventTimeChecker = 0;
@@ -677,6 +738,7 @@ namespace AdvancedWorld
                 CleanUp(massacreList);
                 CleanUp(racerList);
                 CleanUp(drivebyList);
+                CleanUp(terroristList);
                 CleanUp(dispatchList);
             }
             
@@ -701,7 +763,7 @@ namespace AdvancedWorld
             }
             else if (eventTimeChecker == 4000)
             {
-                switch (Util.GetRandomInt(9))
+                switch (Util.GetRandomInt(10))
                 {
                     case 0:
                         {
@@ -810,10 +872,10 @@ namespace AdvancedWorld
                             GangTeam teamA = new GangTeam();
                             GangTeam teamB = new GangTeam();
 
-                            int teamANum = Util.GetRandomInt(models.Count);
+                            int teamANum = Util.GetRandomInt(gangModels.Count);
                             int teamBNum = -1;
 
-                            while (teamBNum == -1 || teamANum == teamBNum) teamBNum = Util.GetRandomInt(models.Count);
+                            while (teamBNum == -1 || teamANum == teamBNum) teamBNum = Util.GetRandomInt(gangModels.Count);
 
                             if (teamANum == -1 || teamBNum == -1) break;
 
@@ -828,8 +890,8 @@ namespace AdvancedWorld
 
                             if (position1.Equals(Vector3.Zero) || position2.Equals(Vector3.Zero)) break;
 
-                            if (teamA.IsCreatedIn(radius, position1, models[teamANum], relationshipA, BlipColor.Green, "A Team")
-                                && teamB.IsCreatedIn(radius, position2, models[teamBNum], relationshipB, BlipColor.Red, "B Team"))
+                            if (teamA.IsCreatedIn(radius, position1, gangModels[teamANum], relationshipA, BlipColor.Green, "A Team")
+                                && teamB.IsCreatedIn(radius, position2, gangModels[teamBNum], relationshipB, BlipColor.Red, "B Team"))
                             {
                                 gangList.Add(teamA);
                                 gangList.Add(teamB);
@@ -940,12 +1002,29 @@ namespace AdvancedWorld
                         {
                             Driveby db = new Driveby(drivebyCarNames[Util.GetRandomInt(drivebyCarNames.Count)]);
 
-                            if (db.IsCreatedIn(radius, models[Util.GetRandomInt(models.Count)]))
+                            if (db.IsCreatedIn(radius, gangModels[Util.GetRandomInt(gangModels.Count)]))
                             {
                                 drivebyList.Add(db);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else db.Restore();
+
+                            break;
+                        }
+
+                    case 9:
+                        {
+                            for (int i = 0; i < 2; i++)
+                            {
+                                Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomInt(terroristCarNames.Count)]);
+
+                                if (tr.IsCreatedIn(radius))
+                                {
+                                    terroristList.Add(tr);
+                                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+                                }
+                                else tr.Restore();
+                            }
 
                             break;
                         }
