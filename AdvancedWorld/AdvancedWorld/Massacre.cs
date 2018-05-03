@@ -18,7 +18,6 @@ namespace AdvancedWorld
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, int teamID)
         {
-            this.relationship = teamID;
             this.radius = radius;
             Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
 
@@ -56,7 +55,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
-                p.RelationshipGroup = relationship;
+                p.RelationshipGroup = teamID;
                 p.AlwaysKeepTask = true;
 
                 p.FiringPattern = FiringPattern.FullAuto;

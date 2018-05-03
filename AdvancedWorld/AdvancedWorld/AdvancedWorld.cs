@@ -1014,11 +1014,15 @@ namespace AdvancedWorld
 
                     case 9:
                         {
+                            int relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Terrorist);
+
+                            if (relationship == 0) break;
+
                             for (int i = 0; i < 2; i++)
                             {
                                 Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomInt(terroristCarNames.Count)]);
 
-                                if (tr.IsCreatedIn(radius))
+                                if (tr.IsCreatedIn(radius, relationship))
                                 {
                                     terroristList.Add(tr);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);

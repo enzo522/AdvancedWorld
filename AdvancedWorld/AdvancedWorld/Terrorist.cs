@@ -12,7 +12,7 @@ namespace AdvancedWorld
             this.name = name;
         }
 
-        public bool IsCreatedIn(float radius)
+        public bool IsCreatedIn(float radius, int relationship)
         {
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
@@ -36,7 +36,6 @@ namespace AdvancedWorld
 
             Script.Wait(50);
             Util.Tune(spawnedVehicle, false, false);
-            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Terrorist);
 
             spawnedPed.RelationshipGroup = relationship;
             spawnedPed.AlwaysKeepTask = true;
