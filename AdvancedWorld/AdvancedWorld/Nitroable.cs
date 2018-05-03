@@ -9,6 +9,7 @@ namespace AdvancedWorld
     {
         private List<string> exhausts;
         private int nitroAmount;
+        private bool nitroCooldown;
 
         public Nitroable(AdvancedWorld.CrimeType type) : base(type)
         {
@@ -31,56 +32,52 @@ namespace AdvancedWorld
                 "exhaust_15",
                 "exhaust_16"
             };
-            nitroAmount = 300;
+            nitroAmount = 600;
+            nitroCooldown = false;
         }
 
         private bool CanSafelyUseNitroBetween(Vector3 v1, Vector3 v2)
         {
             RaycastResult r = World.Raycast(v1, v2, IntersectOptions.Everything);
 
-            return !r.DitHitAnything;
+            return !r.DitHitAnything || r.HitCoords.DistanceTo(v1) > 1.5f;
         }
 
         public void CheckNitroable()
         {
-            if (spawnedVehicle.Speed > 15.0f && spawnedVehicle.CurrentGear > 0 && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 1.5f))
+            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 15.0f && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 2.0f))
             {
-                if (nitroAmount > 0)
+                spawnedVehicle.EnginePowerMultiplier = 7.0f;
+                spawnedVehicle.EngineTorqueMultiplier = 7.0f;
+
+                float pitch = Function.Call<float>(Hash.GET_ENTITY_PITCH, spawnedVehicle);
+
+                if (Function.Call<bool>(Hash.HAS_NAMED_PTFX_ASSET_LOADED, "core"))
                 {
-                    spawnedVehicle.EnginePowerMultiplier = 7.0f;
-                    spawnedVehicle.EngineTorqueMultiplier = 7.0f;
-
-                    float pitch = Function.Call<float>(Hash.GET_ENTITY_PITCH, spawnedVehicle);
-
-                    if (Function.Call<bool>(Hash.HAS_NAMED_PTFX_ASSET_LOADED, "core"))
+                    foreach (string exhaust in exhausts)
                     {
-                        foreach (string exhaust in exhausts)
+                        if (spawnedVehicle.HasBone(exhaust))
                         {
-                            if (spawnedVehicle.HasBone(exhaust))
-                            {
-                                float scale = spawnedVehicle.Speed / 50;
-                                Vector3 offset = spawnedVehicle.GetBoneCoord(exhaust);
-                                Vector3 exhPosition = spawnedVehicle.GetOffsetFromWorldCoords(offset);
-                                Function.Call(Hash._SET_PTFX_ASSET_NEXT_CALL, "core");
-                                Function.Call<bool>(Hash.START_PARTICLE_FX_NON_LOOPED_ON_ENTITY, "veh_backfire", spawnedVehicle, exhPosition.X, exhPosition.Y, exhPosition.Z, 0.0f, pitch, 0.0f, scale, false, false, false);
-                            }
+                            float scale = spawnedVehicle.Speed / 50;
+                            Vector3 offset = spawnedVehicle.GetBoneCoord(exhaust);
+                            Vector3 exhPosition = spawnedVehicle.GetOffsetFromWorldCoords(offset);
+                            Function.Call(Hash._SET_PTFX_ASSET_NEXT_CALL, "core");
+                            Function.Call<bool>(Hash.START_PARTICLE_FX_NON_LOOPED_ON_ENTITY, "veh_backfire", spawnedVehicle, exhPosition.X, exhPosition.Y, exhPosition.Z, 0.0f, pitch, 0.0f, scale, false, false, false);
                         }
                     }
-                    else Function.Call(Hash.REQUEST_NAMED_PTFX_ASSET, "core");
+                }
+                else Function.Call(Hash.REQUEST_NAMED_PTFX_ASSET, "core");
 
-                    nitroAmount -= 2;
-                }
-                else
-                {
-                    spawnedVehicle.EnginePowerMultiplier = 1.0f;
-                    spawnedVehicle.EngineTorqueMultiplier = 1.0f;
-                    nitroAmount = 0;
-                }
+                nitroAmount -= 2;
             }
-            else
+            else nitroAmount++;
+
+            if (nitroAmount > 600) nitroAmount = 600;
+            if (nitroAmount > 300) nitroCooldown = false;
+            else if (nitroAmount <= 0)
             {
-                if (nitroAmount < 300) nitroAmount++;
-                else nitroAmount = 300;
+                nitroAmount = 0;
+                nitroCooldown = true;
             }
         }
     }
