@@ -141,7 +141,8 @@ namespace AdvancedWorld
                 new Vector3(-546.07f, -2812.95f, 5.57f),
                 new Vector3(-962.02f, -3006.96f, 13.95f),
                 new Vector3(1411.63f, 3012.39f, 40.53f),
-                new Vector3(338.6f, 3564.52f, 33.5f)
+                new Vector3(338.6f, 3564.52f, 33.5f),
+                new Vector3(597.45f, 613.62f, 128.91f)
             };
             gangModels = new List<List<string>>
             {
@@ -161,7 +162,7 @@ namespace AdvancedWorld
             {
                 new List<string> { "s_f_y_cop_01", "s_m_y_cop_01" },
                 new List<string> { "s_m_y_hwaycop_01", "s_f_y_sheriff_01", "s_m_y_sheriff_01", "s_f_y_ranger_01", "s_m_y_ranger_01" },
-                new List<string> { "s_m_y_doorman_01" }
+                new List<string> { "mp_g_m_pros_01" }
             };
             copCarNames = new List<List<string>>
             {
@@ -852,8 +853,6 @@ namespace AdvancedWorld
 
                                 if (Util.WeCanReplace(explosiveVehicle))
                                 {
-                                    Dispatch(explosiveVehicle, CrimeType.Fire);
-
                                     if (Util.BlipIsOn(explosiveVehicle))
                                     {
                                         explosiveVehicle.CurrentBlip.Remove();
@@ -861,6 +860,7 @@ namespace AdvancedWorld
                                     }
 
                                     Util.AddBlipOn(explosiveVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
+                                    Dispatch(explosiveVehicle, CrimeType.Fire);
                                     explosiveVehicle.Explode();
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 
@@ -889,8 +889,6 @@ namespace AdvancedWorld
 
                                 if (Util.WeCanReplace(undriveableVehicle))
                                 {
-                                    Dispatch(undriveableVehicle, CrimeType.Fire);
-
                                     if (Util.BlipIsOn(undriveableVehicle))
                                     {
                                         undriveableVehicle.CurrentBlip.Remove();
@@ -898,6 +896,7 @@ namespace AdvancedWorld
                                     }
                                     
                                     Util.AddBlipOn(undriveableVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
+                                    Dispatch(undriveableVehicle, CrimeType.Fire);
                                     undriveableVehicle.EngineHealth = -900.0f;
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
 

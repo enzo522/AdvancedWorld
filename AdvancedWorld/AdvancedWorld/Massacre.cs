@@ -20,8 +20,20 @@ namespace AdvancedWorld
         {
             this.radius = radius;
             Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
+            int trycount = 0;
 
             if (position.Equals(Vector3.Zero)) return false;
+
+            do
+            {
+                Function.Call(Hash.REQUEST_ANIM_SET, "anim_group_move_ballistic");
+                Function.Call(Hash.REQUEST_ANIM_SET, "move_strafe_ballistic");
+                Script.Wait(50);
+
+                if (++trycount > 5) return false;
+            }
+            while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
+            || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic"));
 
             for (int i = 0; i < 4; i++)
             {
@@ -38,8 +50,8 @@ namespace AdvancedWorld
                 Function.Call(Hash.RESET_PED_STRAFE_CLIPSET, p);
                 Function.Call(Hash.SET_PED_USING_ACTION_MODE, p, true, -1, 0);
 
-                Function.Call(Hash.SET_PED_MOVEMENT_CLIPSET, p, "ANIM_GROUP_MOVE_BALLISTIC", 1.0f);
-                Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "MOVE_STRAFE_BALLISTIC");
+                Function.Call(Hash.SET_PED_MOVEMENT_CLIPSET, p, "anim_group_move_ballistic", 1.0f);
+                Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "move_strafe_ballistic");
                 Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, 0x529e5780);
                 
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, 6, 0, 0);

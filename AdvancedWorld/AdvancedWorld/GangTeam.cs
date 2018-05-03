@@ -79,7 +79,7 @@ namespace AdvancedWorld
 
         public void PerformTask()
         {
-            foreach (Ped p in members) p.Task.FightAgainstHatedTargets(100.0f);
+            foreach (Ped p in members) p.Task.FightAgainstHatedTargets(200.0f);
         }
 
         public override bool ShouldBeRemoved()

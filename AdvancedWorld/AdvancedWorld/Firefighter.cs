@@ -66,7 +66,7 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].IsInRangeOf(targetPosition, 50.0f))
+                if (members[i].IsInRangeOf(targetPosition, 50.0f) && members[i].IsSittingInVehicle(spawnedVehicle))
                 {
                     Vehicle[] nearbyVehicles = World.GetNearbyVehicles(members[i], 50.0f);
 
@@ -75,11 +75,11 @@ namespace AdvancedWorld
                     foreach (Vehicle v in nearbyVehicles)
                     {
                         if (v.IsDead || v.IsOnFire)
-                        {
+                        {                            
                             TaskSequence ts = new TaskSequence();
-                            ts.AddTask.RunTo(v.Position);
-                            ts.AddTask.LookAt(v);
-                            ts.AddTask.PlayAnimation("weapons@misc@fire_ext", "fire_high", 8.0f, 10000, AnimationFlags.Loop);
+                            ts.AddTask.RunTo(v.Position.Around(1.0f));
+                            ts.AddTask.FightAgainstHatedTargets(100.0f);
+                            ts.AddTask.WanderAround();
                             ts.Close();
 
                             members[i].Task.PerformSequence(ts);

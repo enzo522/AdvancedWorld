@@ -66,7 +66,7 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].IsInRangeOf(targetPosition, 50.0f))
+                if (members[i].IsInRangeOf(targetPosition, 50.0f) && members[i].IsSittingInVehicle(spawnedVehicle))
                 {
                     Ped[] nearbyPeds = World.GetNearbyPeds(members[i], 50.0f);
 
@@ -75,12 +75,12 @@ namespace AdvancedWorld
                     foreach (Ped p in nearbyPeds)
                     {
                         if (p.IsDead || p.IsInjured)
-                        {
+                        {                            
                             TaskSequence ts = new TaskSequence();
-                            ts.AddTask.RunTo(p.Position);
-                            ts.AddTask.LookAt(p);
-                            ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter", 8.0f, 4000, AnimationFlags.None);
-                            ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c", 8.0f, 4500, AnimationFlags.Loop);
+                            ts.AddTask.RunTo(p.Position.Around(0.5f));
+                            ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter", 8.0f, -1, AnimationFlags.None);
+                            ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c", 8.0f, -1, AnimationFlags.None);
+                            ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@exit", "exit", 8.0f, -1, AnimationFlags.None);
                             ts.Close();
 
                             members[i].Task.PerformSequence(ts);
