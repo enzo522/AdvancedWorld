@@ -1,5 +1,6 @@
 ﻿using GTA;
 using GTA.Math;
+using GTA.Native;
 
 namespace AdvancedWorld
 {
@@ -12,7 +13,7 @@ namespace AdvancedWorld
             this.name = name;
         }
 
-        public bool IsCreatedIn(float radius, int relationship)
+        public bool IsCreatedIn(float radius)
         {
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
@@ -26,7 +27,7 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
-            spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
+            spawnedPed = spawnedVehicle.CreatePedOnSeat(VehicleSeat.Driver, "g_m_m_chicold_01");
 
             if (!Util.ThereIs(spawnedPed))
             {
@@ -34,12 +35,25 @@ namespace AdvancedWorld
                 return false;
             }
 
+            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Terrorist);
+
+            if (relationship == 0)
+            {
+                Restore();
+                return false;
+            }
+
             Script.Wait(50);
             Util.Tune(spawnedVehicle, false, false);
 
             spawnedPed.RelationshipGroup = relationship;
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 46, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 5, true);
+
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
+            
+            spawnedPed.ShootRate = 500;
             spawnedPed.Task.FightAgainstHatedTargets(400.0f);
 
             if (!Util.BlipIsOn(spawnedPed))

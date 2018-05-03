@@ -40,7 +40,8 @@ namespace AdvancedWorld
 
                 Function.Call(Hash.SET_PED_MOVEMENT_CLIPSET, p, "ANIM_GROUP_MOVE_BALLISTIC", 1.0f);
                 Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "MOVE_STRAFE_BALLISTIC");
-
+                Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, 0x529e5780);
+                
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, 6, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, 1, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 2, 1, 0, 0);

@@ -15,7 +15,7 @@ namespace AdvancedWorld
 
             if (position.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, position, target.Heading, false);
+            spawnedVehicle = Util.Create(name, position, (position - target.Position).ToHeading(), false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -36,8 +36,8 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                p.Weapons.Give(WeaponHash.CombatMG, 500, true, true);
-                p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
+                p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
+                p.Weapons.Give(WeaponHash.CombatMG, 500, false, false);
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.ShootRate = 1000;
 

@@ -15,7 +15,7 @@
 
         protected void CheckDispatch()
         {
-            if (dispatchCooldown < 30) dispatchCooldown++;
+            if (dispatchCooldown < 15) dispatchCooldown++;
             else
             {
                 dispatchCooldown = 0;

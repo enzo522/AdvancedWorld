@@ -11,7 +11,7 @@ namespace AdvancedWorld
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
-            spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), target.Heading, false);
+            spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), (safePosition - target.Position).ToHeading(), false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -36,9 +36,8 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                p.Weapons.Give(WeaponHash.CarbineRifle, 300, true, true);
-                p.Weapons.Give(WeaponHash.HeavySniper, 30, false, false);
-                p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
+                p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
+                p.Weapons.Give(WeaponHash.CombatMG, 500, false, false);
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.ShootRate = 1000;
 

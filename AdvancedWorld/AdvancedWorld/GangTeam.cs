@@ -14,8 +14,8 @@ namespace AdvancedWorld
         public GangTeam() : base(AdvancedWorld.CrimeType.GangTeam)
         {
             this.members = new List<Ped>();
-            this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.SwitchBlade, WeaponHash.BattleAxe, WeaponHash.Unarmed };
-            this.standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Revolver, WeaponHash.MiniSMG, WeaponHash.PumpShotgunMk2, WeaponHash.DoubleBarrelShotgun };
+            this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.BattleAxe, WeaponHash.Unarmed };
+            this.standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Revolver };
         }
 
         public bool IsCreatedIn(float radius, Vector3 position, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
@@ -79,14 +79,7 @@ namespace AdvancedWorld
 
         public void PerformTask()
         {
-            TaskSequence ts = new TaskSequence();
-            ts.AddTask.FightAgainstHatedTargets(100.0f);
-            ts.AddTask.WanderAround();
-            ts.Close();
-
-            foreach (Ped p in members) p.Task.PerformSequence(ts);
-
-            ts.Dispose();
+            foreach (Ped p in members) p.Task.FightAgainstHatedTargets(100.0f);
         }
 
         public override bool ShouldBeRemoved()

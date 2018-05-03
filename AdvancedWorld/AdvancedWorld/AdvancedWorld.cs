@@ -203,6 +203,7 @@ namespace AdvancedWorld
             {
                 "s_m_y_blackops_01",
                 "s_m_y_blackops_02",
+                "s_m_y_blackops_03",
                 "s_m_y_marine_01",
                 "s_m_y_marine_03"
             };
@@ -610,7 +611,6 @@ namespace AdvancedWorld
             switch (type)
             {
                 case CrimeType.AggressiveDriver:
-                case CrimeType.GangTeam:
                 case CrimeType.Racer:
                     {
                         for (int i = 0; i < 2; i++)
@@ -646,11 +646,14 @@ namespace AdvancedWorld
 
                 case CrimeType.Driveby:
                     {
-                        int selectedType = Util.GetRandomInt(copCarNames.Count);
-                        LSPD lspd = new LSPD(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            int selectedType = Util.GetRandomInt(copCarNames.Count);
+                            LSPD lspd = new LSPD(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target);
 
-                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) dispatchList.Add(lspd);
-                        else lspd.Restore();
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) dispatchList.Add(lspd);
+                            else lspd.Restore();
+                        }
 
                         SWAT swat = new SWAT(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target);
 
@@ -664,6 +667,43 @@ namespace AdvancedWorld
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swatheli);
                             else swatheli.Restore();
                         }
+
+                        break;
+                    }
+
+                case CrimeType.Fire:
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
+
+                            if (ff.IsCreatedIn(safePosition, fireModels)) dispatchList.Add(ff);
+                            else ff.Restore();
+                        }
+
+                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
+
+                        if (pm.IsCreatedIn(safePosition, emModels)) dispatchList.Add(pm);
+                        else pm.Restore();
+
+                        break;
+                    }
+
+                case CrimeType.GangTeam:
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            int selectedType = Util.GetRandomInt(copCarNames.Count);
+                            LSPD lspd = new LSPD(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target);
+
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) dispatchList.Add(lspd);
+                            else lspd.Restore();
+                        }
+
+                        LSPDHeli lspdheli = new LSPDHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target);
+
+                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) dispatchList.Add(lspdheli);
+                        else lspdheli.Restore();
 
                         break;
                     }
@@ -701,10 +741,13 @@ namespace AdvancedWorld
                             else army.Restore();
                         }
 
-                        ArmyHeli armyheli = new ArmyHeli(armyHeliNames[Util.GetRandomInt(armyHeliNames.Count)], target);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            ArmyHeli armyheli = new ArmyHeli(armyHeliNames[Util.GetRandomInt(armyHeliNames.Count)], target);
 
-                        if (armyheli.IsCreatedIn(safePosition, armyModels)) dispatchList.Add(armyheli);
-                        else armyheli.Restore();
+                            if (armyheli.IsCreatedIn(safePosition, armyModels)) dispatchList.Add(armyheli);
+                            else armyheli.Restore();
+                        }
 
                         break;
                     }
@@ -809,6 +852,8 @@ namespace AdvancedWorld
 
                                 if (Util.WeCanReplace(explosiveVehicle))
                                 {
+                                    Dispatch(explosiveVehicle, CrimeType.Fire);
+
                                     if (Util.BlipIsOn(explosiveVehicle))
                                     {
                                         explosiveVehicle.CurrentBlip.Remove();
@@ -844,12 +889,14 @@ namespace AdvancedWorld
 
                                 if (Util.WeCanReplace(undriveableVehicle))
                                 {
+                                    Dispatch(undriveableVehicle, CrimeType.Fire);
+
                                     if (Util.BlipIsOn(undriveableVehicle))
                                     {
                                         undriveableVehicle.CurrentBlip.Remove();
                                         Script.Wait(100);
                                     }
-
+                                    
                                     Util.AddBlipOn(undriveableVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
                                     undriveableVehicle.EngineHealth = -900.0f;
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
@@ -935,7 +982,6 @@ namespace AdvancedWorld
                             Vector3 goal = racingPosition[Util.GetRandomInt(racingPosition.Count)];
                             Vector3 safePosition = Util.GetSafePositionIn(radius);
                             int random = Util.GetRandomInt(4);
-                            int heading = Util.GetRandomInt(360);
 
                             if (safePosition.Equals(Vector3.Zero)) break;
 
@@ -948,7 +994,7 @@ namespace AdvancedWorld
 
                                 Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
 
-                                if (!position.Equals(Vector3.Zero) && r.IsCreatedIn(radius, position, heading))
+                                if (!position.Equals(Vector3.Zero) && r.IsCreatedIn(radius, position))
                                 {
                                     racerList.Add(r);
                                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
@@ -1014,21 +1060,14 @@ namespace AdvancedWorld
 
                     case 9:
                         {
-                            int relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Terrorist);
+                            Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomInt(terroristCarNames.Count)]);
 
-                            if (relationship == 0) break;
-
-                            for (int i = 0; i < 2; i++)
+                            if (tr.IsCreatedIn(radius))
                             {
-                                Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomInt(terroristCarNames.Count)]);
-
-                                if (tr.IsCreatedIn(radius, relationship))
-                                {
-                                    terroristList.Add(tr);
-                                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-                                }
-                                else tr.Restore();
+                                terroristList.Add(tr);
+                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
+                            else tr.Restore();
 
                             break;
                         }
