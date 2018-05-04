@@ -668,6 +668,13 @@ namespace AdvancedWorld
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) dispatchList.Add(swatheli);
                             else swatheli.Restore();
                         }
+                        else
+                        {
+                            LSPDHeli lspdheli = new LSPDHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target);
+
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) dispatchList.Add(lspdheli);
+                            else lspdheli.Restore();
+                        }
 
                         break;
                     }

@@ -15,7 +15,7 @@ namespace AdvancedWorld
 
             if (position.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, position, (position - target.Position).ToHeading(), false);
+            spawnedVehicle = Util.Create(name, position, (target.Position - position).ToHeading(), false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -63,8 +63,11 @@ namespace AdvancedWorld
             {
                 if (p.Equals(spawnedVehicle.Driver))
                 {
+                    Function.Call(Hash.SET_DRIVER_ABILITY, p, 1.0f);
+                    Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, p, 1.0f);
+
                     if (((Ped)target).IsInVehicle()) Function.Call(Hash.TASK_VEHICLE_CHASE, p, target);
-                    else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                    else p.Task.DriveTo(spawnedVehicle, target.Position, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                 }
                 else p.Task.FightAgainstHatedTargets(100.0f);
             }

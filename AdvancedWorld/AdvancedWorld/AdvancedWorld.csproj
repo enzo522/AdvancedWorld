@@ -51,6 +51,7 @@
     <Compile Include="Army.cs" />
     <Compile Include="ArmyHeli.cs" />
     <Compile Include="Carjacker.cs" />
+    <Compile Include="EmergencyHeli.cs" />
     <Compile Include="LSPDHeli.cs" />
     <Compile Include="Emergency.cs" />
     <Compile Include="Criminal.cs" />

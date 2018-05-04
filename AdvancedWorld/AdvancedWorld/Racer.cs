@@ -17,7 +17,7 @@ namespace AdvancedWorld
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)
         {
-            spawnedVehicle = Util.Create(name, safePosition, (safePosition - goal).ToHeading(), true);
+            spawnedVehicle = Util.Create(name, safePosition, (goal - safePosition).ToHeading(), true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 

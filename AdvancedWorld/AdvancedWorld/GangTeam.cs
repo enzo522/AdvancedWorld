@@ -79,7 +79,14 @@ namespace AdvancedWorld
 
         public void PerformTask()
         {
-            foreach (Ped p in members) p.Task.FightAgainstHatedTargets(200.0f);
+            TaskSequence ts = new TaskSequence();
+            ts.AddTask.FightAgainstHatedTargets(200.0f);
+            Function.Call(Hash.TASK_STAY_IN_COVER, 0);
+            ts.Close(true);
+
+            foreach (Ped p in members) p.Task.PerformSequence(ts);
+
+            ts.Dispose();
         }
 
         public override bool ShouldBeRemoved()

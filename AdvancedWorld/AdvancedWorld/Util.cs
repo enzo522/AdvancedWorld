@@ -169,6 +169,7 @@ namespace AdvancedWorld
             {
                 v.InstallModKit();
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
+                v.CanTiresBurst = GetRandomInt(2) == 1;
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
 
                 foreach (VehicleMod m in mods)

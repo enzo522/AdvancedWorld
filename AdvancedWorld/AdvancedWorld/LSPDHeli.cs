@@ -11,7 +11,7 @@ namespace AdvancedWorld
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
-            spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), (safePosition - target.Position).ToHeading(), false);
+            spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), (target.Position - safePosition).ToHeading(), false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -66,47 +66,6 @@ namespace AdvancedWorld
             }
 
             return true;
-        }
-
-        public override bool ShouldBeRemoved()
-        {
-            int alive = 0;
-
-            for (int i = members.Count - 1; i >= 0; i--)
-            {
-                if (!Util.ThereIs(members[i]))
-                {
-                    members.RemoveAt(i);
-                    continue;
-                }
-
-                if (members[i].IsInRangeOf(target.Position, 50.0f) || !Util.ThereIs(target) || target.IsDead) SetPedAsCop(members[i]);
-                if (members[i].IsDead)
-                {
-                    members[i].MarkAsNoLongerNeeded();
-                    members.RemoveAt(i);
-                }
-                else if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
-            }
-
-            if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p))
-                    {
-                        SetPedAsCop(p);
-                        p.MarkAsNoLongerNeeded();
-                    }
-                }
-
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
-
-                members.Clear();
-                return true;
-            }
-
-            return false;
         }
     }
 }

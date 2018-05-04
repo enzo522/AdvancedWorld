@@ -20,7 +20,7 @@ namespace AdvancedWorld
 
             if (position.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, position, (position - targetPosition).ToHeading(), false);
+            spawnedVehicle = Util.Create(name, position, (targetPosition - position).ToHeading(), false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -50,10 +50,41 @@ namespace AdvancedWorld
 
             foreach (Ped p in members)
             {
-                if (p.Equals(spawnedVehicle.Driver)) p.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                if (p.Equals(spawnedVehicle.Driver))
+                {
+                    Function.Call(Hash.SET_DRIVER_ABILITY, p, 1.0f);
+                    Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, p, 1.0f);
+                    p.Task.DriveTo(spawnedVehicle, targetPosition, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                }
             }
 
             return true;
+        }
+
+        private void SetPedAsMedic(Ped p)
+        {
+            Ped[] nearbyPeds = World.GetNearbyPeds(p, 50.0f);
+
+            if (nearbyPeds.Length < 1) return;
+
+            foreach (Ped selectedPed in nearbyPeds)
+            {
+                if (selectedPed.IsDead || selectedPed.IsInjured)
+                {
+                    TaskSequence ts = new TaskSequence();
+                    ts.AddTask.RunTo(selectedPed.Position.Around(0.5f));
+                    ts.AddTask.LookAt(selectedPed, 2000);
+                    ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter", 8.0f, -1, AnimationFlags.AllowRotation);
+                    ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c", 8.0f, -1, AnimationFlags.AllowRotation);
+                    ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@exit", "exit", 8.0f, -1, AnimationFlags.Loop);
+                    ts.Close();
+
+                    p.Task.PerformSequence(ts);
+                    ts.Dispose();
+
+                    break;
+                }
+            }
         }
 
         public override bool ShouldBeRemoved()
@@ -66,30 +97,7 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].IsInRangeOf(targetPosition, 50.0f) && members[i].IsSittingInVehicle(spawnedVehicle))
-                {
-                    Ped[] nearbyPeds = World.GetNearbyPeds(members[i], 50.0f);
-
-                    if (nearbyPeds.Length < 1) continue;
-
-                    foreach (Ped p in nearbyPeds)
-                    {
-                        if (p.IsDead || p.IsInjured)
-                        {                            
-                            TaskSequence ts = new TaskSequence();
-                            ts.AddTask.RunTo(p.Position.Around(0.5f));
-                            ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter", 8.0f, -1, AnimationFlags.None);
-                            ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c", 8.0f, -1, AnimationFlags.None);
-                            ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@exit", "exit", 8.0f, -1, AnimationFlags.None);
-                            ts.Close();
-
-                            members[i].Task.PerformSequence(ts);
-                            ts.Dispose();
-
-                            break;
-                        }
-                    }
-                }
+                if (members[i].IsInRangeOf(targetPosition, 50.0f)) SetPedAsMedic(members[i]);
 
                 if (members[i].IsDead)
                 {
@@ -103,7 +111,12 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
+                    if (Util.ThereIs(p))
+                    {
+                        p.AlwaysKeepTask = false;
+                        p.BlockPermanentEvents = false;
+                        p.MarkAsNoLongerNeeded();
+                    }
                 }
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();

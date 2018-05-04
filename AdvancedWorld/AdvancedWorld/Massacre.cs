@@ -28,12 +28,14 @@ namespace AdvancedWorld
             {
                 Function.Call(Hash.REQUEST_ANIM_SET, "anim_group_move_ballistic");
                 Function.Call(Hash.REQUEST_ANIM_SET, "move_strafe_ballistic");
+                Function.Call(Hash.REQUEST_CLIP_SET, "move_ballistic_minigun");
                 Script.Wait(50);
 
                 if (++trycount > 5) return false;
             }
             while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
-            || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic"));
+            || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic")
+            || !Function.Call<bool>(Hash.HAS_CLIP_SET_LOADED, "move_ballistic_minigun"));
 
             for (int i = 0; i < 4; i++)
             {
@@ -43,6 +45,7 @@ namespace AdvancedWorld
                 if (Util.GetRandomInt(4) == 1) p.Weapons.Give(WeaponHash.RPG, 25, true, true);
                 else p.Weapons.Give(WeaponHash.Minigun, 1000, true, true);
 
+                p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.Armor = 100;
 
@@ -52,7 +55,7 @@ namespace AdvancedWorld
 
                 Function.Call(Hash.SET_PED_MOVEMENT_CLIPSET, p, "anim_group_move_ballistic", 1.0f);
                 Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "move_strafe_ballistic");
-                Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, 0x529e5780);
+                Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, Function.Call<int>(Hash.GET_HASH_KEY, "Ballistic"));
                 
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, 6, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, 1, 0, 0);
