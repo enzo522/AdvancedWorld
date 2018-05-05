@@ -47,6 +47,7 @@ namespace AdvancedWorld
 
                 p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
                 p.Weapons.Current.InfiniteAmmo = true;
+                p.Health = p.MaxHealth = 2000;
                 p.Armor = 100;
 
                 Function.Call(Hash.RESET_PED_MOVEMENT_CLIPSET, p, 1.0f);
@@ -76,6 +77,7 @@ namespace AdvancedWorld
 
                 p.FiringPattern = FiringPattern.FullAuto;
                 p.ShootRate = 1000;
+                p.CanRagdoll = false;
 
                 if (!Util.BlipIsOn(p))
                 {

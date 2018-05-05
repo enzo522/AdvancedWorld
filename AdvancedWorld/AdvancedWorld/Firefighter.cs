@@ -5,14 +5,9 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Firefighter : Emergency
+    public class Firefighter : EmergencyFire
     {
-        private Vector3 targetPosition;
-
-        public Firefighter(string name, Entity target) : base(name, target)
-        {
-            targetPosition = target.Position;
-        }
+        public Firefighter(string name, Entity target) : base(name, target) { }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -24,7 +19,7 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
-            for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
+            for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 3; i++)
             {
                 if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
                 {
@@ -45,7 +40,7 @@ namespace AdvancedWorld
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
 
-                p.Weapons.Give(WeaponHash.FireExtinguisher, 1, true, true);
+                p.Weapons.Give(WeaponHash.FireExtinguisher, 100, true, true);
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.CanSwitchWeapons = true;
             }
@@ -60,74 +55,40 @@ namespace AdvancedWorld
                     Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, p, 1.0f);
                     p.Task.DriveTo(spawnedVehicle, targetPosition, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                 }
+
+                p.IsFireProof = true;
             }
 
             return true;
         }
 
-        private void SetPedAsFireFighter(Ped p)
+        protected override void SetPedOnDuty(Ped p)
         {
-            p.AlwaysKeepTask = false;
-            p.BlockPermanentEvents = false;
-            Function.Call(Hash.ADD_SHOCKING_EVENT_FOR_ENTITY, 86, p, 1000.0f);
-            Function.Call(Hash.ADD_SHOCKING_EVENT_FOR_ENTITY, 87, p, 1000.0f);
-            p.MarkAsNoLongerNeeded();
-        }
+            if (p.IsRunning || Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 355)) return;
 
-        public override bool ShouldBeRemoved()
-        {
-            for (int i = members.Count - 1; i >= 0; i--)
+            Entity[] nearbyEntities = World.GetNearbyEntities(p.Position, 100.0f);
+
+            if (nearbyEntities.Length < 1) return;
+
+            foreach (Entity en in nearbyEntities)
             {
-                if (!Util.ThereIs(members[i]))
+                if (en.IsOnFire)
                 {
-                    members.RemoveAt(i);
-                    continue;
+                    TaskSequence ts = new TaskSequence();
+
+                    if (!p.IsInRangeOf(en.Position, 10.0f)) ts.AddTask.RunTo(en.Position.Around(5.0f));
+
+                    ts.AddTask.ShootAt(en.Position, 10000, FiringPattern.FullAuto);
+                    ts.Close();
+
+                    p.Task.PerformSequence(ts);
+                    ts.Dispose();
+
+                    return;
                 }
-
-                if (members[i].IsInRangeOf(targetPosition, 50.0f) && members[i].IsSittingInVehicle(spawnedVehicle))
-                {
-                    SetPedAsFireFighter(members[i]);
-                    /*Vehicle[] nearbyVehicles = World.GetNearbyVehicles(members[i], 50.0f);
-
-                    if (nearbyVehicles.Length < 1) continue;
-
-                    foreach (Vehicle v in nearbyVehicles)
-                    {
-                        if (v.IsDead || v.IsOnFire)
-                        {
-                            TaskSequence ts = new TaskSequence();
-                            ts.AddTask.FightAgainstHatedTargets(100.0f);
-                            ts.AddTask.WanderAround();
-                            ts.Close();
-
-                            members[i].Task.PerformSequence(ts);
-                            ts.Dispose();
-                        }
-                    }*/
-                }
-
-                if (members[i].IsDead)
-                {
-                    members[i].MarkAsNoLongerNeeded();
-                    members.RemoveAt(i);
-                }
-                else spawnedPed = members[i];
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p)) SetPedAsFireFighter(p);
-                }
-
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
-
-                members.Clear();
-                return true;
-            }
-
-            return false;
+            SetPedsOffDuty();
         }
     }
 }

@@ -5,14 +5,11 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Paramedic : Emergency
+    public class Paramedic : EmergencyFire
     {
-        private Vector3 targetPosition;
+        private List<DeadPed> deadPeds;
 
-        public Paramedic(string name, Entity target) : base(name, target)
-        {
-            targetPosition = target.Position;
-        }
+        public Paramedic(string name, Entity target) : base(name, target) { this.deadPeds = new List<DeadPed>(); }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -61,68 +58,64 @@ namespace AdvancedWorld
             return true;
         }
 
-        private void SetPedAsMedic(Ped p)
+        protected override void SetPedOnDuty(Ped p)
         {
-            Ped[] nearbyPeds = World.GetNearbyPeds(p, 50.0f);
+            if (p.IsRunning || Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 134)) return;
+
+            Ped[] nearbyPeds = World.GetNearbyPeds(p, 100.0f);
 
             if (nearbyPeds.Length < 1) return;
 
             foreach (Ped selectedPed in nearbyPeds)
             {
-                if (selectedPed.IsDead || selectedPed.IsInjured)
+                if (Util.ThereIs(selectedPed) && (selectedPed.IsDead || selectedPed.IsInjured))
+                {
+                    bool thisIsNewPed = true;
+
+                    foreach (DeadPed dp in deadPeds)
+                    {
+                        if (dp.Equals(selectedPed))
+                        {
+                            thisIsNewPed = false;
+                            break;
+                        }
+                    }
+
+                    if (thisIsNewPed) deadPeds.Add(new DeadPed(selectedPed));
+                }
+            }
+
+            foreach (DeadPed dp in deadPeds)
+            {
+                if (!dp.IsChecked)
                 {
                     TaskSequence ts = new TaskSequence();
-                    ts.AddTask.RunTo(selectedPed.Position.Around(0.5f));
-                    ts.AddTask.LookAt(selectedPed, 2000);
-                    ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter", 8.0f, -1, AnimationFlags.AllowRotation);
-                    ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c", 8.0f, -1, AnimationFlags.AllowRotation);
-                    ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@exit", "exit", 8.0f, -1, AnimationFlags.Loop);
+                    ts.AddTask.RunTo(dp.Position.Around(0.5f));
+                    ts.AddTask.LookAt(dp.Position, 1000);
+                    ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter");
+                    ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c");
+                    ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@exit", "exit");
+                    ts.AddTask.PlayAnimation("amb@medic@standing@timeofdeath@exit", "exit");
                     ts.Close();
 
                     p.Task.PerformSequence(ts);
                     ts.Dispose();
 
-                    break;
+                    return;
                 }
+
+                dp.IsChecked = AnyParamedicIsNear(dp);
             }
+            
+            deadPeds.Clear();
+            SetPedsOffDuty();
         }
 
-        public override bool ShouldBeRemoved()
+        private bool AnyParamedicIsNear(DeadPed dp)
         {
-            for (int i = members.Count - 1; i >= 0; i--)
+            foreach (Ped p in members)
             {
-                if (!Util.ThereIs(members[i]))
-                {
-                    members.RemoveAt(i);
-                    continue;
-                }
-
-                if (members[i].IsInRangeOf(targetPosition, 50.0f)) SetPedAsMedic(members[i]);
-
-                if (members[i].IsDead)
-                {
-                    members[i].MarkAsNoLongerNeeded();
-                    members.RemoveAt(i);
-                }
-                else spawnedPed = members[i];
-            }
-
-            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p))
-                    {
-                        p.AlwaysKeepTask = false;
-                        p.BlockPermanentEvents = false;
-                        p.MarkAsNoLongerNeeded();
-                    }
-                }
-
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
-
-                members.Clear();
-                return true;
+                if (p.IsInRangeOf(dp.Position, 0.5f)) return true;
             }
 
             return false;

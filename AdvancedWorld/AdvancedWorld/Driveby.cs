@@ -186,16 +186,15 @@ namespace AdvancedWorld
                     if (!spawnedVehicle.IsStopped) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedPed, spawnedVehicle, 1, 1000);
                     else
                     {
-                        foreach (Ped p in members)
+                        for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
                         {
-                            if (p.Equals(spawnedPed)) p.Task.Wait(1000);
-                            else if (!p.IsSittingInVehicle(spawnedVehicle) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 160))
+                            if (spawnedVehicle.IsSeatFree((VehicleSeat)i) || spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
                             {
-                                for (int i = 0; i < spawnedVehicle.PassengerSeats; i++)
+                                for (int m = 0; m < members.Count; m++)
                                 {
-                                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i) || spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
+                                    if (!members[m].IsDead && !members[m].IsSittingInVehicle(spawnedVehicle) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[m], 160))
                                     {
-                                        p.Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i, -1, 2.0f, 1);
+                                        members[m].Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i, -1, 2.0f, 1);
                                         break;
                                     }
                                 }
