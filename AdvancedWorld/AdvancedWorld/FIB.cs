@@ -55,6 +55,8 @@ namespace AdvancedWorld
             
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
 
+            spawnedVehicle.EngineRunning = true;
+
             foreach (Ped p in members)
             {
                 if (p.Equals(spawnedVehicle.Driver))
