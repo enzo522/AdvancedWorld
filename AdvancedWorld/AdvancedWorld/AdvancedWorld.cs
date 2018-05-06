@@ -105,6 +105,7 @@ namespace AdvancedWorld
                 "dubsta",
                 "emperor",
                 "glendale",
+                "granger",
                 "minivan",
                 "patriot",
                 "rancherxl",
