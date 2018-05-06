@@ -24,14 +24,6 @@ namespace AdvancedWorld
             Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE"),
             Function.Call<int>(Hash.GET_HASH_KEY, "CIVFEMALE"),
             Function.Call<int>(Hash.GET_HASH_KEY, "SECURITY_GUARD"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "PRIVATE_SECURITY"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "PRISONER"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC")
-        };
-        private static List<int> gangRelationships = new List<int>
-        {
             Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_LOST"),
             Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_MEXICAN"),
             Function.Call<int>(Hash.GET_HASH_KEY, "AMBIENT_GANG_FAMILY"),
@@ -45,7 +37,12 @@ namespace AdvancedWorld
             Function.Call<int>(Hash.GET_HASH_KEY, "GANG_2"),
             Function.Call<int>(Hash.GET_HASH_KEY, "GANG_9"),
             Function.Call<int>(Hash.GET_HASH_KEY, "GANG_10"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "DEALER")
+            Function.Call<int>(Hash.GET_HASH_KEY, "DEALER"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "PRIVATE_SECURITY"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "PRISONER"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"),
+            Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC")
         };
         private static List<int> newRelationships = new List<int>();
         private static int copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
@@ -230,7 +227,6 @@ namespace AdvancedWorld
                 case AdvancedWorld.CrimeType.Terrorist:
                     {
                         foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in gangRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
@@ -240,7 +236,6 @@ namespace AdvancedWorld
 
                 case AdvancedWorld.CrimeType.GangTeam:
                     {
-                        foreach (int i in gangRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);

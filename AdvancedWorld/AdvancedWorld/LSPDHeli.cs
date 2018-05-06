@@ -50,6 +50,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
+                p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
             }
 
             spawnedVehicle.EngineRunning = true;
