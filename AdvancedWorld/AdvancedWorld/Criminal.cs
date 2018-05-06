@@ -20,7 +20,7 @@
             {
                 dispatchCooldown = 0;
 
-                if (!Util.CopIsNear(spawnedPed.Position)) AdvancedWorld.Dispatch(spawnedPed, type);
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Cop)) AdvancedWorld.Dispatch(spawnedPed, type);
             }
         }
     }

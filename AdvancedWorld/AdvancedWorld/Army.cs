@@ -53,8 +53,6 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
             }
 
-            spawnedVehicle.EngineRunning = true;
-
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
 
             foreach (Ped p in members)

@@ -75,6 +75,17 @@ namespace AdvancedWorld
             if (relationship != 0) Util.CleanUpRelationship(spawnedPed.RelationshipGroup);
         }
 
+        private new void CheckDispatch()
+        {
+            if (dispatchCooldown < 15) dispatchCooldown++;
+            else
+            {
+                dispatchCooldown = 0;
+
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Army)) AdvancedWorld.Dispatch(spawnedPed, type);
+            }
+        }
+
         public override bool ShouldBeRemoved()
         {
             if (!Util.ThereIs(spawnedPed))

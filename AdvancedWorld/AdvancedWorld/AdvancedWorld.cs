@@ -59,6 +59,14 @@ namespace AdvancedWorld
             Terrorist
         }
 
+        public enum EmergencyType
+        {
+            Army,
+            Cop,
+            Firefighter,
+            Paramedic
+        }
+
         static AdvancedWorld()
         {
             addOnCarNames = new List<string>();
@@ -142,7 +150,8 @@ namespace AdvancedWorld
                 new Vector3(-962.02f, -3006.96f, 13.95f),
                 new Vector3(1411.63f, 3012.39f, 40.53f),
                 new Vector3(338.6f, 3564.52f, 33.5f),
-                new Vector3(597.45f, 613.62f, 128.91f)
+                new Vector3(597.45f, 613.62f, 128.91f),
+                new Vector3(1378.63f, -2071.99f, 52.0f)
             };
             gangModels = new List<List<string>>
             {
@@ -681,18 +690,24 @@ namespace AdvancedWorld
 
                 case CrimeType.Fire:
                     {
-                        for (int i = 0; i < 2; i++)
+                        if (!Util.AnyEmergencyIsNear(target.Position, EmergencyType.Firefighter))
                         {
-                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
+                            for (int i = 0; i < 2; i++)
+                            {
+                                Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
 
-                            if (ff.IsCreatedIn(safePosition, fireModels)) dispatchList.Add(ff);
-                            else ff.Restore();
+                                if (ff.IsCreatedIn(safePosition, fireModels)) dispatchList.Add(ff);
+                                else ff.Restore();
+                            }
                         }
+                        
+                        if (!Util.AnyEmergencyIsNear(target.Position, EmergencyType.Paramedic))
+                        {
+                            Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
 
-                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
-
-                        if (pm.IsCreatedIn(safePosition, emModels)) dispatchList.Add(pm);
-                        else pm.Restore();
+                            if (pm.IsCreatedIn(safePosition, emModels)) dispatchList.Add(pm);
+                            else pm.Restore();
+                        }
 
                         break;
                     }

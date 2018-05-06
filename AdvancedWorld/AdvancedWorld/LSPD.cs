@@ -52,8 +52,6 @@ namespace AdvancedWorld
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
             }
-
-            spawnedVehicle.EngineRunning = true;
             
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
 

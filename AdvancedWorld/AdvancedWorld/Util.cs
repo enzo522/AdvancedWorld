@@ -46,7 +46,6 @@ namespace AdvancedWorld
         };
         private static List<int> newRelationships = new List<int>();
         private static int copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-        private static int armyID = Function.Call<int>(Hash.GET_HASH_KEY, "ARMY");
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
         private static int count = 0;
 
@@ -255,15 +254,36 @@ namespace AdvancedWorld
             if (newRelationships.Contains(relationship)) newRelationships.Remove(relationship);
         }
 
-        public static bool CopIsNear(Vector3 position)
+        public static bool AnyEmergencyIsNear(Vector3 position, AdvancedWorld.EmergencyType type)
         {
             Ped[] nearbyPeds = World.GetNearbyPeds(position, 100.0f);
 
             if (nearbyPeds.Length < 1) return false;
 
+            int id = 0;
+
+            switch (type)
+            {
+                case AdvancedWorld.EmergencyType.Army:
+                    id = Function.Call<int>(Hash.GET_HASH_KEY, "ARMY");
+                    break;
+
+                case AdvancedWorld.EmergencyType.Cop:
+                    id = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+                    break;
+
+                case AdvancedWorld.EmergencyType.Firefighter:
+                    id = Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN");
+                    break;
+
+                case AdvancedWorld.EmergencyType.Paramedic:
+                    id = Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC");
+                    break;
+            }
+
             foreach (Ped p in nearbyPeds)
             {
-                if ((p.RelationshipGroup == copID || p.RelationshipGroup == armyID) && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
+                if (p.RelationshipGroup == id && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
             }
 
             return false;
