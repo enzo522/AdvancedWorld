@@ -606,10 +606,33 @@ namespace AdvancedWorld
 
             XmlElement element = doc.DocumentElement;
 
-            foreach (XmlElement e in element.SelectNodes("//Replace/spawn")) addOnCarNames.Add(e.GetAttribute("name"));
-            foreach (XmlElement e in element.SelectNodes("//RaceCar/spawn")) racerCarNames.Add(e.GetAttribute("name"));
-            foreach (XmlElement e in element.SelectNodes("//RaceBike/spawn")) racerBikeNames.Add(e.GetAttribute("name"));
-            foreach (XmlElement e in element.SelectNodes("//Driveby/spawn")) drivebyCarNames.Add(e.GetAttribute("name"));
+            foreach (XmlElement e in element.SelectNodes("//AddOn/spawn"))
+            {
+                string spawnName = e.GetAttribute("name");
+
+                if (((Model)spawnName).IsValid) addOnCarNames.Add(spawnName);
+            }
+
+            foreach (XmlElement e in element.SelectNodes("//RaceCar/spawn"))
+            {
+                string spawnName = e.GetAttribute("name");
+
+                if (((Model)spawnName).IsValid && ((Model)spawnName).IsCar) racerCarNames.Add(spawnName);
+            }
+
+            foreach (XmlElement e in element.SelectNodes("//RaceBike/spawn"))
+            {
+                string spawnName = e.GetAttribute("name");
+
+                if (((Model)spawnName).IsValid && (((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) racerBikeNames.Add(spawnName);
+            }
+
+            foreach (XmlElement e in element.SelectNodes("//Driveby/spawn"))
+            {
+                string spawnName = e.GetAttribute("name");
+
+                if (((Model)spawnName).IsValid) drivebyCarNames.Add(spawnName);
+            }
         }
 
         public static void Dispatch(Entity target, CrimeType type)
