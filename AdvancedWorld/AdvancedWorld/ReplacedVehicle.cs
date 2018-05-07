@@ -34,7 +34,7 @@ namespace AdvancedWorld
 
                     if (!Util.ThereIs(spawnedVehicle)) return false;
 
-                    System.IO.File.WriteAllText(@"..\lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("yyyy-MM-dd-HH:mm:ss") + "] " + name);
+                    System.IO.File.WriteAllText(@"lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("yyyy-MM-dd-HH:mm:ss") + "] " + name);
 
                     if (selectedEngineRunning)
                     {
