@@ -82,7 +82,7 @@ namespace AdvancedWorld
             {
                 dispatchCooldown = 0;
 
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Army)) AdvancedWorld.Dispatch(spawnedPed, type);
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Army)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
             }
         }
 
