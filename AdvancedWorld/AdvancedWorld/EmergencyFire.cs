@@ -19,7 +19,7 @@ namespace AdvancedWorld
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
             
-            int max = emergencyType == "FIREMAN" ? 3 : 1;
+            int max = emergencyType.Equals("FIREMAN") ? 3 : 1;
 
             for (int i = -1; i < spawnedVehicle.PassengerSeats && i < max; i++)
             {
