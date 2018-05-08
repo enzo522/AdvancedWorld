@@ -50,8 +50,8 @@ namespace AdvancedWorld
 
                     case "FIB":
                         {
-                            p.Weapons.Give(WeaponHash.CarbineRifle, 300, true, true);
-                            p.Weapons.Give(WeaponHash.SMG, 100, false, false);
+                            p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
+                            p.Weapons.Give(WeaponHash.CarbineRifle, 300, false, false);
                             p.ShootRate = 900;
                             p.Armor = 50;
 
@@ -91,7 +91,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
-                if (emergencyType.Equals("Army")) p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                if (emergencyType.Equals("ARMY")) p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
                 else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
 
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
