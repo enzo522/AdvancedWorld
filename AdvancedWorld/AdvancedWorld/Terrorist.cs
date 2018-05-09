@@ -4,13 +4,15 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class Terrorist : Criminal
+    public class Terrorist : Criminal, IBlockable
     {
         private string name;
+        private int blockCooldown;
 
         public Terrorist(string name) : base(AdvancedWorld.CrimeType.Terrorist)
         {
             this.name = name;
+            this.blockCooldown = 15;
         }
 
         public bool IsCreatedIn(float radius)
@@ -19,11 +21,11 @@ namespace AdvancedWorld
 
             if (safePosition.Equals(Vector3.Zero)) return false;
 
-            Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
 
-            if (position.Equals(Vector3.Zero)) return false;
+            if (road.Position.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, position, Util.GetRandomInt(360), true);
+            spawnedVehicle = Util.Create(name, road.Position, road.Heading, true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
 
@@ -73,17 +75,6 @@ namespace AdvancedWorld
             if (relationship != 0) Util.CleanUpRelationship(spawnedPed.RelationshipGroup);
         }
 
-        private new void CheckDispatch()
-        {
-            if (dispatchCooldown < 15) dispatchCooldown++;
-            else
-            {
-                dispatchCooldown = 0;
-
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Army)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
-            }
-        }
-
         public override bool ShouldBeRemoved()
         {
             if (!Util.ThereIs(spawnedPed))
@@ -113,9 +104,34 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+            if (Util.ThereIs(spawnedPed))
+            {
+                CheckDispatch();
+                CheckBlockable();
+            }
 
             return false;
+        }
+
+        private new void CheckDispatch()
+        {
+            if (dispatchCooldown < 15) dispatchCooldown++;
+            else
+            {
+                dispatchCooldown = 0;
+
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Army)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
+            }
+        }
+
+        public void CheckBlockable()
+        {
+            if (blockCooldown < 15) blockCooldown++;
+            else
+            {
+                blockCooldown = 0;
+                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.Terrorist);
+            }
         }
     }
 }

@@ -62,7 +62,7 @@ namespace AdvancedWorld
                         selectedBlipColor = BlipColor.White;
                     }
 
-                    if (spawnedVehicle.FriendlyName.Equals("NULL")) selectedBlipName += spawnedVehicle.DisplayName.ToUpper();
+                    if (spawnedVehicle.FriendlyName == "NULL") selectedBlipName += spawnedVehicle.DisplayName.ToUpper();
                     else selectedBlipName += spawnedVehicle.FriendlyName;
 
                     if (!Util.BlipIsOn(spawnedVehicle))

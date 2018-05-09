@@ -4,23 +4,25 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class Racer : Nitroable
+    public class Racer : Nitroable, IBlockable
     {
         private string name;
+        private int blockCooldown;
         private Vector3 goal;
 
         public Racer(string name, Vector3 goal) : base(AdvancedWorld.CrimeType.Racer)
         {
             this.name = name;
+            this.blockCooldown = 15;
             this.goal = goal;
         }
 
-        public bool IsCreatedIn(float radius, Vector3 safePosition)
+        public bool IsCreatedIn(float radius, Road road)
         {
-            spawnedVehicle = Util.Create(name, safePosition, (goal - safePosition).ToHeading(), true);
+            spawnedVehicle = Util.Create(name, road.Position, road.Heading, true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
-
+            
             spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
 
             if (!Util.ThereIs(spawnedPed))
@@ -110,9 +112,23 @@ namespace AdvancedWorld
             }
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
-            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+            if (Util.ThereIs(spawnedPed))
+            {
+                CheckDispatch();
+                CheckBlockable();
+            }
 
             return false;
+        }
+
+        public void CheckBlockable()
+        {
+            if (blockCooldown < 15) blockCooldown++;
+            else
+            {
+                blockCooldown = 0;
+                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.Racer);
+            }
         }
     }
 }

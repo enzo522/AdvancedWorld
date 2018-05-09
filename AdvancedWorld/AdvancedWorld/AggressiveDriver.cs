@@ -4,13 +4,15 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class AggressiveDriver : Nitroable
+    public class AggressiveDriver : Nitroable, IBlockable
     {
         private string name;
+        private int blockCooldown;
 
         public AggressiveDriver(string name) : base(AdvancedWorld.CrimeType.AggressiveDriver)
         {
             this.name = name;
+            this.blockCooldown = 15;
         }
 
         public bool IsCreatedIn(float radius)
@@ -18,15 +20,15 @@ namespace AdvancedWorld
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
             if (safePosition.Equals(Vector3.Zero)) return false;
+            
+            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
 
-            Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+            if (road.Position.Equals(Vector3.Zero)) return false;
 
-            if (position.Equals(Vector3.Zero)) return false;
-
-            spawnedVehicle = Util.Create(name, position, Util.GetRandomInt(360), true);
+            spawnedVehicle = Util.Create(name, road.Position, road.Heading, true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
-
+            
             spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
 
             if (!Util.ThereIs(spawnedPed))
@@ -101,9 +103,23 @@ namespace AdvancedWorld
             }
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
-            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+            if (Util.ThereIs(spawnedPed))
+            {
+                CheckDispatch();
+                CheckBlockable();
+            }
 
             return false;
+        }
+
+        public void CheckBlockable()
+        {
+            if (blockCooldown < 15) blockCooldown++;
+            else
+            {
+                blockCooldown = 0;
+                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.AggressiveDriver);
+            }
         }
     }
 }

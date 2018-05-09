@@ -5,15 +5,17 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Driveby : Criminal
+    public class Driveby : Criminal, IBlockable
     {
         private List<Ped> members;
         private string name;
+        private int blockCooldown;
 
         public Driveby(string name) : base(AdvancedWorld.CrimeType.Driveby)
         {
             this.members = new List<Ped>();
             this.name = name;
+            this.blockCooldown = 15;
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
@@ -21,15 +23,15 @@ namespace AdvancedWorld
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
             if (safePosition.Equals(Vector3.Zero) || selectedModels == null) return false;
+            
+            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
 
-            Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+            if (road.Position.Equals(Vector3.Zero)) return false;
 
-            if (position.Equals(Vector3.Zero)) return false;
-
-            spawnedVehicle = Util.Create(name, position, Util.GetRandomInt(360), true);
+            spawnedVehicle = Util.Create(name, road.Position, road.Heading, true);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
-
+            
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };
             Util.Tune(spawnedVehicle, false, (Util.GetRandomInt(3) == 1));
             relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Driveby);
@@ -221,9 +223,23 @@ namespace AdvancedWorld
             }
             else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedPed, 160)) spawnedPed.Task.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
 
-            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+            if (Util.ThereIs(spawnedPed))
+            {
+                CheckDispatch();
+                CheckBlockable();
+            }
 
             return false;
+        }
+
+        public void CheckBlockable()
+        {
+            if (blockCooldown < 15) blockCooldown++;
+            else
+            {
+                blockCooldown = 0;
+                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.Driveby);
+            }
         }
     }
 }

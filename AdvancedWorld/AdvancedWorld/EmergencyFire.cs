@@ -11,15 +11,15 @@ namespace AdvancedWorld
 
         protected bool IsCreatedIn(Vector3 safePosition, List<string> models, string emergencyType)
         {
-            Vector3 position = World.GetNextPositionOnStreet(safePosition, true);
+            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
 
-            if (position.Equals(Vector3.Zero)) return false;
+            if (road.Position.Equals(Vector3.Zero)) return false;
 
-            spawnedVehicle = Util.Create(name, position, (target.Position - position).ToHeading(), false);
+            spawnedVehicle = Util.Create(name, road.Position, road.Heading, false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
             
-            int max = emergencyType.Equals("FIREMAN") ? 3 : 1;
+            int max = emergencyType == "FIREMAN" ? 3 : 1;
 
             for (int i = -1; i < spawnedVehicle.PassengerSeats && i < max; i++)
             {
@@ -42,7 +42,7 @@ namespace AdvancedWorld
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
 
-                if (emergencyType.Equals("FIREMAN"))
+                if (emergencyType == "FIREMAN")
                 {
                     p.Weapons.Give(WeaponHash.FireExtinguisher, 100, true, true);
                     p.Weapons.Current.InfiniteAmmo = true;

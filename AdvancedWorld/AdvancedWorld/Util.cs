@@ -90,9 +90,9 @@ namespace AdvancedWorld
             return Vector3.Zero;
         }
 
-        public static Vector3 GetSafePositionNear(Entity entity)
+        public static Vector3 GetSafePositionNear(Vector3 position)
         {
-            Entity[] nearbyEntities = World.GetNearbyEntities(entity.Position, 100.0f);
+            Entity[] nearbyEntities = World.GetNearbyEntities(position, 100.0f);
 
             if (nearbyEntities.Length > 0)
             {
@@ -288,6 +288,25 @@ namespace AdvancedWorld
             }
 
             return false;
+        }
+
+        public static Road GetNextPositionOnStreetWithHeading(Vector3 position)
+        {
+            OutputArgument outPos = new OutputArgument();
+            OutputArgument roadHeading = new OutputArgument();
+
+            for (int i = 1; i < 40; i++)
+            {
+                if (Function.Call<bool>(Hash.GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING, position.X, position.Y, position.Z, i, outPos, roadHeading, new OutputArgument(), 9, 3.0f, 2.5f))
+                {
+                    Vector3 roadPos = outPos.GetResult<Vector3>();
+
+                    if (!Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
+                        return new Road(roadPos, roadHeading.GetResult<float>());
+                }
+            }
+
+            return new Road(Vector3.Zero, 0.0f);
         }
     }
 }

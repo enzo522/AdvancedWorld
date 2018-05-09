@@ -5,11 +5,13 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public abstract class EmergencyHeli : Emergency
+    public class EmergencyHeli : Emergency
     {
-        public EmergencyHeli(string name, Entity target) : base(name, target) { }
+        private string emergencyType;
 
-        protected bool IsCreatedIn(Vector3 safePosition, List<string> models, string emergencyType)
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target) { this.emergencyType = emergencyType; }
+
+        public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
             spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), (target.Position - safePosition).ToHeading(), false);
 
@@ -67,7 +69,7 @@ namespace AdvancedWorld
                             break;
                         }
                 }
-                
+
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.CanSwitchWeapons = true;
 

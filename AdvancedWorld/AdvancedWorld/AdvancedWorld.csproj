@@ -49,31 +49,27 @@
   <ItemGroup>
     <Compile Include="AdvancedWorld.cs" />
     <Compile Include="AggressiveDriver.cs" />
-    <Compile Include="Army.cs" />
-    <Compile Include="ArmyHeli.cs" />
+    <Compile Include="IBlockable.cs" />
     <Compile Include="Carjacker.cs" />
+    <Compile Include="EmergencyBlock.cs" />
     <Compile Include="EmergencyCar.cs" />
     <Compile Include="EmergencyFire.cs" />
     <Compile Include="EmergencyHeli.cs" />
-    <Compile Include="LSPDHeli.cs" />
     <Compile Include="Emergency.cs" />
     <Compile Include="Criminal.cs" />
     <Compile Include="Driveby.cs" />
     <Compile Include="EntitySet.cs" />
-    <Compile Include="FIB.cs" />
     <Compile Include="Firefighter.cs" />
     <Compile Include="GangTeam.cs" />
-    <Compile Include="LSPD.cs" />
     <Compile Include="Massacre.cs" />
     <Compile Include="Nitroable.cs" />
     <Compile Include="Paramedic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Racer.cs" />
     <Compile Include="ReplacedVehicle.cs" />
-    <Compile Include="SWAT.cs" />
-    <Compile Include="SWATHeli.cs" />
     <Compile Include="Terrorist.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="Road.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
