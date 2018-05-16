@@ -9,7 +9,7 @@ namespace AdvancedWorld
         private List<string> wheels;
         private Vehicle owner;
         private Prop stinger;
-        private Vector2[] points;
+        private Vector3[] points;
         
         public Stinger(Vehicle v)
         {
@@ -43,16 +43,12 @@ namespace AdvancedWorld
             stinger.LodDistance = 1000;
 
             Vector3 dimension = stinger.Model.GetDimensions();
+            points = new Vector3[4];
 
-            Vector3[] v3 = new Vector3[4];
-            points = new Vector2[4];
-
-            v3[0] = stinger.Position + stinger.RightVector * dimension.X / 2 - stinger.ForwardVector * dimension.Y / 2;
-            v3[1] = stinger.Position - stinger.RightVector * dimension.X / 2 - stinger.ForwardVector * dimension.Y / 2;
-            v3[2] = stinger.Position - stinger.RightVector * dimension.X / 2 + stinger.ForwardVector * dimension.Y / 2;
-            v3[3] = stinger.Position + stinger.RightVector * dimension.X / 2 + stinger.ForwardVector * dimension.Y / 2;
-
-            for (int i = 0; i < 4; i++) points[i] = new Vector2(v3[i].X, v3[i].Y);
+            points[0] = stinger.Position + stinger.RightVector * dimension.X / 2 - stinger.ForwardVector * dimension.Y / 2;
+            points[1] = stinger.Position - stinger.RightVector * dimension.X / 2 - stinger.ForwardVector * dimension.Y / 2;
+            points[2] = stinger.Position - stinger.RightVector * dimension.X / 2 + stinger.ForwardVector * dimension.Y / 2;
+            points[3] = stinger.Position + stinger.RightVector * dimension.X / 2 + stinger.ForwardVector * dimension.Y / 2;
 
             return true;
         }
