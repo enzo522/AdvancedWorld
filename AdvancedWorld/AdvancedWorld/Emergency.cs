@@ -47,7 +47,7 @@ namespace AdvancedWorld
                     members.RemoveAt(i);
                     continue;
                 }
-                
+
                 if (members[i].IsDead)
                 {
                     members[i].MarkAsNoLongerNeeded();
@@ -55,7 +55,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || target.IsDead || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 foreach (Ped p in members)
                 {

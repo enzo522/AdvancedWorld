@@ -160,6 +160,8 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(p))
                 {
+                    if (target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 20.0f) && p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, p, spawnedVehicle, 1, 5000);
+
                     p.AlwaysKeepTask = false;
                     p.BlockPermanentEvents = false;
                     Function.Call(Hash.SET_PED_AS_COP, p, true);

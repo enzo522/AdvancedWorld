@@ -118,15 +118,5 @@ namespace AdvancedWorld
                 if (!Util.AnyEmergencyIsNear(spawnedPed.Position, "ARMY")) AdvancedWorld.DispatchAgainst(spawnedPed, type);
             }
         }
-
-        private new void CheckBlockable()
-        {
-            if (blockCooldown < 15) blockCooldown++;
-            else
-            {
-                blockCooldown = 0;
-                AdvancedWorld.BlockRoadAgainst(spawnedPed, type);
-            }
-        }
     }
 }

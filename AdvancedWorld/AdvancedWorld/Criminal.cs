@@ -10,14 +10,14 @@
         public Criminal(ListManager.EventType type) : base()
         {
             this.relationship = 0;
-            this.dispatchCooldown = 10;
+            this.dispatchCooldown = 7;
             this.blockCooldown = 0;
             this.type = type;
         }
 
         protected void CheckDispatch()
         {
-            if (dispatchCooldown < 20) dispatchCooldown++;
+            if (dispatchCooldown < 15) dispatchCooldown++;
             else
             {
                 dispatchCooldown = 0;
@@ -28,7 +28,7 @@
 
         protected void CheckBlockable()
         {
-            if (blockCooldown < 20) blockCooldown++;
+            if (blockCooldown < 15) blockCooldown++;
             else
             {
                 blockCooldown = 0;

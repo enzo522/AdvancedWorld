@@ -65,11 +65,7 @@ namespace AdvancedWorld
         public override bool ShouldBeRemoved()
         {
             if (!Util.ThereIs(stinger)) return true;
-            if (!Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                stinger.MarkAsNoLongerNeeded();
-                return true;
-            }
+            if (!Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f)) stinger.MarkAsNoLongerNeeded();
 
             return false;
         }
@@ -91,13 +87,15 @@ namespace AdvancedWorld
 
         private bool StingerAreaContains(Vector3 v3)
         {
+            bool result = false;
+
             for (int i = 0, j = 3; i < 4; j = i++)
             {
-                if ((points[i].Y > v3.Y != points[j].Y > v3.Y)
-                    && (v3.X < (points[j].X - points[i].X) * (v3.Y - points[i].Y) / (points[j].Y - points[i].Y) + points[i].X)) return true;
+                if (((points[i].Y > v3.Y) != (points[j].Y > v3.Y))
+                    && (v3.X < (points[j].X - points[i].X) * (v3.Y - points[i].Y) / (points[j].Y - points[i].Y) + points[i].X)) result = !result;
             }
 
-            return false;
+            return result;
         }
     }
 }

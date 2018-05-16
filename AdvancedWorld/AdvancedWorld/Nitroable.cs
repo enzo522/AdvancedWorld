@@ -45,7 +45,7 @@ namespace AdvancedWorld
 
         public void CheckNitroable()
         {
-            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 30.0f && spawnedVehicle.Acceleration > 0
+            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 20.0f && spawnedVehicle.Acceleration > 0
                 && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 5.0f))
             {
                 spawnedVehicle.EnginePowerMultiplier = 7.0f;

@@ -132,6 +132,9 @@ namespace AdvancedWorld
                     else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
 
                     p.NeverLeavesGroup = true;
+
+                    if (!p.Equals(spawnedVehicle.Driver)) p.MarkAsNoLongerNeeded();
+
                     onDuty = true;
                 }
             }
@@ -148,7 +151,7 @@ namespace AdvancedWorld
                     members.RemoveAt(i);
                     continue;
                 }
-                
+
                 if (members[i].IsDead)
                 {
                     members[i].MarkAsNoLongerNeeded();
@@ -170,7 +173,7 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (spawnedVehicle.IsInRangeOf(target.Position, 50.0f) || !Util.ThereIs(target) || target.IsDead) SetPedsOnDuty();
+            if (!onDuty && (spawnedVehicle.IsInRangeOf(target.Position, 50.0f) || !Util.ThereIs(target) || target.IsDead)) SetPedsOnDuty();
 
             return false;
         }

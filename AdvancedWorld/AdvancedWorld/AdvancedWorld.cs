@@ -622,7 +622,7 @@ namespace AdvancedWorld
                             else lspd.Restore();
                         }
 
-                        if (((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
+                        if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
                             EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
 
@@ -660,7 +660,7 @@ namespace AdvancedWorld
                         if (swat.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swat, ListManager.EventType.Dispatch);
                         else swat.Restore();
 
-                        if (((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
+                        if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
 
@@ -734,19 +734,19 @@ namespace AdvancedWorld
 
                             if (swat.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swat, ListManager.EventType.Dispatch);
                             else swat.Restore();
+
+                            EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
+
+                            if (swatheli.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatheli, ListManager.EventType.Dispatch);
+                            else swatheli.Restore();
                         }
-
-                        EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
-
-                        if (swatheli.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatheli, ListManager.EventType.Dispatch);
-                        else swatheli.Restore();
 
                         break;
                     }
 
                 case ListManager.EventType.Terrorist:
                     {
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 4; i++)
                         {
                             EmergencyCar army = new EmergencyCar(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
 

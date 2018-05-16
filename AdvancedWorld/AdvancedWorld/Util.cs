@@ -78,6 +78,7 @@ namespace AdvancedWorld
         public static bool SomethingIsBetween(Vector3 position)
         {
             if (Game.Player.Character.IsInRangeOf(position, 50.0f)) return false;
+            else if (!Game.Player.Character.IsInRangeOf(position, 100.0f)) return true;
             else
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
@@ -291,7 +292,7 @@ namespace AdvancedWorld
                 {
                     Vector3 roadPos = outPos.GetResult<Vector3>();
 
-                    if (!Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
+                    if (SomethingIsBetween(roadPos) && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
                         return new Road(roadPos, roadHeading.GetResult<float>());
                 }
             }
