@@ -7,7 +7,7 @@ namespace AdvancedWorld
         private float radius;
         private int trycount;
 
-        public Carjacker() : base(AdvancedWorld.CrimeType.Carjacker)
+        public Carjacker() : base(ListManager.EventType.Carjacker)
         {
             this.radius = 0.0f;
             this.trycount = 0;
@@ -25,7 +25,7 @@ namespace AdvancedWorld
             
             this.radius = radius;
             spawnedPed.IsPersistent = true;
-            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Carjacker);
+            relationship = Util.NewRelationship(ListManager.EventType.Carjacker);
 
             if (relationship == 0)
             {

@@ -7,26 +7,41 @@ namespace AdvancedWorld
 {
     public class EmergencyHeli : Emergency
     {
-        private string emergencyType;
-
-        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target) { this.emergencyType = emergencyType; }
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
             spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), (target.Position - safePosition).ToHeading(), false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
-
-            string selectedModel = models[Util.GetRandomInt(models.Count)];
-
-            if (selectedModel == null) return false;
-
-            for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
+            if (emergencyType == "LSPD")
             {
-                if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 3; i++)
                 {
-                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModel));
-                    Script.Wait(50);
+                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                    {
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                        Script.Wait(50);
+                    }
+                }
+            }
+            else
+            {
+                string selectedModel = models[Util.GetRandomInt(models.Count)];
+
+                if (selectedModel == null)
+                {
+                    Restore();
+                    return false;
+                }
+
+                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 3; i++)
+                {
+                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                    {
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModel));
+                        Script.Wait(50);
+                    }
                 }
             }
 
@@ -78,11 +93,9 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_HEARING_RANGE, p, 2000.0f);
                 Function.Call(Hash.SET_PED_COMBAT_RANGE, p, 2);
 
+                Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
-
-                if (emergencyType.Equals("ARMY")) p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
 
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
@@ -105,13 +118,22 @@ namespace AdvancedWorld
             return true;
         }
 
-        private void SetPedAsCop(Ped p)
+        protected override void SetPedsOnDuty()
         {
-            if (Util.ThereIs(p))
+            foreach (Ped p in members)
             {
-                p.AlwaysKeepTask = false;
-                p.BlockPermanentEvents = false;
-                Function.Call(Hash.SET_PED_AS_COP, p, true);
+                if (Util.ThereIs(p))
+                {
+                    p.AlwaysKeepTask = false;
+                    p.BlockPermanentEvents = false;
+                    Function.Call(Hash.SET_PED_AS_COP, p, true);
+
+                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+
+                    p.NeverLeavesGroup = true;
+                    onDuty = true;
+                }
             }
         }
 
@@ -126,8 +148,7 @@ namespace AdvancedWorld
                     members.RemoveAt(i);
                     continue;
                 }
-
-                if (members[i].IsInRangeOf(target.Position, 50.0f) || !Util.ThereIs(target) || target.IsDead) SetPedAsCop(members[i]);
+                
                 if (members[i].IsDead)
                 {
                     members[i].MarkAsNoLongerNeeded();
@@ -140,11 +161,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p))
-                    {
-                        SetPedAsCop(p);
-                        p.MarkAsNoLongerNeeded();
-                    }
+                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
                 }
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
@@ -152,6 +169,8 @@ namespace AdvancedWorld
                 members.Clear();
                 return true;
             }
+
+            if (spawnedVehicle.IsInRangeOf(target.Position, 50.0f) || !Util.ThereIs(target) || target.IsDead) SetPedsOnDuty();
 
             return false;
         }

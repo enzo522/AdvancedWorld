@@ -75,6 +75,17 @@ namespace AdvancedWorld
             }
         }
 
+        public static bool SomethingIsBetween(Vector3 position)
+        {
+            if (Game.Player.Character.IsInRangeOf(position, 50.0f)) return false;
+            else
+            {
+                RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
+
+                return r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) > 30.0f;
+            }
+        }
+
         public static Vector3 GetSafePositionIn(float radius)
         {
             Entity[] nearbyEntities = World.GetNearbyEntities(Game.Player.Character.Position, radius);
@@ -204,7 +215,7 @@ namespace AdvancedWorld
             }
         }
 
-        public static int NewRelationship(AdvancedWorld.CrimeType type)
+        public static int NewRelationship(ListManager.EventType type)
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
@@ -213,18 +224,18 @@ namespace AdvancedWorld
 
             switch (type)
             {
-                case AdvancedWorld.CrimeType.AggressiveDriver:
-                case AdvancedWorld.CrimeType.Carjacker:
-                case AdvancedWorld.CrimeType.Racer:
+                case ListManager.EventType.AggressiveDriver:
+                case ListManager.EventType.Carjacker:
+                case ListManager.EventType.Racer:
                     {
                         foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         break;
                     }
 
-                case AdvancedWorld.CrimeType.Driveby:
-                case AdvancedWorld.CrimeType.Massacre:
-                case AdvancedWorld.CrimeType.Terrorist:
+                case ListManager.EventType.Driveby:
+                case ListManager.EventType.Massacre:
+                case ListManager.EventType.Terrorist:
                     {
                         foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
@@ -234,7 +245,7 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case AdvancedWorld.CrimeType.GangTeam:
+                case ListManager.EventType.GangTeam:
                     {
                         foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
@@ -255,36 +266,15 @@ namespace AdvancedWorld
             if (newRelationships.Contains(relationship)) newRelationships.Remove(relationship);
         }
 
-        public static bool AnyEmergencyIsNear(Vector3 position, AdvancedWorld.EmergencyType type)
+        public static bool AnyEmergencyIsNear(Vector3 position, string type)
         {
             Ped[] nearbyPeds = World.GetNearbyPeds(position, 100.0f);
 
             if (nearbyPeds.Length < 1) return false;
 
-            int id = 0;
-
-            switch (type)
-            {
-                case AdvancedWorld.EmergencyType.Army:
-                    id = Function.Call<int>(Hash.GET_HASH_KEY, "ARMY");
-                    break;
-
-                case AdvancedWorld.EmergencyType.Cop:
-                    id = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-                    break;
-
-                case AdvancedWorld.EmergencyType.Firefighter:
-                    id = Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN");
-                    break;
-
-                case AdvancedWorld.EmergencyType.Paramedic:
-                    id = Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC");
-                    break;
-            }
-
             foreach (Ped p in nearbyPeds)
             {
-                if (p.RelationshipGroup == id && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
+                if (p.RelationshipGroup == Function.Call<int>(Hash.GET_HASH_KEY, type) && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
             }
 
             return false;
@@ -295,7 +285,7 @@ namespace AdvancedWorld
             OutputArgument outPos = new OutputArgument();
             OutputArgument roadHeading = new OutputArgument();
 
-            for (int i = 1; i < 40; i++)
+            for (int i = 1; i < 100; i++)
             {
                 if (Function.Call<bool>(Hash.GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING, position.X, position.Y, position.Z, i, outPos, roadHeading, new OutputArgument(), 9, 3.0f, 2.5f))
                 {

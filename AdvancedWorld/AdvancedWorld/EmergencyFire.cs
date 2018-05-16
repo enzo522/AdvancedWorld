@@ -7,9 +7,9 @@ namespace AdvancedWorld
 {
     public abstract class EmergencyFire : Emergency
     {
-        public EmergencyFire(string name, Entity target) : base(name, target) { }
+        public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
 
-        protected bool IsCreatedIn(Vector3 safePosition, List<string> models, string emergencyType)
+        public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
             Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
 
@@ -61,8 +61,6 @@ namespace AdvancedWorld
 
             return true;
         }
-        
-        protected abstract void SetPedsOnDuty();
 
         protected void SetPedsOffDuty()
         {

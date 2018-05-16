@@ -10,12 +10,16 @@ namespace AdvancedWorld
         protected List<Ped> members;
         protected string name;
         protected Entity target;
+        protected string emergencyType;
+        protected bool onDuty;
 
-        public Emergency(string name, Entity target) : base()
+        public Emergency(string name, Entity target, string emergencyType) : base()
         {
             this.members = new List<Ped>();
             this.name = name;
             this.target = target;
+            this.emergencyType = emergencyType;
+            this.onDuty = false;
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
@@ -32,16 +36,7 @@ namespace AdvancedWorld
             members.Clear();
         }
 
-        private void SetPedAsCop(Ped p)
-        {
-            if (Util.ThereIs(p))
-            {
-                p.AlwaysKeepTask = false;
-                p.BlockPermanentEvents = false;
-                Function.Call(Hash.SET_PED_AS_COP, p, true);
-                p.MarkAsNoLongerNeeded();
-            }
-        }
+        protected abstract void SetPedsOnDuty();
 
         public override bool ShouldBeRemoved()
         {
@@ -52,8 +47,7 @@ namespace AdvancedWorld
                     members.RemoveAt(i);
                     continue;
                 }
-
-                if (members[i].IsInRangeOf(target.Position, 50.0f)) SetPedAsCop(members[i]);
+                
                 if (members[i].IsDead)
                 {
                     members[i].MarkAsNoLongerNeeded();
@@ -65,7 +59,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p)) SetPedAsCop(p);
+                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
                 }
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
@@ -73,6 +67,8 @@ namespace AdvancedWorld
                 members.Clear();
                 return true;
             }
+
+            if (!onDuty && spawnedVehicle.IsInRangeOf(target.Position, 50.0f)) SetPedsOnDuty();
 
             return false;
         }

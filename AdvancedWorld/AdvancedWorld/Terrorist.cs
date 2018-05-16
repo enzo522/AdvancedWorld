@@ -4,16 +4,11 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class Terrorist : Criminal, IBlockable
+    public class Terrorist : Criminal
     {
         private string name;
-        private int blockCooldown;
 
-        public Terrorist(string name) : base(AdvancedWorld.CrimeType.Terrorist)
-        {
-            this.name = name;
-            this.blockCooldown = 15;
-        }
+        public Terrorist(string name) : base(ListManager.EventType.Terrorist) { this.name = name; }
 
         public bool IsCreatedIn(float radius)
         {
@@ -37,7 +32,7 @@ namespace AdvancedWorld
                 return false;
             }
 
-            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Terrorist);
+            relationship = Util.NewRelationship(ListManager.EventType.Terrorist);
 
             if (relationship == 0)
             {
@@ -120,17 +115,17 @@ namespace AdvancedWorld
             {
                 dispatchCooldown = 0;
 
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, AdvancedWorld.EmergencyType.Army)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, "ARMY")) AdvancedWorld.DispatchAgainst(spawnedPed, type);
             }
         }
 
-        public void CheckBlockable()
+        private new void CheckBlockable()
         {
             if (blockCooldown < 15) blockCooldown++;
             else
             {
                 blockCooldown = 0;
-                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.Terrorist);
+                AdvancedWorld.BlockRoadAgainst(spawnedPed, type);
             }
         }
     }

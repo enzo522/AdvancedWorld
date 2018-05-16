@@ -1,5 +1,4 @@
 ﻿using GTA;
-using GTA.Math;
 using System.Collections.Generic;
 
 namespace AdvancedWorld
@@ -8,9 +7,7 @@ namespace AdvancedWorld
     {
         private List<Entity> checkedPeds;
 
-        public Paramedic(string name, Entity target) : base(name, target) { this.checkedPeds = new List<Entity>(); }
-
-        public override bool IsCreatedIn(Vector3 safePosition, List<string> models) { return IsCreatedIn(safePosition, models, "MEDIC"); }
+        public Paramedic(string name, Entity target) : base(name, target, "MEDIC") { this.checkedPeds = new List<Entity>(); }
 
         protected override void SetPedsOnDuty()
         {

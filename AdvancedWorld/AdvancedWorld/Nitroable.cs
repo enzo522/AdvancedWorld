@@ -11,7 +11,7 @@ namespace AdvancedWorld
         private int nitroAmount;
         private bool nitroCooldown;
 
-        public Nitroable(AdvancedWorld.CrimeType type) : base(type)
+        public Nitroable(ListManager.EventType type) : base(type)
         {
             exhausts = new List<string>
             {
@@ -38,15 +38,15 @@ namespace AdvancedWorld
 
         private bool CanSafelyUseNitroBetween(Vector3 v1, Vector3 v2)
         {
-            RaycastResult r = World.Raycast(v1, v2, IntersectOptions.Everything);
-
-            return !r.DitHitAnything || r.HitCoords.DistanceTo(v1) > 1.5f;
+            RaycastResult r = World.Raycast(v1, v1 + v2, IntersectOptions.Everything, spawnedVehicle);
+            
+            return !r.DitHitAnything;
         }
 
         public void CheckNitroable()
         {
-            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 20.0f && spawnedVehicle.Acceleration > 0
-                && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 2.0f))
+            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 30.0f && spawnedVehicle.Acceleration > 0
+                && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 5.0f))
             {
                 spawnedVehicle.EnginePowerMultiplier = 7.0f;
                 spawnedVehicle.EngineTorqueMultiplier = 7.0f;

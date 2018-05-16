@@ -5,17 +5,15 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Driveby : Criminal, IBlockable
+    public class Driveby : Criminal
     {
         private List<Ped> members;
         private string name;
-        private int blockCooldown;
 
-        public Driveby(string name) : base(AdvancedWorld.CrimeType.Driveby)
+        public Driveby(string name) : base(ListManager.EventType.Driveby)
         {
             this.members = new List<Ped>();
             this.name = name;
-            this.blockCooldown = 15;
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
@@ -34,7 +32,7 @@ namespace AdvancedWorld
             
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };
             Util.Tune(spawnedVehicle, false, (Util.GetRandomInt(3) == 1));
-            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Driveby);
+            relationship = Util.NewRelationship(ListManager.EventType.Driveby);
 
             if (relationship == 0)
             {
@@ -230,16 +228,6 @@ namespace AdvancedWorld
             }
 
             return false;
-        }
-
-        public void CheckBlockable()
-        {
-            if (blockCooldown < 15) blockCooldown++;
-            else
-            {
-                blockCooldown = 0;
-                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.Driveby);
-            }
         }
     }
 }

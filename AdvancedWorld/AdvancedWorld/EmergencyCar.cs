@@ -7,9 +7,7 @@ namespace AdvancedWorld
 {
     public class EmergencyCar : Emergency
     {
-        private string emergencyType;
-
-        public EmergencyCar(string name, Entity target, string emergencyType) : base(name, target) { this.emergencyType = emergencyType; }
+        public EmergencyCar(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -20,15 +18,34 @@ namespace AdvancedWorld
             spawnedVehicle = Util.Create(name, road.Position, road.Heading, false);
 
             if (!Util.ThereIs(spawnedVehicle)) return false;
-
-            int max = emergencyType == "LSPD" ? 1 : spawnedVehicle.PassengerSeats;
-
-            for (int i = -1; i < max; i++)
+            if (emergencyType == "LSPD")
             {
-                if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 1; i++)
                 {
-                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
-                    Script.Wait(50);
+                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                    {
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                        Script.Wait(50);
+                    }
+                }
+            }
+            else
+            {
+                string selectedModel = models[Util.GetRandomInt(models.Count)];
+
+                if (selectedModel == null)
+                {
+                    Restore();
+                    return false;
+                }
+
+                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 5; i++)
+                {
+                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                    {
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModel));
+                        Script.Wait(50);
+                    }
                 }
             }
 
@@ -74,8 +91,24 @@ namespace AdvancedWorld
 
                     case "SWAT":
                         {
-                            p.Weapons.Give(WeaponHash.SMG, 300, true, true);
-                            p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
+                            if (Util.GetRandomInt(3) == 1)
+                            {
+                                Shield s = new Shield(p);
+
+                                if (s.IsCreatedIn(p.Position.Around(5.0f)))
+                                {
+                                    ListManager.Add(s, ListManager.EventType.Shield);
+                                    p.Weapons.Give(WeaponHash.Pistol, 100, true, true);
+                                }
+                                else s.Restore();
+                            }
+                            
+                            if (!p.Weapons.HasWeapon(WeaponHash.Pistol))
+                            {
+                                p.Weapons.Give(WeaponHash.SMG, 300, true, true);
+                                p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
+                            }
+                            
                             p.ShootRate = 700;
                             p.Armor = 70;
 
@@ -91,12 +124,10 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_HEARING_RANGE, p, 1000.0f);
                 Function.Call(Hash.SET_PED_COMBAT_RANGE, p, 2);
 
+                Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
-
-                if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
 
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
@@ -113,7 +144,7 @@ namespace AdvancedWorld
                 {
                     Function.Call(Hash.SET_DRIVER_ABILITY, p, 1.0f);
                     Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, p, 1.0f);
-
+                    
                     if (((Ped)target).IsInVehicle()) Function.Call(Hash.TASK_VEHICLE_CHASE, p, target);
                     else p.Task.DriveTo(spawnedVehicle, target.Position, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                 }
@@ -121,6 +152,26 @@ namespace AdvancedWorld
             }
 
             return true;
+        }
+
+        protected override void SetPedsOnDuty()
+        {
+            foreach (Ped p in members)
+            {
+                if (Util.ThereIs(p))
+                {
+                    p.AlwaysKeepTask = false;
+                    p.BlockPermanentEvents = false;
+                    Function.Call(Hash.SET_PED_AS_COP, p, true);
+
+                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+                    
+                    p.NeverLeavesGroup = true;
+                    p.MarkAsNoLongerNeeded();
+                    onDuty = true;
+                }
+            }
         }
     }
 }

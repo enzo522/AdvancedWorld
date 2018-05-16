@@ -47,6 +47,7 @@ namespace AdvancedWorld
                             spawnedVehicle.Speed = selectedSpeed;
                             spawnedPed.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIV" + spawnedPed.Gender.ToString().ToUpper());
                             spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                            spawnedPed.MarkAsNoLongerNeeded();
                         }
                     }
                     

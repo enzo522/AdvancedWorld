@@ -4,16 +4,14 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class Racer : Nitroable, IBlockable
+    public class Racer : Nitroable
     {
         private string name;
-        private int blockCooldown;
         private Vector3 goal;
 
-        public Racer(string name, Vector3 goal) : base(AdvancedWorld.CrimeType.Racer)
+        public Racer(string name, Vector3 goal) : base(ListManager.EventType.Racer)
         {
             this.name = name;
-            this.blockCooldown = 15;
             this.goal = goal;
         }
 
@@ -36,7 +34,7 @@ namespace AdvancedWorld
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             Util.Tune(spawnedVehicle, true, true);
 
-            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.Racer);
+            relationship = Util.NewRelationship(ListManager.EventType.Racer);
 
             if (relationship == 0)
             {
@@ -112,23 +110,22 @@ namespace AdvancedWorld
             }
 
             if (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) spawnedVehicle.PlaceOnGround();
+
+            return false;
+        }
+
+        public void CheckDispatchable()
+        {
             if (Util.ThereIs(spawnedPed))
             {
                 CheckDispatch();
                 CheckBlockable();
             }
-
-            return false;
         }
 
-        public void CheckBlockable()
+        public bool Exists()
         {
-            if (blockCooldown < 15) blockCooldown++;
-            else
-            {
-                blockCooldown = 0;
-                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.Racer);
-            }
+            return Util.ThereIs(spawnedPed) && Util.ThereIs(spawnedVehicle);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace AdvancedWorld
         private List<WeaponHash> standoffWeapons;
         private TaskSequence ts;
 
-        public GangTeam() : base(AdvancedWorld.CrimeType.GangTeam)
+        public GangTeam() : base(ListManager.EventType.GangTeam)
         {
             this.members = new List<Ped>();
             this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.BattleAxe, WeaponHash.Unarmed };

@@ -4,16 +4,11 @@ using GTA.Native;
 
 namespace AdvancedWorld
 {
-    public class AggressiveDriver : Nitroable, IBlockable
+    public class AggressiveDriver : Nitroable
     {
         private string name;
-        private int blockCooldown;
 
-        public AggressiveDriver(string name) : base(AdvancedWorld.CrimeType.AggressiveDriver)
-        {
-            this.name = name;
-            this.blockCooldown = 15;
-        }
+        public AggressiveDriver(string name) : base(ListManager.EventType.AggressiveDriver) { this.name = name; }
 
         public bool IsCreatedIn(float radius)
         {
@@ -41,7 +36,7 @@ namespace AdvancedWorld
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             Util.Tune(spawnedVehicle, true, true);
-            relationship = Util.NewRelationship(AdvancedWorld.CrimeType.AggressiveDriver);
+            relationship = Util.NewRelationship(ListManager.EventType.AggressiveDriver);
 
             if (relationship == 0)
             {
@@ -110,16 +105,6 @@ namespace AdvancedWorld
             }
 
             return false;
-        }
-
-        public void CheckBlockable()
-        {
-            if (blockCooldown < 15) blockCooldown++;
-            else
-            {
-                blockCooldown = 0;
-                AdvancedWorld.BlockRoadAgainst(spawnedPed, AdvancedWorld.CrimeType.AggressiveDriver);
-            }
         }
     }
 }

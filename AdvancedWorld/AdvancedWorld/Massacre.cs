@@ -10,7 +10,7 @@ namespace AdvancedWorld
         private List<Ped> members;
         private float radius;
 
-        public Massacre() : base(AdvancedWorld.CrimeType.Massacre)
+        public Massacre() : base(ListManager.EventType.Massacre)
         {
             this.members = new List<Ped>();
             this.radius = 0.0f;
@@ -32,8 +32,7 @@ namespace AdvancedWorld
                 Script.Wait(50);
 
                 if (++trycount > 5) return false;
-            }
-            while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
+            } while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
             || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic")
             || !Function.Call<bool>(Hash.HAS_CLIP_SET_LOADED, "move_ballistic_minigun"));
 
@@ -47,7 +46,7 @@ namespace AdvancedWorld
 
                 p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
                 p.Weapons.Current.InfiniteAmmo = true;
-                p.Health = p.MaxHealth = 2000;
+                p.Health = p.MaxHealth = 500;
                 p.Armor = 100;
 
                 Function.Call(Hash.RESET_PED_MOVEMENT_CLIPSET, p, 1.0f);
@@ -69,6 +68,8 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 10, 9, 0, 0);
                 Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 5, 0, false);
 
+                Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
+                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
@@ -78,6 +79,8 @@ namespace AdvancedWorld
                 p.FiringPattern = FiringPattern.FullAuto;
                 p.ShootRate = 1000;
                 p.CanRagdoll = false;
+                p.CanWrithe = false;
+                p.IsFireProof = true;
                 p.CanSwitchWeapons = true;
 
                 if (!Util.BlipIsOn(p))
@@ -96,7 +99,7 @@ namespace AdvancedWorld
                     return false;
                 }
             }
-
+            
             PerformTask();
             return true;
         }

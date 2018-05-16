@@ -1,15 +1,11 @@
 ﻿using GTA;
-using GTA.Math;
-using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
     public class Firefighter : EmergencyFire
     {
-        public Firefighter(string name, Entity target) : base(name, target) { }
-
-        public override bool IsCreatedIn(Vector3 safePosition, List<string> models) { return IsCreatedIn(safePosition, models, "FIREMAN"); }
-
+        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { }
+        
         protected override void SetPedsOnDuty()
         {
             Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
