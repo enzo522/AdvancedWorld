@@ -68,15 +68,18 @@ namespace AdvancedWorld
 
         public void CheckStingable()
         {
-            Vehicle v = World.GetClosestVehicle(stinger.Position, 10.0f);
+            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(stinger.Position, 10.0f);
 
-            if (!Util.ThereIs(v)) return;
+            if (nearbyVehicles.Length < 1) return;
 
-            if (v.IsTouching(stinger) && v.CanTiresBurst)
+            foreach (Vehicle v in nearbyVehicles)
             {
-                for (int i = 0; i < wheels.Count; i++)
+                if (Util.ThereIs(v) && v.CanTiresBurst)
                 {
-                    if (v.HasBone(wheels[i]) && !v.IsTireBurst(i) && StingerAreaContains(v.GetBoneCoord(wheels[i]))) v.BurstTire(i);
+                    for (int i = 0; i < wheels.Count; i++)
+                    {
+                        if (v.HasBone(wheels[i]) && !v.IsTireBurst(i) && StingerAreaContains(v.GetBoneCoord(wheels[i]))) v.BurstTire(i);
+                    }
                 }
             }
         }

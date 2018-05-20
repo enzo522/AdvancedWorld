@@ -813,12 +813,13 @@ namespace AdvancedWorld
         {
             radius = 100.0f;
             eventTimeChecker = 0;
+            Interval = 15000;
             Tick += OnTick;
         }
 
         private void OnTick(Object sender, EventArgs e)
         {
-            if (eventTimeChecker == 800 || eventTimeChecker == 1600 || eventTimeChecker == 2400 || eventTimeChecker == 3600)
+            if (eventTimeChecker == 1 || eventTimeChecker == 2 || eventTimeChecker == 3 || eventTimeChecker == 4)
             {
                 if (ListManager.ReplaceSlotIsAvailable)
                 {
@@ -834,7 +835,7 @@ namespace AdvancedWorld
 
                 eventTimeChecker++;
             }
-            else if (eventTimeChecker == 4000)
+            else if (eventTimeChecker == 5)
             {
                 switch (Util.GetRandomInt(10))
                 {

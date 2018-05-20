@@ -32,6 +32,7 @@ namespace AdvancedWorld
                 return false;
             }
 
+            Script.Wait(50);
             relationship = Util.NewRelationship(ListManager.EventType.Terrorist);
 
             if (relationship == 0)
@@ -39,10 +40,8 @@ namespace AdvancedWorld
                 Restore();
                 return false;
             }
-
-            Script.Wait(50);
+            
             Util.Tune(spawnedVehicle, false, false);
-
             spawnedPed.RelationshipGroup = relationship;
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 46, true);
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 5, true);

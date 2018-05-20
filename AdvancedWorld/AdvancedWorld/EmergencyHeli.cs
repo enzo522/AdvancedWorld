@@ -7,7 +7,9 @@ namespace AdvancedWorld
 {
     public class EmergencyHeli : Emergency
     {
-        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        private bool alsoDriver;
+
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.alsoDriver = false; }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -35,7 +37,7 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 3; i++)
+                for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
                 {
                     if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
                     {
@@ -100,6 +102,11 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
+                
+                if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+
+                p.NeverLeavesGroup = true;
             }
 
             spawnedVehicle.EngineRunning = true;
@@ -111,7 +118,7 @@ namespace AdvancedWorld
                 foreach (Ped p in members)
                 {
                     if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
-                    else p.Task.FightAgainstHatedTargets(100.0f);
+                    else p.Task.FightAgainstHatedTargets(400.0f);
                 }
             }
 
@@ -124,20 +131,16 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(p))
                 {
+                    if (!alsoDriver && p.Equals(spawnedVehicle.Driver)) continue;
+
                     p.AlwaysKeepTask = false;
                     p.BlockPermanentEvents = false;
                     Function.Call(Hash.SET_PED_AS_COP, p, true);
-
-                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-
-                    p.NeverLeavesGroup = true;
-
-                    if (!p.Equals(spawnedVehicle.Driver)) p.MarkAsNoLongerNeeded();
-
-                    onDuty = true;
+                    p.MarkAsNoLongerNeeded();
                 }
             }
+
+            onDuty = true;
         }
 
         public override bool ShouldBeRemoved()
@@ -160,11 +163,16 @@ namespace AdvancedWorld
                 else if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || !spawnedVehicle.IsInRangeOf(target.Position, 300.0f) || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
+                    if (Util.ThereIs(p))
+                    {
+                        alsoDriver = true;
+                        SetPedsOnDuty();
+                        p.MarkAsNoLongerNeeded();
+                    }
                 }
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();

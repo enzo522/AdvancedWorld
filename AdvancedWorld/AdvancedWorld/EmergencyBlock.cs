@@ -26,11 +26,7 @@ namespace AdvancedWorld
 
             if (emergencyType == "LSPD")
             {
-                for (int i = 0; i < 2; i++)
-                {
-                    members.Add(Util.Create(models[Util.GetRandomInt(models.Count)], spawnedVehicle.Position.Around(5.0f)));
-                    Script.Wait(50);
-                }
+                for (int i = 0; i < 2; i++) members.Add(Util.Create(models[Util.GetRandomInt(models.Count)], spawnedVehicle.Position.Around(5.0f)));
             }
             else
             {
@@ -42,11 +38,7 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                for (int i = 0; i < 2; i++)
-                {
-                    members.Add(Util.Create(selectedModel, spawnedVehicle.Position.Around(5.0f)));
-                    Script.Wait(50);
-                }
+                for (int i = 0; i < 2; i++) members.Add(Util.Create(selectedModel, spawnedVehicle.Position.Around(5.0f)));
             }
 
             foreach (Ped p in members)
@@ -103,7 +95,13 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
+                
+                if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+
+                p.NeverLeavesGroup = true;
                 Function.Call(Hash.SET_PED_AS_COP, p, true);
+                p.Task.FightAgainstHatedTargets(200.0f);
             }
 
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
@@ -115,16 +113,10 @@ namespace AdvancedWorld
         {
             foreach (Ped p in members)
             {
-                if (Util.ThereIs(p))
-                {
-                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-
-                    p.NeverLeavesGroup = true;
-                    p.MarkAsNoLongerNeeded();
-                    onDuty = true;
-                }
+                if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
             }
+
+            onDuty = true;
         }
     }
 }

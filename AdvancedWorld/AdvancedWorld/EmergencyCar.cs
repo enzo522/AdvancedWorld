@@ -132,6 +132,11 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
+
+                if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+
+                p.NeverLeavesGroup = true;
             }
 
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
@@ -145,10 +150,10 @@ namespace AdvancedWorld
                     Function.Call(Hash.SET_DRIVER_ABILITY, p, 1.0f);
                     Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, p, 1.0f);
                     
-                    if (((Ped)target).IsInVehicle()) Function.Call(Hash.TASK_VEHICLE_CHASE, p, target);
+                    if (target.Model.IsPed && ((Ped)target).IsInVehicle()) Function.Call(Hash.TASK_VEHICLE_CHASE, p, target);
                     else p.Task.DriveTo(spawnedVehicle, target.Position, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                 }
-                else p.Task.FightAgainstHatedTargets(100.0f);
+                else p.Task.FightAgainstHatedTargets(400.0f);
             }
 
             return true;
@@ -160,20 +165,14 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(p))
                 {
-                    if (target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 20.0f) && p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, p, spawnedVehicle, 1, 5000);
-
                     p.AlwaysKeepTask = false;
                     p.BlockPermanentEvents = false;
                     Function.Call(Hash.SET_PED_AS_COP, p, true);
-
-                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-                    
-                    p.NeverLeavesGroup = true;
                     p.MarkAsNoLongerNeeded();
-                    onDuty = true;
                 }
             }
+
+            onDuty = true;
         }
     }
 }

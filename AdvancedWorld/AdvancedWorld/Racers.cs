@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class Racers : AdvancedEntity
+    public class Racers : Criminal
     {
         private List<Racer> racers;
         private List<string> models;
         private Vector3 safePosition;
         private Vector3 goal;
 
-        public Racers(List<string> models, Vector3 position, Vector3 goal) : base()
+        public Racers(List<string> models, Vector3 position, Vector3 goal) : base(ListManager.EventType.Racer)
         {
             this.racers = new List<Racer>();
             this.models = models;
@@ -62,13 +62,21 @@ namespace AdvancedWorld
 
             if (racers.Count < 1) return true;
 
+            float distance = float.MaxValue;
+
             foreach (Racer r in racers)
             {
-                if (r.Exists())
+                if (r.Exists() && r.RemainingDistance < distance)
                 {
-                    r.CheckDispatchable();
-                    break;
+                    distance = r.RemainingDistance;
+                    spawnedPed = r.Driver;
                 }
+            }
+
+            if (Util.ThereIs(spawnedPed))
+            {
+                CheckDispatch();
+                CheckBlockable();
             }
 
             return false;

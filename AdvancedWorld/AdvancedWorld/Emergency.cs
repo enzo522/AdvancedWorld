@@ -1,6 +1,5 @@
 ﻿using GTA;
 using GTA.Math;
-using GTA.Native;
 using System.Collections.Generic;
 
 namespace AdvancedWorld
@@ -55,13 +54,9 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !Util.ThereIs(target) || target.IsDead || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || !Util.ThereIs(target) || target.IsDead || !spawnedVehicle.IsInRangeOf(target.Position, 300.0f) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
-                }
-
+                if (!onDuty) SetPedsOnDuty();
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
 
                 members.Clear();

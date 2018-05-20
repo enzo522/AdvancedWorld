@@ -114,18 +114,12 @@ namespace AdvancedWorld
             return false;
         }
 
-        public void CheckDispatchable()
-        {
-            if (Util.ThereIs(spawnedPed))
-            {
-                CheckDispatch();
-                CheckBlockable();
-            }
-        }
-
         public bool Exists()
         {
             return Util.ThereIs(spawnedPed) && Util.ThereIs(spawnedVehicle);
         }
+
+        public float RemainingDistance { get { return spawnedPed.Position.DistanceTo(goal); } }
+        public Ped Driver { get { return spawnedPed; } }
     }
 }

@@ -39,7 +39,7 @@ namespace AdvancedWorld
                 Restore();
                 return false;
             }
-
+            
             for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
             {
                 if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
