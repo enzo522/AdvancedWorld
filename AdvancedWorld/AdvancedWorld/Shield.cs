@@ -16,8 +16,7 @@ namespace AdvancedWorld
         {
             None,
             Inactive,
-            MeleeCombat,
-            NormalCombat,
+            InCombat,
             Reloading
         }
 
@@ -42,7 +41,6 @@ namespace AdvancedWorld
             shield.IsMeleeProof = true;
             shield.IsInvincible = true;
             shield.IsVisible = false;
-            shield.LodDistance = 1000;
 
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);
             owner.CanPlayGestures = false;
@@ -71,10 +69,9 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (owner.IsInVehicle()) Detach(false);
+            if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
             else if (owner.IsRagdoll) Detach(true);
-            else if (owner.IsInMeleeCombat) Attach(AttachState.MeleeCombat);
-            else if (owner.IsInCombat) Attach(AttachState.NormalCombat);
+            else if (owner.IsInCombat) Attach(AttachState.InCombat);
             else if (owner.IsReloading) Attach(AttachState.Reloading);
             else Attach(AttachState.Inactive);
 
@@ -99,15 +96,7 @@ namespace AdvancedWorld
                             break;
                         }
 
-                    case AttachState.MeleeCombat:
-                        {
-                            position = new Vector3(0.0f, -0.07f, 0.0f);
-                            rotation = new Vector3(39.0f, 188.5f, 4.0f);
-                            boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 36029);
-                            break;
-                        }
-
-                    case AttachState.NormalCombat:
+                    case AttachState.InCombat:
                         {
                             position = new Vector3(-0.255f, 0.11f, -0.18f);
                             rotation = new Vector3(57.4701f, 198.83f, 25.4501f);

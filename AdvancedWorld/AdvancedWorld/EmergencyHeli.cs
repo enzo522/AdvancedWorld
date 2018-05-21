@@ -112,7 +112,7 @@ namespace AdvancedWorld
         {
             foreach (Ped p in members)
             {
-                if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
+                if (Util.ThereIs(spawnedVehicle) && p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
                 else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
             }
         }

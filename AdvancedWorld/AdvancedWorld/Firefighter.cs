@@ -6,7 +6,7 @@ namespace AdvancedWorld
     {
         public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { }
         
-        private new void SetPedsOnDuty()
+        protected override void SetPedsOnDuty()
         {
             if (TargetIsFound())
             {
@@ -28,6 +28,7 @@ namespace AdvancedWorld
 
         private new bool TargetIsFound()
         {
+            target = null;
             Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
 
             if (nearbyEntities.Length < 1) return false;
@@ -39,9 +40,8 @@ namespace AdvancedWorld
                     target = en;
                     return true;
                 }
-                else target = null;
             }
-
+            
             return false;
         }
     }

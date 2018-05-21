@@ -66,6 +66,7 @@ namespace AdvancedWorld
             return true;
         }
 
+        protected new abstract void SetPedsOnDuty();
         protected new void SetPedsOffDuty()
         {
             if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
@@ -75,16 +76,13 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (p.IsPersistent)
-                        {
-                            if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
-                            else p.Task.Wait(1000);
+                        if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                        else p.Task.Wait(1000);
 
-                            p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
-                            p.AlwaysKeepTask = false;
-                            p.BlockPermanentEvents = false;
-                            p.MarkAsNoLongerNeeded();
-                        }
+                        p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
+                        p.AlwaysKeepTask = false;
+                        p.BlockPermanentEvents = false;
+                        p.MarkAsNoLongerNeeded();
                     }
                 }
                 else
@@ -138,14 +136,14 @@ namespace AdvancedWorld
                 }
             }
             
-            if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;
             }
 
             if (!Util.ThereIs(target)) SetPedsOffDuty();
-            else if (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) || !EveryoneIsSitting()) SetPedsOnDuty();
+            else if (spawnedVehicle.IsInRangeOf(target.Position, 30.0f)) SetPedsOnDuty();
 
             return false;
         }

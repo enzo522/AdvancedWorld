@@ -9,7 +9,7 @@ namespace AdvancedWorld
 
         public Paramedic(string name, Entity target) : base(name, target, "MEDIC") { this.checkedPeds = new List<Entity>(); }
 
-        private new void SetPedsOnDuty()
+        protected override void SetPedsOnDuty()
         {
             if (TargetIsFound() && target.Model.IsPed)
             {
@@ -37,6 +37,7 @@ namespace AdvancedWorld
 
         private new bool TargetIsFound()
         {
+            target = null;
             Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 100.0f);
 
             if (nearbyPeds.Length < 1) return false;
@@ -51,9 +52,8 @@ namespace AdvancedWorld
                         return true;
                     }
                 }
-                else target = null;
             }
-
+            
             return false;
         }
     }

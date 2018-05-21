@@ -22,8 +22,8 @@ namespace AdvancedWorld
             this.emergencyType = emergencyType;
             this.onVehicleDuty = true;
 
-            if (this.emergencyType == "ARMY") relationship = Util.NewRelationship(ListManager.EventType.Army);
-            else relationship = Util.NewRelationship(ListManager.EventType.Cop);
+            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationship(ListManager.EventType.Army);
+            else this.relationship = Util.NewRelationship(ListManager.EventType.Cop);
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
@@ -139,7 +139,7 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(p))
                 {
-                    if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                    if (Util.ThereIs(spawnedVehicle) && p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
 
                     p.AlwaysKeepTask = false;
                     p.BlockPermanentEvents = false;
@@ -151,14 +151,13 @@ namespace AdvancedWorld
 
         protected bool TargetIsFound()
         {
+            target = null;
             Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 300.0f);
 
             if (nearbyPeds.Length < 1) return false;
 
             foreach (Ped p in nearbyPeds)
             {
-                target = null;
-
                 if (Util.ThereIs(p) && !p.IsDead && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup).Equals(Relationship.Hate))
                 {
                     target = p;

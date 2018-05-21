@@ -40,7 +40,6 @@ namespace AdvancedWorld
             stinger.IsFireProof = true;
             stinger.IsInvincible = true;
             stinger.FreezePosition = true;
-            stinger.LodDistance = 1000;
 
             Vector3 dimension = stinger.Model.GetDimensions();
             points = new Vector3[4];

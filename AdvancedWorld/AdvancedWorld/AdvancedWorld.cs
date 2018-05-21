@@ -464,8 +464,6 @@ namespace AdvancedWorld
                 copCarNames[1].Add("bcso4");
                 copCarNames[1].Add("bcso5");
                 copCarNames[1].Add("bcso6");
-                copCarNames[0].Add("bpsp1");
-                copCarNames[0].Add("bpsp2");
                 copCarNames[0].Add("bulhway");
                 copCarNames[0].Add("bulhway2");
                 copCarNames[0].Add("bulpolice");
