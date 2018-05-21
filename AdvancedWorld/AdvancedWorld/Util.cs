@@ -44,7 +44,9 @@ namespace AdvancedWorld
             Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"),
             Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC")
         };
-        private static List<int> newRelationships = new List<int>();
+        private static List<int> criminalRelationships = new List<int>();
+        private static List<int> copRelationships = new List<int>();
+        private static List<int> armyRelationships = new List<int>();
         private static int copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
         private static int count = 0;
@@ -220,16 +222,46 @@ namespace AdvancedWorld
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
-            newRelationships.Add(newRel);
-            World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
-
             switch (type)
             {
                 case ListManager.EventType.AggressiveDriver:
                 case ListManager.EventType.Carjacker:
                 case ListManager.EventType.Racer:
                     {
-                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        
+                        criminalRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
+
+                        break;
+                    }
+
+                case ListManager.EventType.Army:
+                    {
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+
+                        armyRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, copID);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+
+                        break;
+                    }
+
+                case ListManager.EventType.Cop:
+                    {
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+
+                        copRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, copID);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
                         break;
                     }
@@ -239,20 +271,26 @@ namespace AdvancedWorld
                 case ListManager.EventType.Terrorist:
                     {
                         foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        
+                        criminalRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+
+
                         break;
                     }
 
                 case ListManager.EventType.GangTeam:
                     {
-                        foreach (int i in newRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                        criminalRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+
                         break;
                     }
             }
@@ -260,14 +298,33 @@ namespace AdvancedWorld
             return newRel;
         }
 
-        public static void CleanUpRelationship(int relationship)
+        public static void CleanUpRelationship(int relationship, ListManager.EventType type)
         {
             World.RemoveRelationshipGroup(relationship);
 
-            if (newRelationships.Contains(relationship)) newRelationships.Remove(relationship);
+            switch (type)
+            {
+                case ListManager.EventType.Army:
+                    {
+                        if (armyRelationships.Contains(relationship)) armyRelationships.Remove(relationship);
+                        break;
+                    }
+
+                case ListManager.EventType.Cop:
+                    {
+                        if (copRelationships.Contains(relationship)) copRelationships.Remove(relationship);
+                        break;
+                    }
+
+                default:
+                    {
+                        if (criminalRelationships.Contains(relationship)) criminalRelationships.Remove(relationship);
+                        break;
+                    }
+            }
         }
 
-        public static bool AnyEmergencyIsNear(Vector3 position, string type)
+        public static bool AnyEmergencyIsNear(Vector3 position, ListManager.EventType type)
         {
             Ped[] nearbyPeds = World.GetNearbyPeds(position, 100.0f);
 
@@ -275,7 +332,38 @@ namespace AdvancedWorld
 
             foreach (Ped p in nearbyPeds)
             {
-                if (p.RelationshipGroup == Function.Call<int>(Hash.GET_HASH_KEY, type) && !p.Equals(Game.Player.Character) && !p.IsDead) return true;
+                if (!p.Equals(Game.Player.Character) && !p.IsDead)
+                {
+                    switch (type)
+                    {
+                        case ListManager.EventType.Army:
+                            {
+                                foreach (int i in armyRelationships)
+                                {
+                                    if (p.RelationshipGroup == i) return true;
+                                }
+
+                                break;
+                            }
+
+                        case ListManager.EventType.Cop:
+                            {
+                                foreach (int i in copRelationships)
+                                {
+                                    if (p.RelationshipGroup == i) return true;
+                                }
+
+                                break;
+                            }
+
+                        case ListManager.EventType.Fire:
+                            {
+                                if (p.RelationshipGroup == Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN")) return true;
+
+                                break;
+                            }
+                    }
+                }
             }
 
             return false;

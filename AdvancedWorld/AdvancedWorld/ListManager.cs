@@ -24,8 +24,9 @@ namespace AdvancedWorld
         public enum EventType
         {
             AggressiveDriver,
+            Army,
             Carjacker,
-            Dispatch,
+            Cop,
             Driveby,
             GangTeam,
             Fire,
@@ -62,15 +63,17 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case EventType.Carjacker:
+                case EventType.Army:
+                case EventType.Cop:
+                case EventType.Fire:
                     {
-                        carjackerList.Add(en);
+                        dispatchList.Add(en);
                         break;
                     }
 
-                case EventType.Dispatch:
+                case EventType.Carjacker:
                     {
-                        dispatchList.Add(en);
+                        carjackerList.Add(en);
                         break;
                     }
 

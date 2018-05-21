@@ -16,7 +16,7 @@ namespace AdvancedWorld
             this.radius = 0.0f;
         }
 
-        public bool IsCreatedIn(float radius, Vector3 safePosition, int teamID)
+        public bool IsCreatedIn(float radius, Vector3 safePosition)
         {
             this.radius = radius;
             Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
@@ -73,7 +73,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
-                p.RelationshipGroup = teamID;
+                p.RelationshipGroup = relationship;
                 p.AlwaysKeepTask = true;
 
                 p.FiringPattern = FiringPattern.FullAuto;
@@ -95,7 +95,7 @@ namespace AdvancedWorld
             {
                 if (!Util.ThereIs(p))
                 {
-                    Restore();
+                    Restore(true);
                     return false;
                 }
             }
@@ -109,19 +109,34 @@ namespace AdvancedWorld
             foreach (Ped p in members) p.Task.FightAgainstHatedTargets(radius);
         }
 
-        public override void Restore()
+        public override void Restore(bool instantly)
         {
-            foreach (Ped p in members)
+            if (instantly)
             {
-                if (Util.ThereIs(p))
+                foreach (Ped p in members)
                 {
-                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+                    if (Util.ThereIs(p))
+                    {
+                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
 
-                    p.Delete();
+                        p.Delete();
+                    }
+                }
+            }
+            else
+            {
+                foreach (Ped p in members)
+                {
+                    if (Util.ThereIs(p))
+                    {
+                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+
+                        p.MarkAsNoLongerNeeded();
+                    }
                 }
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Massacre);
 
             members.Clear();
         }
@@ -159,10 +174,11 @@ namespace AdvancedWorld
 
             if (members.Count < 1)
             {
-                if (relationship != 0) Util.CleanUpRelationship(relationship);
+                if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Massacre);
 
                 return true;
             }
+
             if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
             return false;

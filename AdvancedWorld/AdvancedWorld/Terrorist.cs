@@ -32,16 +32,9 @@ namespace AdvancedWorld
                 return false;
             }
 
-            Script.Wait(50);
-            relationship = Util.NewRelationship(ListManager.EventType.Terrorist);
-
-            if (relationship == 0)
-            {
-                Restore();
-                return false;
-            }
-            
+            Script.Wait(50);            
             Util.Tune(spawnedVehicle, false, false);
+
             spawnedPed.RelationshipGroup = relationship;
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 46, true);
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 5, true);
@@ -57,44 +50,40 @@ namespace AdvancedWorld
             }
             else
             {
-                Restore();
+                Restore(true);
                 return false;
             }
         }
 
-        public override void Restore()
+        public override void Restore(bool instantly)
         {
-            if (Util.ThereIs(spawnedPed)) spawnedPed.Delete();
-            if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
-            if (relationship != 0) Util.CleanUpRelationship(spawnedPed.RelationshipGroup);
+            if (instantly)
+            {
+                if (Util.ThereIs(spawnedPed)) spawnedPed.Delete();
+                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
+            }
+            else
+            {
+                if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+            }
+
+            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Terrorist);
         }
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(spawnedPed))
+            if (!Util.ThereIs(spawnedPed) || !Util.ThereIs(spawnedVehicle))
             {
-                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
-                if (relationship != 0) Util.CleanUpRelationship(relationship);
-
+                Restore(false);
                 return true;
             }
 
-            if (!Util.ThereIs(spawnedVehicle))
+            if (spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-                if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
-                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
-                return true;
-            }
-
-            if (spawnedPed.IsDead || !spawnedVehicle.IsDriveable || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-                if (spawnedPed.IsPersistent) spawnedPed.MarkAsNoLongerNeeded();
-                if (spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
-                if (relationship != 0) Util.CleanUpRelationship(relationship);
-
+                Restore(false);
                 return true;
             }
 
@@ -114,7 +103,7 @@ namespace AdvancedWorld
             {
                 dispatchCooldown = 0;
 
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, "ARMY")) AdvancedWorld.DispatchAgainst(spawnedPed, type);
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, ListManager.EventType.Army)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
             }
         }
     }

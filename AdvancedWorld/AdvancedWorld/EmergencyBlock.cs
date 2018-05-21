@@ -7,7 +7,7 @@ namespace AdvancedWorld
 {
     public class EmergencyBlock : Emergency
     {
-        public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { onVehicleDuty = false; }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -22,11 +22,11 @@ namespace AdvancedWorld
             Stinger s = new Stinger(spawnedVehicle);
 
             if (s.IsCreatedIn(spawnedVehicle.Position - spawnedVehicle.ForwardVector * spawnedVehicle.Model.GetDimensions().Y)) ListManager.Add(s, ListManager.EventType.RoadBlock);
-            else s.Restore();
+            else s.Restore(true);
 
             if (emergencyType == "LSPD")
             {
-                for (int i = 0; i < 2; i++) members.Add(Util.Create(models[Util.GetRandomInt(models.Count)], spawnedVehicle.Position.Around(5.0f)));
+                for (int i = 0; i < 2; i++) members.Add(Util.Create(models[Util.GetRandomInt(models.Count)], World.GetNextPositionOnSidewalk(spawnedVehicle.Position.Around(5.0f))));
             }
             else
             {
@@ -34,7 +34,7 @@ namespace AdvancedWorld
 
                 if (selectedModel == null)
                 {
-                    Restore();
+                    Restore(true);
                     return false;
                 }
 
@@ -45,7 +45,7 @@ namespace AdvancedWorld
             {
                 if (!Util.ThereIs(p))
                 {
-                    Restore();
+                    Restore(true);
                     return false;
                 }
 
@@ -84,39 +84,25 @@ namespace AdvancedWorld
 
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.CanSwitchWeapons = true;
-
-                Function.Call(Hash.SET_PED_ID_RANGE, p, 1000.0f);
-                Function.Call(Hash.SET_PED_SEEING_RANGE, p, 1000.0f);
-                Function.Call(Hash.SET_PED_HEARING_RANGE, p, 1000.0f);
-                Function.Call(Hash.SET_PED_COMBAT_RANGE, p, 2);
-
+                
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 1, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
-                
-                if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
 
-                p.NeverLeavesGroup = true;
-                Function.Call(Hash.SET_PED_AS_COP, p, true);
+                Function.Call(Hash.SET_PED_AS_COP, p, false);
+                p.AlwaysKeepTask = true;
+                p.BlockPermanentEvents = true;
                 p.Task.FightAgainstHatedTargets(200.0f);
+
+                p.RelationshipGroup = relationship;
+                p.NeverLeavesGroup = true;
             }
 
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
 
             return true;
-        }
-
-        protected override void SetPedsOnDuty()
-        {
-            foreach (Ped p in members)
-            {
-                if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
-            }
-
-            onDuty = true;
         }
     }
 }

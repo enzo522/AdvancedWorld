@@ -51,9 +51,16 @@ namespace AdvancedWorld
             return true;
         }
 
-        public override void Restore()
+        public override void Restore(bool instantly)
         {
-            if (Util.ThereIs(shield)) shield.Delete();
+            if (instantly)
+            {
+                if (Util.ThereIs(shield)) shield.Delete();
+            }
+            else
+            {
+                if (Util.ThereIs(shield)) shield.MarkAsNoLongerNeeded();
+            }
         }
 
         public override bool ShouldBeRemoved()
@@ -61,7 +68,7 @@ namespace AdvancedWorld
             if (!Util.ThereIs(shield)) return true;
             if (!Util.ThereIs(owner) || owner.IsDead || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                shield.MarkAsNoLongerNeeded();
+                Restore(false);
                 return true;
             }
 

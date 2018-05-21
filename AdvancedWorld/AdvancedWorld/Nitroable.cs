@@ -38,9 +38,7 @@ namespace AdvancedWorld
 
         private bool CanSafelyUseNitroBetween(Vector3 v1, Vector3 v2)
         {
-            RaycastResult r = World.Raycast(v1, v1 + v2, IntersectOptions.Everything, spawnedVehicle);
-            
-            return !r.DitHitAnything;
+            return !World.Raycast(v1, v1 + v2, IntersectOptions.Everything, spawnedVehicle).DitHitAnything;
         }
 
         public void CheckNitroable()

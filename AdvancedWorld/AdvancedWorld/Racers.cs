@@ -28,14 +28,14 @@ namespace AdvancedWorld
                 Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
 
                 if (!road.Position.Equals(Vector3.Zero) && r.IsCreatedIn(radius, road)) racers.Add(r);
-                else r.Restore();
+                else r.Restore(true);
             }
 
             foreach (Racer r in racers)
             {
                 if (!r.Exists())
                 {
-                    Restore();
+                    Restore(true);
                     return false;
                 }
             }
@@ -48,9 +48,9 @@ namespace AdvancedWorld
             foreach (Racer r in racers) r.CheckNitroable();
         }
 
-        public override void Restore()
+        public override void Restore(bool instantly)
         {
-            foreach (Racer r in racers) r.Restore();
+            foreach (Racer r in racers) r.Restore(instantly);
         }
 
         public override bool ShouldBeRemoved()

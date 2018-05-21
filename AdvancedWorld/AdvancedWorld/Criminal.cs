@@ -9,10 +9,10 @@
 
         public Criminal(ListManager.EventType type) : base()
         {
-            this.relationship = 0;
             this.dispatchCooldown = 7;
             this.blockCooldown = 0;
             this.type = type;
+            this.relationship = Util.NewRelationship(type);
         }
 
         protected void CheckDispatch()
@@ -22,7 +22,7 @@
             {
                 dispatchCooldown = 0;
 
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, "COP")) AdvancedWorld.DispatchAgainst(spawnedPed, type);
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, ListManager.EventType.Cop)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
             }
         }
 

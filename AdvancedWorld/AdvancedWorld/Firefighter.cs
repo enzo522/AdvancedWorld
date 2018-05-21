@@ -6,24 +6,9 @@ namespace AdvancedWorld
     {
         public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { }
         
-        protected override void SetPedsOnDuty()
+        private new void SetPedsOnDuty()
         {
-            Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
-
-            if (nearbyEntities.Length < 1) return;
-
-            foreach (Entity en in nearbyEntities)
-            {
-                if (Util.ThereIs(en) && en.IsOnFire)
-                {
-                    target = en;
-
-                    break;
-                }
-                else target = null;
-            }
-
-            if (Util.ThereIs(target))
+            if (TargetIsFound())
             {
                 foreach (Ped p in members)
                 {
@@ -39,6 +24,25 @@ namespace AdvancedWorld
                     }
                 }
             }
+        }
+
+        private new bool TargetIsFound()
+        {
+            Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
+
+            if (nearbyEntities.Length < 1) return false;
+
+            foreach (Entity en in nearbyEntities)
+            {
+                if (Util.ThereIs(en) && en.IsOnFire)
+                {
+                    target = en;
+                    return true;
+                }
+                else target = null;
+            }
+
+            return false;
         }
     }
 }

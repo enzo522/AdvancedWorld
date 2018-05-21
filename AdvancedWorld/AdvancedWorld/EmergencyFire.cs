@@ -7,7 +7,11 @@ namespace AdvancedWorld
 {
     public abstract class EmergencyFire : Emergency
     {
-        public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
+        {
+            Util.CleanUpRelationship(this.relationship, ListManager.EventType.Cop);
+            this.relationship = 0;
+        }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -34,7 +38,7 @@ namespace AdvancedWorld
             {
                 if (!Util.ThereIs(p))
                 {
-                    Restore();
+                    Restore(true);
                     return false;
                 }
 
@@ -62,11 +66,11 @@ namespace AdvancedWorld
             return true;
         }
 
-        protected void SetPedsOffDuty()
+        protected new void SetPedsOffDuty()
         {
+            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
             if (EveryoneIsSitting())
             {
-                if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                 foreach (Ped p in members)
                 {
                     if (p.IsPersistent)
@@ -75,45 +79,39 @@ namespace AdvancedWorld
                         else p.Task.Wait(1000);
 
                         p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
+                        p.AlwaysKeepTask = false;
+                        p.BlockPermanentEvents = false;
                         p.MarkAsNoLongerNeeded();
                     }
                 }
             }
             else
             {
-                foreach (Ped p in members)
+                for (int i = -1, j = 0; j < members.Count; j++)
                 {
-                    if (!p.IsInVehicle(spawnedVehicle))
+                    if (Util.ThereIs(members[j]) && !members[j].IsSittingInVehicle(spawnedVehicle))
                     {
-                        for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
+                        if (Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 160))
                         {
-                            if (spawnedVehicle.IsSeatFree((VehicleSeat)i) || spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
+                            if (members[j].IsStopped && !members[j].IsGettingIntoAVehicle)
+                                members[j].SetIntoVehicle(spawnedVehicle, (VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j]));
+                        }
+                        else
+                        {
+                            while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) || !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
                             {
-                                if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 160))
+                                if (++i >= spawnedVehicle.PassengerSeats)
                                 {
-                                    p.Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i, -1, 2.0f, 1);
-                                    break;
-                                }
-                                else if (p.IsStopped && !p.IsGettingIntoAVehicle)
-                                {
-                                    p.SetIntoVehicle(spawnedVehicle, (VehicleSeat)i);
-                                    break;
+                                    Restore(false);
+                                    return;
                                 }
                             }
+
+                            members[j].Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i++, -1, 2.0f, 1);
                         }
                     }
                 }
             }
-        }
-
-        private bool EveryoneIsSitting()
-        {
-            foreach (Ped p in members)
-            {
-                if (!p.IsDead && !p.IsSittingInVehicle(spawnedVehicle)) return false;
-            }
-
-            return true;
         }
 
         public override bool ShouldBeRemoved()
@@ -135,14 +133,7 @@ namespace AdvancedWorld
             
             if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
-                }
-
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
-
-                members.Clear();
+                Restore(false);
                 return true;
             }
 

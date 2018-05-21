@@ -478,6 +478,7 @@ namespace AdvancedWorld
                 copCarNames[0].Add("facthway");
                 copCarNames[0].Add("infhway");
                 copCarNames[0].Add("infpolice");
+                copCarNames[2].Add("infpolice2");
                 copCarNames[0].Add("leesperanto");
                 copCarNames[0].Add("pbp1");
                 copCarNames[0].Add("pcpd1");
@@ -504,15 +505,14 @@ namespace AdvancedWorld
                 copCarNames[1].Add("sheriff9");
                 copCarNames[1].Add("uranushway");
                 copCarNames[1].Add("uranushway2");
+                copCarNames[2].Add("vaccapol");
+                copCarNames[2].Add("vcpd1");
                 copCarNames[0].Add("vighway");
                 copCarNames[0].Add("vigpolice");
                 copCarNames[1].Add("vigsheriff");
                 fibCarNames.Add("fbi6");
                 fibCarNames.Add("fbi7");
                 fibCarNames.Add("fbi8");
-                fibCarNames.Add("infpolice2");
-                fibCarNames.Add("vaccapol");
-                fibCarNames.Add("vcpd1");
                 swatCarNames.Add("police14");
                 emCarNames.Add("ambulance2");
                 emCarNames.Add("ambulance3");
@@ -618,16 +618,16 @@ namespace AdvancedWorld
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
                             EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Dispatch);
-                            else lspd.Restore();
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Cop);
+                            else lspd.Restore(true);
                         }
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
                             EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
 
-                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Dispatch);
-                            else lspdheli.Restore();
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Cop);
+                            else lspdheli.Restore(true);
                         }
 
                         break;
@@ -638,8 +638,8 @@ namespace AdvancedWorld
                         int selectedType = Util.GetRandomInt(copCarNames.Count);
                         EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
-                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Dispatch);
-                        else lspd.Restore();
+                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Cop);
+                        else lspd.Restore(true);
 
                         break;
                     }
@@ -651,28 +651,28 @@ namespace AdvancedWorld
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
                             EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Dispatch);
-                            else lspd.Restore();
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Cop);
+                            else lspd.Restore(true);
                         }
 
                         EmergencyCar swat = new EmergencyCar(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
 
-                        if (swat.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swat, ListManager.EventType.Dispatch);
-                        else swat.Restore();
+                        if (swat.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swat, ListManager.EventType.Cop);
+                        else swat.Restore(true);
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
 
-                            if (swatheli.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatheli, ListManager.EventType.Dispatch);
-                            else swatheli.Restore();
+                            if (swatheli.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatheli, ListManager.EventType.Cop);
+                            else swatheli.Restore(true);
                         }
                         else
                         {
                             EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
 
-                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Dispatch);
-                            else lspdheli.Restore();
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Cop);
+                            else lspdheli.Restore(true);
                         }
 
                         break;
@@ -680,23 +680,20 @@ namespace AdvancedWorld
 
                 case ListManager.EventType.Fire:
                     {
-                        if (!Util.AnyEmergencyIsNear(target.Position, "FIREMAN"))
+                        if (!Util.AnyEmergencyIsNear(target.Position, ListManager.EventType.Fire))
                         {
                             for (int i = 0; i < 2; i++)
                             {
                                 Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
 
-                                if (ff.IsCreatedIn(safePosition, fireModels)) ListManager.Add(ff, ListManager.EventType.Dispatch);
-                                else ff.Restore();
+                                if (ff.IsCreatedIn(safePosition, fireModels)) ListManager.Add(ff, ListManager.EventType.Fire);
+                                else ff.Restore(true);
                             }
-                        }
-                        
-                        if (!Util.AnyEmergencyIsNear(target.Position, "MEDIC"))
-                        {
+
                             Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
 
-                            if (pm.IsCreatedIn(safePosition, emModels)) ListManager.Add(pm, ListManager.EventType.Dispatch);
-                            else pm.Restore();
+                            if (pm.IsCreatedIn(safePosition, emModels)) ListManager.Add(pm, ListManager.EventType.Fire);
+                            else pm.Restore(true);
                         }
 
                         break;
@@ -709,14 +706,14 @@ namespace AdvancedWorld
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
                             EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Dispatch);
-                            else lspd.Restore();
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Cop);
+                            else lspd.Restore(true);
                         }
 
                         EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
 
-                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Dispatch);
-                        else lspdheli.Restore();
+                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Cop);
+                        else lspdheli.Restore(true);
 
                         break;
                     }
@@ -727,18 +724,18 @@ namespace AdvancedWorld
                         {
                             EmergencyCar fib = new EmergencyCar(fibCarNames[Util.GetRandomInt(fibCarNames.Count)], target, "FIB");
 
-                            if (fib.IsCreatedIn(safePosition, fibModels)) ListManager.Add(fib, ListManager.EventType.Dispatch);
-                            else fib.Restore();
+                            if (fib.IsCreatedIn(safePosition, fibModels)) ListManager.Add(fib, ListManager.EventType.Cop);
+                            else fib.Restore(true);
 
                             EmergencyCar swat = new EmergencyCar(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
 
-                            if (swat.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swat, ListManager.EventType.Dispatch);
-                            else swat.Restore();
+                            if (swat.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swat, ListManager.EventType.Cop);
+                            else swat.Restore(true);
 
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
 
-                            if (swatheli.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatheli, ListManager.EventType.Dispatch);
-                            else swatheli.Restore();
+                            if (swatheli.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatheli, ListManager.EventType.Cop);
+                            else swatheli.Restore(true);
                         }
 
                         break;
@@ -750,16 +747,16 @@ namespace AdvancedWorld
                         {
                             EmergencyCar army = new EmergencyCar(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
 
-                            if (army.IsCreatedIn(safePosition, armyModels)) ListManager.Add(army, ListManager.EventType.Dispatch);
-                            else army.Restore();
+                            if (army.IsCreatedIn(safePosition, armyModels)) ListManager.Add(army, ListManager.EventType.Army);
+                            else army.Restore(true);
                         }
 
                         for (int i = 0; i < 2; i++)
                         {
                             EmergencyHeli armyheli = new EmergencyHeli(armyHeliNames[Util.GetRandomInt(armyHeliNames.Count)], target, "ARMY");
 
-                            if (armyheli.IsCreatedIn(safePosition, armyModels)) ListManager.Add(armyheli, ListManager.EventType.Dispatch);
-                            else armyheli.Restore();
+                            if (armyheli.IsCreatedIn(safePosition, armyModels)) ListManager.Add(armyheli, ListManager.EventType.Army);
+                            else armyheli.Restore(true);
                         }
 
                         break;
@@ -781,8 +778,8 @@ namespace AdvancedWorld
                         int selectedType = Util.GetRandomInt(copCarNames.Count);
                         EmergencyBlock lspdblock = new EmergencyBlock(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
-                        if (lspdblock.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspdblock, ListManager.EventType.Dispatch);
-                        else lspdblock.Restore();
+                        if (lspdblock.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspdblock, ListManager.EventType.Cop);
+                        else lspdblock.Restore(true);
 
                         break;
                     }
@@ -791,8 +788,8 @@ namespace AdvancedWorld
                     {
                         EmergencyBlock swatblock = new EmergencyBlock(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
 
-                        if (swatblock.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatblock, ListManager.EventType.Dispatch);
-                        else swatblock.Restore();
+                        if (swatblock.IsCreatedIn(safePosition, swatModels)) ListManager.Add(swatblock, ListManager.EventType.Cop);
+                        else swatblock.Restore(true);
 
                         break;
                     }
@@ -801,8 +798,8 @@ namespace AdvancedWorld
                     {
                         EmergencyBlock armyblock = new EmergencyBlock(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
 
-                        if (armyblock.IsCreatedIn(safePosition, armyModels)) ListManager.Add(armyblock, ListManager.EventType.Dispatch);
-                        else armyblock.Restore();
+                        if (armyblock.IsCreatedIn(safePosition, armyModels)) ListManager.Add(armyblock, ListManager.EventType.Army);
+                        else armyblock.Restore(true);
 
                         break;
                     }
@@ -830,7 +827,7 @@ namespace AdvancedWorld
                         ListManager.Add(rv, ListManager.EventType.ReplacedVehicle);
                         Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                     }
-                    else rv.Restore();
+                    else rv.Restore(true);
                 }
 
                 eventTimeChecker++;
@@ -848,7 +845,7 @@ namespace AdvancedWorld
                                 ListManager.Add(cj, ListManager.EventType.Carjacker);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
-                            else cj.Restore();
+                            else cj.Restore(true);
 
                             break;
                         }
@@ -862,7 +859,7 @@ namespace AdvancedWorld
                                 ListManager.Add(ad, ListManager.EventType.AggressiveDriver);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
-                            else ad.Restore();
+                            else ad.Restore(true);
 
                             break;
                         }
@@ -980,8 +977,8 @@ namespace AdvancedWorld
                             }
                             else
                             {
-                                teamA.Restore();
-                                teamB.Restore();
+                                teamA.Restore(true);
+                                teamB.Restore(true);
                             }
 
                             break;
@@ -994,15 +991,13 @@ namespace AdvancedWorld
                             if (safePosition.Equals(Vector3.Zero)) break;
 
                             Massacre ms = new Massacre();
-                            int relationship = Util.NewRelationship(ListManager.EventType.Massacre);
-
-                            if (relationship == 0) break;
-                            if (ms.IsCreatedIn(radius, safePosition, relationship))
+                            
+                            if (ms.IsCreatedIn(radius, safePosition))
                             {
                                 ListManager.Add(ms, ListManager.EventType.Massacre);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
-                            else ms.Restore();
+                            else ms.Restore(true);
 
                             break;
                         }
@@ -1024,7 +1019,7 @@ namespace AdvancedWorld
                                 ListManager.Add(r, ListManager.EventType.Racer);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
-                            else r.Restore();
+                            else r.Restore(true);
 
                             break;
                         }
@@ -1077,7 +1072,7 @@ namespace AdvancedWorld
                                 ListManager.Add(db, ListManager.EventType.Driveby);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
-                            else db.Restore();
+                            else db.Restore(true);
 
                             break;
                         }
@@ -1091,7 +1086,7 @@ namespace AdvancedWorld
                                 ListManager.Add(tr, ListManager.EventType.Terrorist);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
-                            else tr.Restore();
+                            else tr.Restore(true);
 
                             break;
                         }

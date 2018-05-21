@@ -9,26 +9,9 @@ namespace AdvancedWorld
 
         public Paramedic(string name, Entity target) : base(name, target, "MEDIC") { this.checkedPeds = new List<Entity>(); }
 
-        protected override void SetPedsOnDuty()
+        private new void SetPedsOnDuty()
         {
-            Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 100.0f);
-
-            if (nearbyPeds.Length < 1) return;
-
-            foreach (Ped selectedPed in nearbyPeds)
-            {
-                if (Util.ThereIs(selectedPed) && (selectedPed.IsDead || selectedPed.IsInjured))
-                {
-                    if (!checkedPeds.Contains(selectedPed))
-                    {
-                        target = selectedPed;
-                        break;
-                    }
-                    else target = null;
-                }
-            }
-            
-            if (Util.ThereIs(target) && target.Model.IsPed)
+            if (TargetIsFound() && target.Model.IsPed)
             {
                 foreach (Ped p in members)
                 {
@@ -50,6 +33,28 @@ namespace AdvancedWorld
                     else if (p.TaskSequenceProgress == 6 && !checkedPeds.Contains(target)) checkedPeds.Add(target);
                 }
             }
+        }
+
+        private new bool TargetIsFound()
+        {
+            Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 100.0f);
+
+            if (nearbyPeds.Length < 1) return false;
+
+            foreach (Ped selectedPed in nearbyPeds)
+            {
+                if (Util.ThereIs(selectedPed) && (selectedPed.IsDead || selectedPed.IsInjured))
+                {
+                    if (!checkedPeds.Contains(selectedPed))
+                    {
+                        target = selectedPed;
+                        return true;
+                    }
+                }
+                else target = null;
+            }
+
+            return false;
         }
     }
 }

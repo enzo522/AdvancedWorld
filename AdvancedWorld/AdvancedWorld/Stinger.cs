@@ -53,15 +53,25 @@ namespace AdvancedWorld
             return true;
         }
 
-        public override void Restore()
+        public override void Restore(bool instantly)
         {
-            if (Util.ThereIs(stinger)) stinger.Delete();
+            if (instantly)
+            {
+                if (Util.ThereIs(stinger)) stinger.Delete();
+            }
+            else
+            {
+                if (Util.ThereIs(stinger)) stinger.MarkAsNoLongerNeeded();
+            }
         }
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(stinger)) return true;
-            if (!Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f)) stinger.MarkAsNoLongerNeeded();
+            if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            {
+                Restore(false);
+                return true;
+            }
 
             return false;
         }
