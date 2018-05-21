@@ -65,8 +65,7 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(shield)) return true;
-            if (!Util.ThereIs(owner) || owner.IsDead || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(shield) || !Util.ThereIs(owner) || owner.IsDead || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;

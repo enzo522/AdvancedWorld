@@ -176,13 +176,20 @@ namespace AdvancedWorld
             }
             else if (EveryoneIsSitting())
             {
-                foreach (Ped p in members)
+                if (Util.ThereIs(spawnedVehicle.Driver))
                 {
-                    if (p.Equals(spawnedPed))
+                    foreach (Ped p in members)
                     {
-                        if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                        if (p.Equals(spawnedPed))
+                        {
+                            if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                        }
+                        else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                     }
-                    else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                }
+                else
+                {
+                    foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
                 }
             }
             else

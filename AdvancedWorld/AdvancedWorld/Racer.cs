@@ -74,7 +74,12 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedPed))
+                {
+                    spawnedPed.MarkAsNoLongerNeeded();
+
+                    if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
+                }
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
             }
 
@@ -83,16 +88,8 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(spawnedPed) || !Util.ThereIs(spawnedVehicle))
+            if (!Util.ThereIs(spawnedPed) || !Util.ThereIs(spawnedVehicle) || spawnedPed.IsDead || !spawnedVehicle.IsDriveable || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Restore(false);
-                return true;
-            }
-            
-            if (spawnedPed.IsDead || !spawnedVehicle.IsDriveable || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
-            {
-                if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-
                 Restore(false);
                 return true;
             }

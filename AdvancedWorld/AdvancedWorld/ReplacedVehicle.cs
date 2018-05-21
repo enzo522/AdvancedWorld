@@ -88,18 +88,20 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedPed))
+                {
+                    spawnedPed.MarkAsNoLongerNeeded();
+
+                    if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
+                }
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
             }
         }
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(spawnedVehicle)) return true;
-            if ((!spawnedVehicle.IsDriveable && !Game.Player.Character.IsInVehicle(spawnedVehicle)) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+            if (!Util.ThereIs(spawnedVehicle) || (!spawnedVehicle.IsDriveable && !Game.Player.Character.IsInVehicle(spawnedVehicle)) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
             {
-                if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
-
                 Restore(false);
                 return true;
             }

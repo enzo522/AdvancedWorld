@@ -38,7 +38,7 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                for (int i = 0; i < 2; i++) members.Add(Util.Create(selectedModel, spawnedVehicle.Position.Around(5.0f)));
+                for (int i = 0; i < 2; i++) members.Add(Util.Create(selectedModel, World.GetNextPositionOnSidewalk(spawnedVehicle.Position.Around(5.0f))));
             }
 
             foreach (Ped p in members)

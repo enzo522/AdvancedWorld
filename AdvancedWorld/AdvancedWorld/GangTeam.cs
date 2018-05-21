@@ -45,6 +45,7 @@ namespace AdvancedWorld
 
                 p.RelationshipGroup = relationship;
                 p.AlwaysKeepTask = true;
+                p.BlockPermanentEvents = true;
                 p.Armor = Util.GetRandomInt(100);
 
                 if (!Util.BlipIsOn(p))

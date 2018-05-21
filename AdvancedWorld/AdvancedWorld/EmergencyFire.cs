@@ -71,18 +71,25 @@ namespace AdvancedWorld
             if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
             if (EveryoneIsSitting())
             {
-                foreach (Ped p in members)
+                if (Util.ThereIs(spawnedVehicle.Driver))
                 {
-                    if (p.IsPersistent)
+                    foreach (Ped p in members)
                     {
-                        if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
-                        else p.Task.Wait(1000);
+                        if (p.IsPersistent)
+                        {
+                            if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                            else p.Task.Wait(1000);
 
-                        p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
-                        p.AlwaysKeepTask = false;
-                        p.BlockPermanentEvents = false;
-                        p.MarkAsNoLongerNeeded();
+                            p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
+                            p.AlwaysKeepTask = false;
+                            p.BlockPermanentEvents = false;
+                            p.MarkAsNoLongerNeeded();
+                        }
                     }
+                }
+                else
+                {
+                    foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
                 }
             }
             else

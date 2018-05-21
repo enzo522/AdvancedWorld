@@ -8,17 +8,11 @@ namespace AdvancedWorld
     public class Massacre : Criminal
     {
         private List<Ped> members;
-        private float radius;
 
-        public Massacre() : base(ListManager.EventType.Massacre)
-        {
-            this.members = new List<Ped>();
-            this.radius = 0.0f;
-        }
+        public Massacre() : base(ListManager.EventType.Massacre) { this.members = new List<Ped>(); }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)
         {
-            this.radius = radius;
             Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
             int trycount = 0;
 
@@ -98,15 +92,11 @@ namespace AdvancedWorld
                     Restore(true);
                     return false;
                 }
-            }
-            
-            PerformTask();
-            return true;
-        }
 
-        private void PerformTask()
-        {
-            foreach (Ped p in members) p.Task.FightAgainstHatedTargets(radius);
+                p.Task.FightAgainstHatedTargets(400.0f);
+            }
+
+            return true;
         }
 
         public override void Restore(bool instantly)
