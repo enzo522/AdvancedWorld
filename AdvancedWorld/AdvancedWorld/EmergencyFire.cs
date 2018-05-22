@@ -7,10 +7,13 @@ namespace AdvancedWorld
 {
     public abstract class EmergencyFire : Emergency
     {
+        protected Vector3 targetPosition;
+
         public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             Util.CleanUpRelationship(this.relationship, ListManager.EventType.Cop);
             this.relationship = 0;
+            this.targetPosition = target.Position;
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
@@ -60,7 +63,7 @@ namespace AdvancedWorld
             {
                 Function.Call(Hash.SET_DRIVER_ABILITY, spawnedVehicle.Driver, 1.0f);
                 Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedVehicle.Driver, 1.0f);
-                spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, (int)DrivingStyle.SometimesOvertakeTraffic);
+                spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.SometimesOvertakeTraffic);
             }
 
             return true;
@@ -69,7 +72,13 @@ namespace AdvancedWorld
         protected new abstract void SetPedsOnDuty();
         protected new void SetPedsOffDuty()
         {
-            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive)
+            {
+                spawnedVehicle.SirenActive = false;
+
+                foreach (Ped p in members) p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
+            }
+
             if (EveryoneIsSitting())
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
@@ -79,7 +88,6 @@ namespace AdvancedWorld
                         if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
                         else p.Task.Wait(1000);
 
-                        p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
                         p.AlwaysKeepTask = false;
                         p.BlockPermanentEvents = false;
                         p.MarkAsNoLongerNeeded();
@@ -142,8 +150,8 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (!Util.ThereIs(target)) SetPedsOffDuty();
-            else if (spawnedVehicle.IsInRangeOf(target.Position, 30.0f)) SetPedsOnDuty();
+            if (targetPosition.Equals(Vector3.Zero)) SetPedsOffDuty();
+            else if (spawnedVehicle.IsInRangeOf(targetPosition, 30.0f) || !EveryoneIsSitting()) SetPedsOnDuty();
 
             return false;
         }

@@ -1,13 +1,14 @@
 ﻿using GTA;
+using GTA.Math;
 using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
     public class Paramedic : EmergencyFire
     {
-        private List<Entity> checkedPeds;
+        private List<int> checkedPeds;
 
-        public Paramedic(string name, Entity target) : base(name, target, "MEDIC") { this.checkedPeds = new List<Entity>(); }
+        public Paramedic(string name, Entity target) : base(name, target, "MEDIC") { this.checkedPeds = new List<int>(); }
 
         protected override void SetPedsOnDuty()
         {
@@ -18,8 +19,8 @@ namespace AdvancedWorld
                     if (p.TaskSequenceProgress < 0)
                     {
                         TaskSequence ts = new TaskSequence();
-                        ts.AddTask.RunTo(target.Position.Around(1.0f));
-                        ts.AddTask.LookAt(target.Position, 1000);
+                        ts.AddTask.RunTo(targetPosition.Around(1.0f));
+                        ts.AddTask.LookAt(targetPosition, 1000);
                         ts.AddTask.PlayAnimation("amb@medic@standing@kneel@enter", "enter");
                         ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@idle_a", "idle_c");
                         ts.AddTask.PlayAnimation("amb@medic@standing@tendtodead@exit", "exit");
@@ -30,7 +31,7 @@ namespace AdvancedWorld
                         p.Task.PerformSequence(ts);
                         ts.Dispose();
                     }
-                    else if (p.TaskSequenceProgress == 6 && !checkedPeds.Contains(target)) checkedPeds.Add(target);
+                    else if (p.TaskSequenceProgress == 6 && !checkedPeds.Contains(target.Handle)) checkedPeds.Add(target.Handle);
                 }
             }
         }
@@ -38,6 +39,7 @@ namespace AdvancedWorld
         private new bool TargetIsFound()
         {
             target = null;
+            targetPosition = Vector3.Zero;
             Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 100.0f);
 
             if (nearbyPeds.Length < 1) return false;
@@ -46,9 +48,10 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(selectedPed) && (selectedPed.IsDead || selectedPed.IsInjured))
                 {
-                    if (!checkedPeds.Contains(selectedPed))
+                    if (!checkedPeds.Contains(selectedPed.Handle))
                     {
                         target = selectedPed;
+                        targetPosition = target.Position;
                         return true;
                     }
                 }

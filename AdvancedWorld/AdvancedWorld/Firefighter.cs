@@ -1,4 +1,6 @@
 ﻿using GTA;
+using GTA.Math;
+using GTA.Native;
 
 namespace AdvancedWorld
 {
@@ -15,8 +17,8 @@ namespace AdvancedWorld
                     if (p.TaskSequenceProgress < 0)
                     {
                         TaskSequence ts = new TaskSequence();
-                        ts.AddTask.RunTo(target.Position.Around(3.0f));
-                        ts.AddTask.ShootAt(target.Position, 10000, FiringPattern.FullAuto);
+                        ts.AddTask.RunTo(targetPosition.Around(3.0f));
+                        ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
                         ts.Close();
 
                         p.Task.PerformSequence(ts);
@@ -28,20 +30,20 @@ namespace AdvancedWorld
 
         private new bool TargetIsFound()
         {
-            target = null;
-            Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
+            targetPosition = Vector3.Zero;
+            OutputArgument outPos = new OutputArgument();
 
-            if (nearbyEntities.Length < 1) return false;
-
-            foreach (Entity en in nearbyEntities)
+            if (Function.Call<bool>(Hash.GET_CLOSEST_FIRE_POS, outPos, spawnedVehicle.Position.X, spawnedVehicle.Position.Y, spawnedVehicle.Position.Z))
             {
-                if (Util.ThereIs(en) && en.IsOnFire)
+                Vector3 position = outPos.GetResult<Vector3>();
+
+                if (!position.Equals(Vector3.Zero) && spawnedVehicle.IsInRangeOf(position, 100.0f))
                 {
-                    target = en;
+                    targetPosition = position;
                     return true;
                 }
             }
-            
+
             return false;
         }
     }

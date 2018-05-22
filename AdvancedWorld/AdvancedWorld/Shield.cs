@@ -10,20 +10,19 @@ namespace AdvancedWorld
         private List<string> shieldModels;
         private Ped owner;
         private Prop shield;
-        private AttachState currentState;
-
-        public enum AttachState
-        {
-            None,
-            Inactive,
-            InCombat,
-            Reloading
-        }
+        private bool attached;
+        private int boneIndex;
+        private Vector3 position;
+        private Vector3 rotation;
 
         public Shield(Ped p)
         {
             this.shieldModels = new List<string> { "prop_ballistic_shield", "prop_riot_shield" };
             this.owner = p;
+            this.attached = false;
+            this.boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 61163);
+            this.position = new Vector3(0.21f, -0.11f, -0.038f);
+            this.rotation = new Vector3(60.0f, 170.0f, 10.0f);
         }
 
         public bool IsCreatedIn(Vector3 position)
@@ -44,7 +43,7 @@ namespace AdvancedWorld
 
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);
             owner.CanPlayGestures = false;
-            currentState = AttachState.None;
+            attached = false;
 
             return true;
         }
@@ -69,70 +68,35 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
-            else if (owner.IsRagdoll) Detach(true);
-            else if (owner.IsInCombat) Attach(AttachState.InCombat);
-            else if (owner.IsReloading) Attach(AttachState.Reloading);
-            else Attach(AttachState.Inactive);
-
             return false;
         }
 
-        private void Attach(AttachState state)
+        public void CheckShieldable()
         {
-            if (currentState != state)
+            if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
+            else if (owner.IsRagdoll) Detach(true);
+            else Attach();
+        }
+
+        private void Attach()
+        {
+            if (!attached)
             {
-                Vector3 position = Vector3.Zero;
-                Vector3 rotation = Vector3.Zero;
-                int boneIndex = 0;
-
-                switch (state)
-                {
-                    case AttachState.Inactive:
-                        {
-                            position = new Vector3(0.09f, -0.255f, 0.26f);
-                            rotation = new Vector3(5.44f, 1.08f, -363.882f);
-                            boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 0);
-                            break;
-                        }
-
-                    case AttachState.InCombat:
-                        {
-                            position = new Vector3(-0.255f, 0.11f, -0.18f);
-                            rotation = new Vector3(57.4701f, 198.83f, 25.4501f);
-                            boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 36029);
-                            break;
-                        }
-
-                    case AttachState.Reloading:
-                        {
-                            position = new Vector3(0.5f, 0.045f, -0.04f);
-                            rotation = new Vector3(-248.81f, 8.92f, -126.71f);
-                            boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 5232);
-                            break;
-                        }
-                }
-
-                if (position.Equals(Vector3.Zero) || rotation.Equals(Vector3.Zero) || boneIndex == 0) return;
-
-                Detach(false);
                 shield.AttachTo(owner, boneIndex, position, rotation);
                 shield.IsVisible = true;
                 Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Gang1H"));
-
-                currentState = state;
+                attached = true;
             }
         }
 
         private void Detach(bool shouldBeVisible)
         {
-            if (currentState != AttachState.None)
+            if (attached)
             {
                 shield.Detach();
                 shield.IsVisible = shouldBeVisible;
                 Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Default"));
-
-                currentState = AttachState.None;
+                attached = false;
             }
         }
     }
