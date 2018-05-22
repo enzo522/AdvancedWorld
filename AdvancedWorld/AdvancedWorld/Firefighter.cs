@@ -30,6 +30,7 @@ namespace AdvancedWorld
 
         private new bool TargetIsFound()
         {
+            target = null;
             targetPosition = Vector3.Zero;
             OutputArgument outPos = new OutputArgument();
 
@@ -40,6 +41,20 @@ namespace AdvancedWorld
                 if (!position.Equals(Vector3.Zero) && spawnedVehicle.IsInRangeOf(position, 100.0f))
                 {
                     targetPosition = position;
+                    return true;
+                }
+            }
+            
+            Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
+
+            if (nearbyEntities.Length < 1) return false;
+
+            foreach (Entity en in nearbyEntities)
+            {
+                if (Util.ThereIs(en) && en.IsOnFire)
+                {
+                    target = en;
+                    targetPosition = target.Position;
                     return true;
                 }
             }
