@@ -17,7 +17,7 @@ namespace AdvancedWorld
 
         public Shield(Ped p)
         {
-            this.shieldModels = new List<string> { "prop_ballistic_shield", "prop_ballistic_shield_lod1", "prop_riot_shield" };
+            this.shieldModels = new List<string> { "prop_ballistic_shield", "prop_riot_shield" };
             this.owner = p;
             this.attached = false;
             this.boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 61163);
