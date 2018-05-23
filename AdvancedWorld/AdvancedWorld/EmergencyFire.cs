@@ -44,10 +44,6 @@ namespace AdvancedWorld
                     Restore(true);
                     return false;
                 }
-
-                p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                p.AlwaysKeepTask = true;
-                p.BlockPermanentEvents = true;
                 
                 if (emergencyType == "FIREMAN")
                 {
@@ -55,42 +51,12 @@ namespace AdvancedWorld
                     p.Weapons.Current.InfiniteAmmo = true;
                     p.CanSwitchWeapons = true;
                     p.IsFireProof = true;
-
-                    switch (Util.GetRandomInt(3))
-                    {
-                        case 0:
-                            break;
-
-                        case 1:
-                            Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
-                            break;
-
-                        case 2:
-                            Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 0, 0, false);
-                            break;
-                    }
                 }
-                else
-                {
-                    switch (Util.GetRandomInt(4))
-                    {
-                        case 0:
-                            break;
 
-                        case 1:
-                            Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
-                            break;
-
-                        case 2:
-                            Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 0, 0, false);
-                            break;
-
-                        case 3:
-                            Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
-                            Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 0, 0, false);
-                            break;
-                    }
-                }
+                AddVarietyTo(p);
+                p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                p.AlwaysKeepTask = true;
+                p.BlockPermanentEvents = true;
             }
 
             if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
@@ -135,7 +101,12 @@ namespace AdvancedWorld
             }
             else
             {
-                for (int i = -1, j = 0; j < members.Count; j++)
+                int startingSeat = 0;
+
+                if (Util.ThereIs(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
+                else startingSeat = -1;
+
+                for (int i = startingSeat, j = 0; j < members.Count; j++)
                 {
                     if (Util.ThereIs(members[j]) && !members[j].IsSittingInVehicle(spawnedVehicle))
                     {
@@ -158,6 +129,41 @@ namespace AdvancedWorld
                             members[j].Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i++, -1, 2.0f, 1);
                         }
                     }
+                }
+            }
+        }
+
+        private new void AddVarietyTo(Ped p)
+        {
+            if (emergencyType == "FIREMAN")
+            {
+                switch (Util.GetRandomInt(3))
+                {
+                    case 1:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
+                        break;
+
+                    case 2:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 0, 0, false);
+                        break;
+                }
+            }
+            else
+            {
+                switch (Util.GetRandomInt(4))
+                {
+                    case 1:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
+                        break;
+
+                    case 2:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 0, 0, false);
+                        break;
+
+                    case 3:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 0, 0, false);
+                        break;
                 }
             }
         }

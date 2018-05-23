@@ -194,7 +194,12 @@ namespace AdvancedWorld
             }
             else
             {
-                for (int i = -1, j = 0; j < members.Count; j++)
+                int startingSeat = 0;
+
+                if (Util.ThereIs(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
+                else startingSeat = -1;
+
+                for (int i = startingSeat, j = 0; j < members.Count; j++)
                 {
                     if (Util.ThereIs(members[j]) && !members[j].IsSittingInVehicle(spawnedVehicle))
                     {

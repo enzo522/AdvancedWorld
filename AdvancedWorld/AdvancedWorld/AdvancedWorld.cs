@@ -141,7 +141,7 @@ namespace AdvancedWorld
             {
                 new List<string> { "s_f_y_cop_01", "s_m_y_cop_01" },
                 new List<string> { "s_m_y_hwaycop_01", "s_f_y_sheriff_01", "s_m_y_sheriff_01", "s_f_y_ranger_01", "s_m_y_ranger_01" },
-                new List<string> { "mp_g_m_pros_01" }
+                new List<string> { "s_m_m_highsec_01", "s_m_m_highsec_02" }
             };
             copCarNames = new List<List<string>>
             {
@@ -158,7 +158,8 @@ namespace AdvancedWorld
             {
                 "s_m_m_fiboffice_01",
                 "s_m_m_fiboffice_02",
-                "s_m_m_ciasec_01"
+                "s_m_m_ciasec_01",
+                "mp_m_fibsec_01"
             };
             fibCarNames = new List<string>
             {
@@ -182,7 +183,6 @@ namespace AdvancedWorld
             {
                 "s_m_y_blackops_01",
                 "s_m_y_blackops_02",
-                "s_m_y_blackops_03",
                 "s_m_y_marine_01",
                 "s_m_y_marine_03"
             };
@@ -305,6 +305,7 @@ namespace AdvancedWorld
                 drivebyCarNames.Add("enduro");
                 fibModels.Add("s_m_m_fibsec_01");
                 fibModels.Add("u_m_m_doa_01");
+                armyModels.Add("s_m_y_blackops_03");
                 armyCarNames.Add("barracks3");
                 armyCarNames.Add("insurgent");
                 armyCarNames.Add("insurgent2");

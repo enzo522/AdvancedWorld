@@ -83,7 +83,12 @@ namespace AdvancedWorld
                 }
                 else
                 {
-                    for (int i = -1, j = 0; j < members.Count; j++)
+                    int startingSeat = 0;
+
+                    if (Util.ThereIs(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
+                    else startingSeat = -1;
+
+                    for (int i = startingSeat, j = 0; j < members.Count; j++)
                     {
                         if (Util.ThereIs(members[j]) && !members[j].IsSittingInVehicle(spawnedVehicle))
                         {
@@ -143,6 +148,10 @@ namespace AdvancedWorld
 
                     p.AlwaysKeepTask = false;
                     p.BlockPermanentEvents = false;
+
+                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+
                     Function.Call(Hash.SET_PED_AS_COP, p, true);
                     p.MarkAsNoLongerNeeded();
                 }
@@ -176,6 +185,17 @@ namespace AdvancedWorld
             }
 
             return true;
+        }
+
+        protected void AddVarietyTo(Ped p)
+        {
+            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0) > 0
+                && Util.GetRandomInt(2) == 1)
+                Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
+
+            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0) > 0
+                && Util.GetRandomInt(2) == 1)
+                Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0)), 0, false);
         }
 
         public override bool ShouldBeRemoved()

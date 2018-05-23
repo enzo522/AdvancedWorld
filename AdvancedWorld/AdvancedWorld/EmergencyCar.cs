@@ -118,25 +118,7 @@ namespace AdvancedWorld
 
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.CanSwitchWeapons = true;
-
-                switch (Util.GetRandomInt(4))
-                {
-                    case 0:
-                        break;
-
-                    case 1:
-                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
-                        break;
-
-                    case 2:
-                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0)), 0, false);
-                        break;
-
-                    case 3:
-                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
-                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0)), 0, false);
-                        break;
-                }
+                AddVarietyTo(p);
 
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
