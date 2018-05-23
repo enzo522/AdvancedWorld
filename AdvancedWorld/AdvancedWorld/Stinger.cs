@@ -83,7 +83,7 @@ namespace AdvancedWorld
 
             foreach (Vehicle v in nearbyVehicles)
             {
-                if (Util.ThereIs(v) && v.CanTiresBurst)
+                if (Util.ThereIs(v) && v.IsTouching(stinger) && v.CanTiresBurst)
                 {
                     for (int i = 0; i < wheels.Count; i++)
                     {

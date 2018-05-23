@@ -524,7 +524,6 @@ namespace AdvancedWorld
             {
                 terroristCarNames.Add("dovnapc");
                 copModels[2].Add("d_o_v_dick_01");
-                copModels[0].Add("d_o_v_npatrol_01");
                 copModels[0].Add("d_o_v_npatrol_02");
                 copCarNames[2].Add("dovdtbuff");
                 copCarNames[2].Add("dovdtfugi");

@@ -45,23 +45,34 @@ namespace AdvancedWorld
 
                 Function.Call(Hash.RESET_PED_MOVEMENT_CLIPSET, p, 1.0f);
                 Function.Call(Hash.RESET_PED_STRAFE_CLIPSET, p);
-                Function.Call(Hash.SET_PED_USING_ACTION_MODE, p, true, -1, 0);
-
+                
                 Function.Call(Hash.SET_PED_MOVEMENT_CLIPSET, p, "anim_group_move_ballistic", 1.0f);
                 Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "move_strafe_ballistic");
                 Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, Function.Call<int>(Hash.GET_HASH_KEY, "Ballistic"));
                 
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, 6, 0, 0);
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, 1, 0, 0);
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 2, 1, 0, 0);
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, Util.GetRandomInt(7), 0, 0);
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 2, 0, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 3, 1, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 4, 1, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 6, 1, 0, 0);
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, 2, 1, 0);
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, 7, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 9, 1, 0, 0);
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 10, 9, 0, 0);
-                Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 5, 0, false);
 
+                switch (Util.GetRandomInt(3))
+                {
+                    case 0:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 5, 0, true);
+                        break;
+
+                    case 1:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 1, 0, true);
+                        break;
+
+                    case 2:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 2, 0, true);
+                        break;
+                }
+                
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);

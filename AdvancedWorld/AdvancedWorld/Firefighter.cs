@@ -44,7 +44,7 @@ namespace AdvancedWorld
                     return true;
                 }
             }
-            
+
             Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
 
             if (nearbyEntities.Length < 1) return false;
