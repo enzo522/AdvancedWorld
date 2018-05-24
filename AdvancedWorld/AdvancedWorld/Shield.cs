@@ -40,7 +40,8 @@ namespace AdvancedWorld
             shield.IsMeleeProof = true;
             shield.IsInvincible = true;
             shield.IsVisible = false;
-
+            
+            Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Gang1H"));
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);
             owner.CanPlayGestures = false;
             attached = false;
@@ -62,20 +63,17 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(shield) || !Util.ThereIs(owner) || owner.IsDead || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(shield) || !Util.ThereIs(owner) || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;
             }
 
-            return false;
-        }
-
-        public void CheckShieldable()
-        {
             if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
-            else if (owner.IsRagdoll) Detach(true);
+            else if (owner.IsDead) Detach(true);
             else Attach();
+
+            return false;
         }
 
         private void Attach()
@@ -84,7 +82,6 @@ namespace AdvancedWorld
             {
                 shield.AttachTo(owner, boneIndex, position, rotation);
                 shield.IsVisible = true;
-                Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Gang1H"));
                 attached = true;
             }
         }
@@ -95,7 +92,6 @@ namespace AdvancedWorld
             {
                 shield.Detach();
                 shield.IsVisible = shouldBeVisible;
-                Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Default"));
                 attached = false;
             }
         }

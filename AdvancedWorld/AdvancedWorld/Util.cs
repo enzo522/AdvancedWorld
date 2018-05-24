@@ -355,13 +355,6 @@ namespace AdvancedWorld
 
                                 break;
                             }
-
-                        case ListManager.EventType.Fire:
-                            {
-                                if (p.RelationshipGroup == Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN")) return true;
-
-                                break;
-                            }
                     }
                 }
             }

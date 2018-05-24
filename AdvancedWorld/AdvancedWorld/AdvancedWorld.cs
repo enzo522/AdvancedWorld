@@ -611,21 +611,13 @@ namespace AdvancedWorld
                 case ListManager.EventType.AggressiveDriver:
                 case ListManager.EventType.Racer:
                     {
-                        for (int i = 0; i < 2; i++)
+                        for (int i = 0; i < 3; i++)
                         {
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
                             EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Cop);
                             else lspd.Restore(true);
-                        }
-
-                        if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
-                        {
-                            EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
-
-                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Cop);
-                            else lspdheli.Restore(true);
                         }
 
                         break;
@@ -678,21 +670,18 @@ namespace AdvancedWorld
 
                 case ListManager.EventType.Fire:
                     {
-                        if (!Util.AnyEmergencyIsNear(target.Position, ListManager.EventType.Fire))
+                        for (int i = 0; i < 2; i++)
                         {
-                            for (int i = 0; i < 2; i++)
-                            {
-                                Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
+                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
 
-                                if (ff.IsCreatedIn(safePosition, fireModels)) ListManager.Add(ff, ListManager.EventType.Fire);
-                                else ff.Restore(true);
-                            }
-
-                            Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
-
-                            if (pm.IsCreatedIn(safePosition, emModels)) ListManager.Add(pm, ListManager.EventType.Fire);
-                            else pm.Restore(true);
+                            if (ff.IsCreatedIn(safePosition, fireModels)) ListManager.Add(ff, ListManager.EventType.Fire);
+                            else ff.Restore(true);
                         }
+
+                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
+
+                        if (pm.IsCreatedIn(safePosition, emModels)) ListManager.Add(pm, ListManager.EventType.Fire);
+                        else pm.Restore(true);
 
                         break;
                     }

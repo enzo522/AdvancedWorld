@@ -155,7 +155,6 @@ namespace AdvancedWorld
 
             foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
             foreach (Racers r in racerList) r.CheckNitroable();
-            foreach (Shield s in shieldList) s.CheckShieldable();
             foreach (Stinger s in stingerList) s.CheckStingable();
         }
 

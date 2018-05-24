@@ -113,11 +113,15 @@ namespace AdvancedWorld
                         if (Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 160))
                         {
                             if (members[j].IsStopped && !members[j].IsGettingIntoAVehicle)
-                                members[j].SetIntoVehicle(spawnedVehicle, (VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j]));
+                            {
+                                if (spawnedVehicle.IsSeatFree((VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j])))
+                                    members[j].SetIntoVehicle(spawnedVehicle, (VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j]));
+                                else members[j].Task.ClearAllImmediately();
+                            }
                         }
                         else
                         {
-                            while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) || !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
+                            while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) && !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
                             {
                                 if (++i >= spawnedVehicle.PassengerSeats)
                                 {
