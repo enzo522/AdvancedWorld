@@ -83,44 +83,16 @@ namespace AdvancedWorld
                 }
                 else
                 {
-                    int startingSeat = 0;
-
-                    if (Util.ThereIs(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
-                    else startingSeat = -1;
-
-                    for (int i = startingSeat, j = 0; j < members.Count; j++)
+                    if (!VehicleSeatsCanBeSeatedBy(members))
                     {
-                        if (Util.ThereIs(members[j]) && !members[j].IsSittingInVehicle(spawnedVehicle))
-                        {
-                            if (Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 160))
-                            {
-                                if (members[j].IsStopped && !members[j].IsGettingIntoAVehicle)
-                                {
-                                    if (spawnedVehicle.IsSeatFree((VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j])))
-                                        members[j].SetIntoVehicle(spawnedVehicle, (VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j]));
-                                    else members[j].Task.ClearAllImmediately();
-                                }
-                            }
-                            else
-                            {
-                                while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) && !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
-                                {
-                                    if (++i >= spawnedVehicle.PassengerSeats)
-                                    {
-                                        Restore(false);
-                                        return;
-                                    }
-                                }
-
-                                members[j].Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i++, -1, 2.0f, 1);
-                            }
-                        }
+                        Restore(false);
+                        return;
                     }
                 }
             }
             else
             {
-                if (Util.ThereIs(spawnedVehicle.Driver))
+                if (Util.ThereIs(spawnedVehicle) && Util.ThereIs(spawnedVehicle.Driver))
                 {
                     TaskSequence ts = new TaskSequence();
                     Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, 0, spawnedVehicle, 1, 1000);
@@ -143,21 +115,48 @@ namespace AdvancedWorld
 
         protected void SetPedsOffDuty()
         {
-            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
-            foreach (Ped p in members)
+            if (!Util.ThereIs(spawnedVehicle))
             {
-                if (Util.ThereIs(p))
+                foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(spawnedVehicle) && p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                    if (Util.ThereIs(p) && p.IsPersistent)
+                    {
+                        p.AlwaysKeepTask = false;
+                        p.BlockPermanentEvents = false;
+                        Function.Call(Hash.SET_PED_AS_COP, p, true);
+                        p.MarkAsNoLongerNeeded();
+                    }
+                }
+            }
+            else if (EveryoneIsSitting())
+            {
+                if (Util.ThereIs(spawnedVehicle.Driver))
+                {
+                    foreach (Ped p in members)
+                    {
+                        if (Util.ThereIs(p) && p.IsPersistent)
+                        {
+                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
 
-                    p.AlwaysKeepTask = false;
-                    p.BlockPermanentEvents = false;
-
-                    if (emergencyType == "ARMY") p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                    else p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
-
-                    Function.Call(Hash.SET_PED_AS_COP, p, true);
-                    p.MarkAsNoLongerNeeded();
+                            p.AlwaysKeepTask = false;
+                            p.BlockPermanentEvents = false;
+                            Function.Call(Hash.SET_PED_AS_COP, p, true);
+                            p.MarkAsNoLongerNeeded();
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                }
+            }
+            else
+            {
+                if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+                if (!VehicleSeatsCanBeSeatedBy(members))
+                {
+                    Restore(false);
+                    return;
                 }
             }
         }
@@ -185,7 +184,7 @@ namespace AdvancedWorld
         {
             foreach (Ped p in members)
             {
-                if (!p.IsDead && !p.IsSittingInVehicle(spawnedVehicle)) return false;
+                if (Util.ThereIs(p) && !p.IsDead && !p.IsSittingInVehicle(spawnedVehicle)) return false;
             }
 
             return true;
@@ -219,18 +218,22 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || !TargetIsFound() || !spawnedVehicle.IsInRangeOf(target.Position, 300.0f) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                SetPedsOffDuty();
                 Restore(false);
                 return true;
             }
 
-            if (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f))
-                onVehicleDuty = false;
-            else onVehicleDuty = true;
+            if (!TargetIsFound()) SetPedsOffDuty();
+            else
+            {
+                if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f)))
+                    onVehicleDuty = false;
+                else onVehicleDuty = true;
 
-            SetPedsOnDuty();
+                SetPedsOnDuty();
+            }
+
             return false;
         }
     }

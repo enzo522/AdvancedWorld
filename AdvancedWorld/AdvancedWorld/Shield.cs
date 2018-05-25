@@ -69,11 +69,14 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
+            return false;
+        }
+
+        public void CheckShieldable()
+        {
+            if (owner.IsInVehicle()) Detach(false);
             else if (owner.IsDead) Detach(true);
             else Attach();
-
-            return false;
         }
 
         private void Attach()

@@ -140,14 +140,16 @@ namespace AdvancedWorld
             copModels = new List<List<string>>
             {
                 new List<string> { "s_f_y_cop_01", "s_m_y_cop_01" },
-                new List<string> { "s_m_y_hwaycop_01", "s_f_y_sheriff_01", "s_m_y_sheriff_01", "s_f_y_ranger_01", "s_m_y_ranger_01" },
-                new List<string> { "s_m_m_highsec_01", "s_m_m_highsec_02" }
+                new List<string> { "s_f_y_sheriff_01", "s_m_y_sheriff_01", "s_f_y_ranger_01", "s_m_y_ranger_01" },
+                new List<string> { "s_m_m_highsec_01", "s_m_m_highsec_02" },
+                new List<string> { "s_m_y_hwaycop_01" }
             };
             copCarNames = new List<List<string>>
             {
                 new List<string> { "police", "police2", "police3", "policet" },
                 new List<string> { "sheriff", "sheriff2" },
-                new List<string> { "police4" }
+                new List<string> { "police4" },
+                new List<string> { "policeb" }
             };
             copHeliNames = new List<string>
             {
@@ -419,7 +421,7 @@ namespace AdvancedWorld
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "wov")))
             {
-                copModels[0].Add("s_m_y_bcop_01");
+                copModels[3].Add("s_m_y_bcop_01");
                 copCarNames[1].Add("sheriff3");
                 copHeliNames.Add("shemav");
                 swatModels.Add("s_m_y_swat_02");
@@ -525,6 +527,7 @@ namespace AdvancedWorld
             {
                 terroristCarNames.Add("dovnapc");
                 copModels[2].Add("d_o_v_dick_01");
+                copModels[3].Add("d_o_v_npatrol_01");
                 copModels[0].Add("d_o_v_npatrol_02");
                 copCarNames[2].Add("dovdtbuff");
                 copCarNames[2].Add("dovdtfugi");
@@ -611,13 +614,21 @@ namespace AdvancedWorld
                 case ListManager.EventType.AggressiveDriver:
                 case ListManager.EventType.Racer:
                     {
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 2; i++)
                         {
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
                             EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspd, ListManager.EventType.Cop);
                             else lspd.Restore(true);
+                        }
+
+                        if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
+                        {
+                            EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
+
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) ListManager.Add(lspdheli, ListManager.EventType.Cop);
+                            else lspdheli.Restore(true);
                         }
 
                         break;
@@ -762,7 +773,7 @@ namespace AdvancedWorld
                 case ListManager.EventType.AggressiveDriver:
                 case ListManager.EventType.Racer:
                     {
-                        int selectedType = Util.GetRandomInt(copCarNames.Count);
+                        int selectedType = Util.GetRandomInt(copCarNames.Count - 1);
                         EmergencyBlock lspdblock = new EmergencyBlock(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                         if (lspdblock.IsCreatedIn(safePosition, copModels[selectedType])) ListManager.Add(lspdblock, ListManager.EventType.Cop);

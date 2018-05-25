@@ -7,7 +7,9 @@ namespace AdvancedWorld
 {
     public class EmergencyHeli : Emergency
     {
-        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        private bool rappeling;
+
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.rappeling = false; }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -110,10 +112,51 @@ namespace AdvancedWorld
 
         private new void SetPedsOnDuty()
         {
-            foreach (Ped p in members)
+            if (onVehicleDuty)
             {
-                if (Util.ThereIs(spawnedVehicle) && p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
-                else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                foreach (Ped p in members)
+                {
+                    if (Util.ThereIs(spawnedVehicle) && p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
+                    else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                }
+            }
+            else
+            {
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsDriveable)
+                {
+                    foreach (Ped p in members)
+                    {
+                        if (p.Equals(spawnedVehicle.Driver))
+                        {
+                            if (rappeling) Function.Call(Hash.TASK_HELI_MISSION, p, spawnedVehicle, 0, 0, spawnedVehicle.Position.X, spawnedVehicle.Position.Y, spawnedVehicle.Position.Z, 4, 40.0f, 1.0f, spawnedVehicle.Heading, -1, 5, -1.0f, 0);
+                            else Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
+                        }
+                        else if (p.Equals(spawnedVehicle.GetPedOnSeat(VehicleSeat.Passenger)))
+                        {
+                            if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                        }
+                        else
+                        {
+                            if (p.IsSittingInVehicle(spawnedVehicle))
+                            {
+                                Function.Call(Hash.TASK_RAPPEL_FROM_HELI, p, 0x41200000);
+                                rappeling = true;
+                            }
+                            else if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 67) && !p.IsInCombat)
+                            {
+                                p.Task.FightAgainstHatedTargets(400.0f);
+                                rappeling = false;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Ped p in members)
+                    {
+                        if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                    }
+                }
             }
         }
 
@@ -121,7 +164,7 @@ namespace AdvancedWorld
         {
             foreach (Ped p in members)
             {
-                if (Util.ThereIs(p))
+                if (Util.ThereIs(p) && p.IsPersistent)
                 {
                     p.AlwaysKeepTask = false;
                     p.BlockPermanentEvents = false;
@@ -151,14 +194,20 @@ namespace AdvancedWorld
                 else if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || !TargetIsFound() || !spawnedVehicle.IsInRangeOf(target.Position, 300.0f) || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                SetPedsOffDuty();
                 Restore(false);
                 return true;
             }
 
-            if (spawnedVehicle.IsInRangeOf(target.Position, 50.0f)) SetPedsOnDuty();
+            if (!TargetIsFound() || alive < 1) SetPedsOffDuty();
+            else
+            {
+                if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsInRangeOf(target.Position, 100.0f) && target.Model.IsPed && !((Ped)target).IsInVehicle())) onVehicleDuty = false;
+                else onVehicleDuty = true;
+
+                SetPedsOnDuty();
+            }
 
             return false;
         }

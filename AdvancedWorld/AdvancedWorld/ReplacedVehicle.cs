@@ -100,7 +100,7 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(spawnedVehicle) || (!spawnedVehicle.IsDriveable && !Game.Player.Character.IsInVehicle(spawnedVehicle)) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
             {
                 Restore(false);
                 return true;
