@@ -115,7 +115,7 @@ namespace AdvancedWorld
 
         protected void SetPedsOffDuty()
         {
-            if (!Util.ThereIs(spawnedVehicle))
+            if (!spawnedVehicle.IsDriveable)
             {
                 foreach (Ped p in members)
                 {
@@ -136,6 +136,7 @@ namespace AdvancedWorld
                     {
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
+                            if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                             if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
 
                             p.AlwaysKeepTask = false;
@@ -152,7 +153,6 @@ namespace AdvancedWorld
             }
             else
             {
-                if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                 if (!VehicleSeatsCanBeSeatedBy(members))
                 {
                     Restore(false);
@@ -218,7 +218,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (members.Count < 1 || !Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;
@@ -227,7 +227,7 @@ namespace AdvancedWorld
             if (!TargetIsFound()) SetPedsOffDuty();
             else
             {
-                if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f)))
+                if (!spawnedVehicle.IsDriveable || (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f)))
                     onVehicleDuty = false;
                 else onVehicleDuty = true;
 
