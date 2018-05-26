@@ -57,7 +57,7 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(shield)) shield.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(shield)) Util.NaturallyRemove(shield);
             }
         }
 

@@ -21,7 +21,7 @@ namespace AdvancedWorld
 
             Stinger s = new Stinger(spawnedVehicle);
 
-            if (s.IsCreatedIn(spawnedVehicle.Position - spawnedVehicle.ForwardVector * spawnedVehicle.Model.GetDimensions().Y)) ListManager.Add(s, ListManager.EventType.RoadBlock);
+            if (s.IsCreatedIn(spawnedVehicle.Position - spawnedVehicle.ForwardVector * spawnedVehicle.Model.GetDimensions().Y)) DispatchManager.Add(s, DispatchManager.DispatchType.Stinger);
             else s.Restore(true);
 
             if (emergencyType == "LSPD")

@@ -5,9 +5,9 @@
         protected int relationship;
         protected int dispatchCooldown;
         protected int blockCooldown;
-        protected ListManager.EventType type;
+        protected CriminalManager.EventType type;
 
-        public Criminal(ListManager.EventType type) : base()
+        public Criminal(CriminalManager.EventType type) : base()
         {
             this.dispatchCooldown = 7;
             this.blockCooldown = 0;
@@ -22,7 +22,7 @@
             {
                 dispatchCooldown = 0;
 
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, ListManager.EventType.Cop)) AdvancedWorld.DispatchAgainst(spawnedPed, type);
+                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, DispatchManager.DispatchType.Cop)) Main.DispatchAgainst(spawnedPed, type);
             }
         }
 
@@ -32,7 +32,7 @@
             else
             {
                 blockCooldown = 0;
-                AdvancedWorld.BlockRoadAgainst(spawnedPed, type);
+                Main.BlockRoadAgainst(spawnedPed, type);
             }
         }
     }

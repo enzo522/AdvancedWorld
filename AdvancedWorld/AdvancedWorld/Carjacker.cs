@@ -7,7 +7,7 @@ namespace AdvancedWorld
         private float radius;
         private int trycount;
 
-        public Carjacker() : base(ListManager.EventType.Carjacker)
+        public Carjacker() : base(CriminalManager.EventType.Carjacker)
         {
             this.radius = 0.0f;
             this.trycount = 0;
@@ -45,7 +45,7 @@ namespace AdvancedWorld
 
         private void FindNewVehicle()
         {
-            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) spawnedVehicle.MarkAsNoLongerNeeded();
+            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) Util.NaturallyRemove(spawnedVehicle);
 
             trycount++;
 
@@ -84,14 +84,14 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(spawnedPed))
                 {
-                    spawnedPed.MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(spawnedPed);
 
                     if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 }
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
             }
             
-            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Carjacker);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
         }
 
         public override bool ShouldBeRemoved()

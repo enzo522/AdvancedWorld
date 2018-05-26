@@ -97,7 +97,7 @@ namespace AdvancedWorld
 
                                 if (s.IsCreatedIn(p.Position.Around(5.0f)))
                                 {
-                                    ListManager.Add(s, ListManager.EventType.Shield);
+                                    DispatchManager.Add(s, DispatchManager.DispatchType.Shield);
                                     p.Weapons.Give(WeaponHash.Pistol, 100, true, true);
                                 }
                                 else s.Restore(true);

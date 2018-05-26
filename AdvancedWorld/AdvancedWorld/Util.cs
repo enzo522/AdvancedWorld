@@ -153,7 +153,7 @@ namespace AdvancedWorld
             return null;
         }
 
-        public static Vehicle Create(Model m, Vector3 v3, float h, bool colorNeeded)
+        public static Vehicle Create(Model m, Vector3 v3, float h, bool withColors)
         {
             if (m.IsValid && !v3.Equals(Vector3.Zero))
             {
@@ -163,7 +163,7 @@ namespace AdvancedWorld
 
                 if (ThereIs(v))
                 {
-                    if (colorNeeded)
+                    if (withColors)
                     {
                         v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
                         v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
@@ -176,7 +176,7 @@ namespace AdvancedWorld
             return null;
         }
 
-        public static void Tune(Vehicle v, bool neonsAreNeeded, bool wheelsAreNeeded)
+        public static void Tune(Vehicle v, bool withNeons, bool withWheels)
         {
             if (ThereIs(v))
             {
@@ -190,7 +190,7 @@ namespace AdvancedWorld
                     if (m != VehicleMod.Horns && m != VehicleMod.FrontWheels && m != VehicleMod.BackWheels && v.GetModCount(m) > 0) v.SetMod(m, dice.Next(-1, v.GetModCount(m)), false);
                 }
 
-                if (wheelsAreNeeded)
+                if (withWheels)
                 {
                     if (v.Model.IsCar)
                     {
@@ -209,7 +209,7 @@ namespace AdvancedWorld
                     v.RimColor = (VehicleColor)wheelColors[dice.Next(wheelColors.Length)];
                 }
 
-                if (neonsAreNeeded)
+                if (withNeons)
                 {
                     v.NeonLightsColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
 
@@ -218,15 +218,15 @@ namespace AdvancedWorld
             }
         }
 
-        public static int NewRelationship(ListManager.EventType type)
+        public static int NewRelationship(CriminalManager.EventType type)
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
             switch (type)
             {
-                case ListManager.EventType.AggressiveDriver:
-                case ListManager.EventType.Carjacker:
-                case ListManager.EventType.Racer:
+                case CriminalManager.EventType.AggressiveDriver:
+                case CriminalManager.EventType.Carjacker:
+                case CriminalManager.EventType.Racer:
                     {
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         
@@ -236,7 +236,48 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case ListManager.EventType.Army:
+                case CriminalManager.EventType.Driveby:
+                case CriminalManager.EventType.Massacre:
+                case CriminalManager.EventType.Terrorist:
+                    {
+                        foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                        
+                        criminalRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+
+                        if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+
+                        break;
+                    }
+
+                case CriminalManager.EventType.GangTeam:
+                    {
+                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+
+                        criminalRelationships.Add(newRel);
+                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
+                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+
+                        if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+
+                        break;
+                    }
+            }
+
+            return newRel;
+        }
+
+        public static int NewRelationship(DispatchManager.DispatchType type)
+        {
+            int newRel = World.AddRelationshipGroup((count++).ToString());
+
+            switch (type)
+            {
+                case DispatchManager.DispatchType.Army:
+                case DispatchManager.DispatchType.ArmyHeli:
+                case DispatchManager.DispatchType.ArmyRoadBlock:
                     {
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
@@ -246,12 +287,15 @@ namespace AdvancedWorld
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+
+                        if (!Main.DispatchesCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
                         break;
                     }
 
-                case ListManager.EventType.Cop:
+                case DispatchManager.DispatchType.Cop:
+                case DispatchManager.DispatchType.CopHeli:
+                case DispatchManager.DispatchType.CopRoadBlock:
                     {
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
@@ -261,35 +305,8 @@ namespace AdvancedWorld
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
-                        break;
-                    }
-
-                case ListManager.EventType.Driveby:
-                case ListManager.EventType.Massacre:
-                case ListManager.EventType.Terrorist:
-                    {
-                        foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        
-                        criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
-
-
-                        break;
-                    }
-
-                case ListManager.EventType.GangTeam:
-                    {
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-
-                        criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                        if (!Main.DispatchesCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
                         break;
                     }
@@ -298,33 +315,36 @@ namespace AdvancedWorld
             return newRel;
         }
 
-        public static void CleanUpRelationship(int relationship, ListManager.EventType type)
+        public static void CleanUpRelationship(int relationship)
         {
             World.RemoveRelationshipGroup(relationship);
 
+            if (criminalRelationships.Contains(relationship)) criminalRelationships.Remove(relationship);
+        }
+
+        public static void CleanUpRelationship(int relationship, DispatchManager.DispatchType type)
+        {
             switch (type)
             {
-                case ListManager.EventType.Army:
+                case DispatchManager.DispatchType.Army:
+                case DispatchManager.DispatchType.ArmyHeli:
+                case DispatchManager.DispatchType.ArmyRoadBlock:
                     {
                         if (armyRelationships.Contains(relationship)) armyRelationships.Remove(relationship);
                         break;
                     }
 
-                case ListManager.EventType.Cop:
+                case DispatchManager.DispatchType.Cop:
+                case DispatchManager.DispatchType.CopHeli:
+                case DispatchManager.DispatchType.CopRoadBlock:
                     {
                         if (copRelationships.Contains(relationship)) copRelationships.Remove(relationship);
-                        break;
-                    }
-
-                default:
-                    {
-                        if (criminalRelationships.Contains(relationship)) criminalRelationships.Remove(relationship);
                         break;
                     }
             }
         }
 
-        public static bool AnyEmergencyIsNear(Vector3 position, ListManager.EventType type)
+        public static bool AnyEmergencyIsNear(Vector3 position, DispatchManager.DispatchType type)
         {
             Ped[] nearbyPeds = World.GetNearbyPeds(position, 100.0f);
 
@@ -336,7 +356,7 @@ namespace AdvancedWorld
                 {
                     switch (type)
                     {
-                        case ListManager.EventType.Army:
+                        case DispatchManager.DispatchType.Army:
                             {
                                 foreach (int i in armyRelationships)
                                 {
@@ -346,7 +366,7 @@ namespace AdvancedWorld
                                 break;
                             }
 
-                        case ListManager.EventType.Cop:
+                        case DispatchManager.DispatchType.Cop:
                             {
                                 foreach (int i in copRelationships)
                                 {
@@ -379,6 +399,12 @@ namespace AdvancedWorld
             }
 
             return new Road(Vector3.Zero, 0.0f);
+        }
+
+        public static void NaturallyRemove(Entity en)
+        {
+            Function.Call(Hash.SET_ENTITY_AS_MISSION_ENTITY, en, false, true);
+            en.MarkAsNoLongerNeeded();
         }
     }
 }

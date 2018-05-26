@@ -10,7 +10,7 @@ namespace AdvancedWorld
         private List<Ped> members;
         private string name;
 
-        public Driveby(string name) : base(ListManager.EventType.Driveby)
+        public Driveby(string name) : base(CriminalManager.EventType.Driveby)
         {
             this.members = new List<Ped>();
             this.name = name;
@@ -90,16 +90,16 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(p))
                     {
-                        p.MarkAsNoLongerNeeded();
+                        Util.NaturallyRemove(p);
 
                         if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
                     }
                 }
 
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Driveby);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -122,10 +122,10 @@ namespace AdvancedWorld
                             Script.Wait(100);
                             Vector3 offset = p.Position + (p.RightVector * (-1.01f));
                             p.Position = new Vector3(offset.X, offset.Y, offset.Z - 0.5f);
-                            p.MarkAsNoLongerNeeded();
+                            Util.NaturallyRemove(p);
                         }
                     }
-                    else p.MarkAsNoLongerNeeded();
+                    else Util.NaturallyRemove(p);
                 }
 
                 if (Util.ThereIs(spawnedPed))

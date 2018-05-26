@@ -9,7 +9,7 @@ namespace AdvancedWorld
         private string name;
         private Vector3 goal;
 
-        public Racer(string name, Vector3 goal) : base(ListManager.EventType.Racer)
+        public Racer(string name, Vector3 goal) : base(CriminalManager.EventType.Racer)
         {
             this.name = name;
             this.goal = goal;
@@ -76,14 +76,14 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(spawnedPed))
                 {
-                    spawnedPed.MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(spawnedPed);
 
                     if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 }
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Racer);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
         }
 
         public override bool ShouldBeRemoved()

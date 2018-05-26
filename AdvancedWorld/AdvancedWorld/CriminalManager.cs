@@ -4,18 +4,15 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class ListManager : Script
+    public class CriminalManager : Script
     {
         private static List<AdvancedEntity> aggressiveList;
         private static List<AdvancedEntity> carjackerList;
-        private static List<AdvancedEntity> dispatchList;
         private static List<AdvancedEntity> drivebyList;
         private static List<AdvancedEntity> gangList;
         private static List<AdvancedEntity> massacreList;
         private static List<AdvancedEntity> racerList;
         private static List<AdvancedEntity> replacedList;
-        private static List<AdvancedEntity> shieldList;
-        private static List<AdvancedEntity> stingerList;
         private static List<AdvancedEntity> terroristList;
         private int timeChecker;
 
@@ -24,32 +21,25 @@ namespace AdvancedWorld
         public enum EventType
         {
             AggressiveDriver,
-            Army,
             Carjacker,
-            Cop,
             Driveby,
-            GangTeam,
             Fire,
+            GangTeam,
             Massacre,
             Racer,
             ReplacedVehicle,
-            RoadBlock,
-            Shield,
             Terrorist
         }
 
-        static ListManager()
+        static CriminalManager()
         {
             aggressiveList = new List<AdvancedEntity>();
             carjackerList = new List<AdvancedEntity>();
-            dispatchList = new List<AdvancedEntity>();
             drivebyList = new List<AdvancedEntity>();
             gangList = new List<AdvancedEntity>();
             massacreList = new List<AdvancedEntity>();
             racerList = new List<AdvancedEntity>();
             replacedList = new List<AdvancedEntity>();
-            shieldList = new List<AdvancedEntity>();
-            stingerList = new List<AdvancedEntity>();
             terroristList = new List<AdvancedEntity>();
         }
 
@@ -60,14 +50,6 @@ namespace AdvancedWorld
                 case EventType.AggressiveDriver:
                     {
                         aggressiveList.Add(en);
-                        break;
-                    }
-
-                case EventType.Army:
-                case EventType.Cop:
-                case EventType.Fire:
-                    {
-                        dispatchList.Add(en);
                         break;
                     }
 
@@ -107,18 +89,6 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case EventType.RoadBlock:
-                    {
-                        stingerList.Add(en);
-                        break;
-                    }
-
-                case EventType.Shield:
-                    {
-                        shieldList.Add(en);
-                        break;
-                    }
-
                 case EventType.Terrorist:
                     {
                         terroristList.Add(en);
@@ -127,7 +97,7 @@ namespace AdvancedWorld
             }
         }
 
-        public ListManager()
+        public CriminalManager()
         {
             timeChecker = 0;
             Tick += OnTick;
@@ -139,14 +109,11 @@ namespace AdvancedWorld
             {
                 CleanUp(aggressiveList);
                 CleanUp(carjackerList);
-                CleanUp(dispatchList);
                 CleanUp(drivebyList);
                 CleanUp(gangList);
                 CleanUp(massacreList);
                 CleanUp(racerList);
                 CleanUp(replacedList);
-                CleanUp(shieldList);
-                CleanUp(stingerList);
                 CleanUp(terroristList);
 
                 timeChecker = 0;
@@ -155,8 +122,6 @@ namespace AdvancedWorld
 
             foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
             foreach (Racers r in racerList) r.CheckNitroable();
-            foreach (Shield s in shieldList) s.CheckShieldable();
-            foreach (Stinger s in stingerList) s.CheckStingable();
         }
 
         private void CleanUp(List<AdvancedEntity> l)

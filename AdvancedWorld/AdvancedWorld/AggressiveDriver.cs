@@ -8,7 +8,7 @@ namespace AdvancedWorld
     {
         private string name;
 
-        public AggressiveDriver(string name) : base(ListManager.EventType.AggressiveDriver) { this.name = name; }
+        public AggressiveDriver(string name) : base(CriminalManager.EventType.AggressiveDriver) { this.name = name; }
 
         public bool IsCreatedIn(float radius)
         {
@@ -65,14 +65,14 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(spawnedPed))
                 {
-                    spawnedPed.MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(spawnedPed);
 
                     if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
                 }
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.AggressiveDriver);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
         }
 
         public override bool ShouldBeRemoved()

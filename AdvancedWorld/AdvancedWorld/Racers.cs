@@ -10,7 +10,7 @@ namespace AdvancedWorld
         private Vector3 safePosition;
         private Vector3 goal;
 
-        public Racers(List<string> models, Vector3 position, Vector3 goal) : base(ListManager.EventType.Racer)
+        public Racers(List<string> models, Vector3 position, Vector3 goal) : base(CriminalManager.EventType.Racer)
         {
             this.racers = new List<Racer>();
             this.models = models;

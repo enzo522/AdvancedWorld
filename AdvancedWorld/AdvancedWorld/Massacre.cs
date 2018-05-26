@@ -9,7 +9,7 @@ namespace AdvancedWorld
     {
         private List<Ped> members;
 
-        public Massacre() : base(ListManager.EventType.Massacre) { this.members = new List<Ped>(); }
+        public Massacre() : base(CriminalManager.EventType.Massacre) { this.members = new List<Ped>(); }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)
         {
@@ -130,14 +130,14 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(p))
                     {
-                        p.MarkAsNoLongerNeeded();
+                        Util.NaturallyRemove(p);
 
                         if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
                     }
                 }
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Massacre);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -159,7 +159,7 @@ namespace AdvancedWorld
                 {
                     if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
 
-                    members[i].MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                     continue;
                 }
@@ -167,7 +167,7 @@ namespace AdvancedWorld
                 if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
                     if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
-                    if (members[i].IsPersistent) members[i].MarkAsNoLongerNeeded();
+                    if (members[i].IsPersistent) Util.NaturallyRemove(members[i]);
 
                     members.RemoveAt(i);
                 }
@@ -175,7 +175,7 @@ namespace AdvancedWorld
 
             if (members.Count < 1)
             {
-                if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.Massacre);
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 return true;
             }

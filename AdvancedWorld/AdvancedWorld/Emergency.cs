@@ -22,8 +22,8 @@ namespace AdvancedWorld
             this.emergencyType = emergencyType;
             this.onVehicleDuty = true;
 
-            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationship(ListManager.EventType.Army);
-            else this.relationship = Util.NewRelationship(ListManager.EventType.Cop);
+            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationship(DispatchManager.DispatchType.Army);
+            else this.relationship = Util.NewRelationship(DispatchManager.DispatchType.Cop);
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
@@ -43,18 +43,18 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p))
+                    if (Util.ThereIs(p) && p.IsPersistent)
                     {
                         p.AlwaysKeepTask = false;
                         p.BlockPermanentEvents = false;
                         Function.Call(Hash.SET_PED_AS_COP, p, true);
-                        p.MarkAsNoLongerNeeded();
+                        Util.NaturallyRemove(p);
                     }
                 }
 
                 if (Util.ThereIs(spawnedVehicle))
                 {
-                    spawnedVehicle.MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(spawnedVehicle);
 
                     if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                 }
@@ -62,8 +62,8 @@ namespace AdvancedWorld
             
             if (relationship != 0)
             {
-                if (emergencyType == "ARMY") Util.CleanUpRelationship(relationship, ListManager.EventType.Army);
-                else Util.CleanUpRelationship(relationship, ListManager.EventType.Cop);
+                if (emergencyType == "ARMY") Util.CleanUpRelationship(relationship, DispatchManager.DispatchType.Army);
+                else Util.CleanUpRelationship(relationship, DispatchManager.DispatchType.Cop);
             }
 
             members.Clear();
@@ -126,19 +126,7 @@ namespace AdvancedWorld
 
         protected void SetPedsOffDuty()
         {
-            if (!spawnedVehicle.IsDriveable)
-            {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p) && p.IsPersistent)
-                    {
-                        p.AlwaysKeepTask = false;
-                        p.BlockPermanentEvents = false;
-                        Function.Call(Hash.SET_PED_AS_COP, p, true);
-                        p.MarkAsNoLongerNeeded();
-                    }
-                }
-            }
+            if (!spawnedVehicle.IsDriveable) Restore(false);
             else if (EveryoneIsSitting())
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
@@ -153,7 +141,7 @@ namespace AdvancedWorld
                             p.AlwaysKeepTask = false;
                             p.BlockPermanentEvents = false;
                             Function.Call(Hash.SET_PED_AS_COP, p, true);
-                            p.MarkAsNoLongerNeeded();
+                            Util.NaturallyRemove(p);
                         }
                     }
                 }
@@ -224,7 +212,7 @@ namespace AdvancedWorld
 
                 if (members[i].IsDead)
                 {
-                    members[i].MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                 }
             }

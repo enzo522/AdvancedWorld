@@ -128,20 +128,6 @@ namespace AdvancedWorld
             }
         }
 
-        private new void SetPedsOffDuty()
-        {
-            foreach (Ped p in members)
-            {
-                if (Util.ThereIs(p) && p.IsPersistent)
-                {
-                    p.AlwaysKeepTask = false;
-                    p.BlockPermanentEvents = false;
-                    Function.Call(Hash.SET_PED_AS_COP, p, true);
-                    p.MarkAsNoLongerNeeded();
-                }
-            }
-        }
-
         public override bool ShouldBeRemoved()
         {
             int alive = 0;
@@ -156,19 +142,17 @@ namespace AdvancedWorld
 
                 if (members[i].IsDead)
                 {
-                    members[i].MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                 }
                 else if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
             }
 
-            if (members.Count < 1 || !Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!TargetIsFound() || alive < 1 || members.Count < 1 || !Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;
             }
-
-            if (!TargetIsFound() || alive < 1) SetPedsOffDuty();
             else
             {
                 if (!spawnedVehicle.IsDriveable && spawnedVehicle.IsOnAllWheels) onVehicleDuty = false;

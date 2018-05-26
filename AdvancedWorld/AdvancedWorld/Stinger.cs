@@ -60,7 +60,7 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(stinger)) stinger.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(stinger)) Util.NaturallyRemove(stinger);
             }
         }
 

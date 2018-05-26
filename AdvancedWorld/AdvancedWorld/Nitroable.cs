@@ -11,7 +11,7 @@ namespace AdvancedWorld
         private int nitroAmount;
         private bool nitroCooldown;
 
-        public Nitroable(ListManager.EventType type) : base(type)
+        public Nitroable(CriminalManager.EventType type) : base(type)
         {
             exhausts = new List<string>
             {

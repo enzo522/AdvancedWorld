@@ -12,12 +12,12 @@ namespace AdvancedWorld
         private List<WeaponHash> standoffWeapons;
         private TaskSequence ts;
 
-        public GangTeam() : base(ListManager.EventType.GangTeam)
+        public GangTeam() : base(CriminalManager.EventType.GangTeam)
         {
             this.members = new List<Ped>();
             this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.BattleAxe, WeaponHash.Unarmed };
             this.standoffWeapons = new List<WeaponHash> { WeaponHash.MachinePistol, WeaponHash.SawnOffShotgun, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.PumpShotgun, WeaponHash.Revolver };
-            Util.CleanUpRelationship(this.relationship, ListManager.EventType.GangTeam);
+            Util.CleanUpRelationship(this.relationship);
 
             ts = new TaskSequence();
             ts.AddTask.FightAgainstHatedTargets(200.0f);
@@ -83,14 +83,14 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(p))
                     {
-                        p.MarkAsNoLongerNeeded();
+                        Util.NaturallyRemove(p);
 
                         if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
                     }
                 }
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.GangTeam);
+            if (relationship != 0) Util.CleanUpRelationship(relationship);
 
             members.Clear();
         }
@@ -117,16 +117,16 @@ namespace AdvancedWorld
                 {
                     if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
 
-                    members[i].MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                     continue;
                 }
 
-                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, ListManager.EventType.Cop)) members[i].Task.PerformSequence(ts);
+                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop)) members[i].Task.PerformSequence(ts);
                 if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
                     if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
-                    if (members[i].IsPersistent) members[i].MarkAsNoLongerNeeded();
+                    if (members[i].IsPersistent) Util.NaturallyRemove(members[i]);
 
                     members.RemoveAt(i);
                 }
@@ -134,7 +134,7 @@ namespace AdvancedWorld
 
             if (members.Count < 1)
             {
-                if (relationship != 0) Util.CleanUpRelationship(relationship, ListManager.EventType.GangTeam);
+                if (relationship != 0) Util.CleanUpRelationship(relationship);
 
                 ts.Dispose();
                 return true;

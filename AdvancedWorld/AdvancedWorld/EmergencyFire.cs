@@ -11,7 +11,7 @@ namespace AdvancedWorld
 
         public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
-            Util.CleanUpRelationship(this.relationship, ListManager.EventType.Cop);
+            Util.CleanUpRelationship(this.relationship, DispatchManager.DispatchType.Cop);
             this.relationship = 0;
             this.targetPosition = target.Position;
         }
@@ -89,13 +89,13 @@ namespace AdvancedWorld
                     {
                         p.AlwaysKeepTask = false;
                         p.BlockPermanentEvents = false;
-                        p.MarkAsNoLongerNeeded();
+                        Util.NaturallyRemove(p);
                     }
                 }
 
                 if (Util.ThereIs(spawnedVehicle))
                 {
-                    spawnedVehicle.MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(spawnedVehicle);
 
                     if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                 }
