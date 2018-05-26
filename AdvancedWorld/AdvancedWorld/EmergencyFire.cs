@@ -70,6 +70,40 @@ namespace AdvancedWorld
             return true;
         }
 
+        public override void Restore(bool instantly)
+        {
+            if (instantly)
+            {
+                foreach (Ped p in members)
+                {
+                    if (Util.ThereIs(p)) p.Delete();
+                }
+
+                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
+            }
+            else
+            {
+                foreach (Ped p in members)
+                {
+                    if (Util.ThereIs(p))
+                    {
+                        p.AlwaysKeepTask = false;
+                        p.BlockPermanentEvents = false;
+                        p.MarkAsNoLongerNeeded();
+                    }
+                }
+
+                if (Util.ThereIs(spawnedVehicle))
+                {
+                    spawnedVehicle.MarkAsNoLongerNeeded();
+
+                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+                }
+            }
+
+            members.Clear();
+        }
+
         protected new abstract void SetPedsOnDuty();
         protected new void SetPedsOffDuty()
         {
@@ -111,7 +145,7 @@ namespace AdvancedWorld
                 }
             }
         }
-
+        
         private new void AddVarietyTo(Ped p)
         {
             if (emergencyType == "FIREMAN")

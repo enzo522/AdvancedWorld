@@ -7,9 +7,7 @@ namespace AdvancedWorld
 {
     public class EmergencyHeli : Emergency
     {
-        private bool rappeling;
-
-        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.rappeling = false; }
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {

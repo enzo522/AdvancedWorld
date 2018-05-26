@@ -88,13 +88,13 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed))
+                if (Util.ThereIs(spawnedPed)) spawnedPed.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle))
                 {
-                    spawnedPed.MarkAsNoLongerNeeded();
-
+                    spawnedVehicle.MarkAsNoLongerNeeded();
+                    
                     if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
                 }
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
             }
         }
 

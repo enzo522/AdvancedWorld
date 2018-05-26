@@ -79,12 +79,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p))
-                    {
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-
-                        p.Delete();
-                    }
+                    if (Util.ThereIs(p)) p.Delete();
                 }
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
@@ -95,9 +90,9 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(p))
                     {
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-
                         p.MarkAsNoLongerNeeded();
+
+                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
                     }
                 }
 

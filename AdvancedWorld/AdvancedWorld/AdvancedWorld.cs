@@ -439,14 +439,12 @@ namespace AdvancedWorld
                 racerCarNames.Add("elegy5");
                 racerCarNames.Add("elegy6");
                 racerCarNames.Add("es550");
-                racerCarNames.Add("euros");
                 racerCarNames.Add("futo3");
                 racerCarNames.Add("gauntlet3");
                 racerCarNames.Add("gauntlet4");
                 racerCarNames.Add("gauntlet5");
                 racerCarNames.Add("hellhound");
                 racerCarNames.Add("rapidgt4");
-                racerCarNames.Add("requiem");
                 racerCarNames.Add("tyrus2");
                 racerCarNames.Add("vigero3");
                 racerBikeNames.Add("kenshin");
@@ -536,7 +534,6 @@ namespace AdvancedWorld
                 copCarNames[0].Add("dovhpgran");
                 copCarNames[0].Add("dovhpstan2");
                 copCarNames[0].Add("dovngran");
-                copCarNames[0].Add("dovpolesp");
                 copCarNames[0].Add("dovpolfugi");
                 copCarNames[0].Add("dovpolmerit");
                 copCarNames[0].Add("dovpolstan");
@@ -555,7 +552,6 @@ namespace AdvancedWorld
                 swatCarNames.Add("dovnstock");
                 swatCarNames.Add("dovnsurge");
                 emCarNames.Add("dovemambu");
-                fireCarNames.Add("dovemfihvy");
             }
         }
 

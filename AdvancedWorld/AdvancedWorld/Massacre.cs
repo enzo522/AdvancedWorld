@@ -50,7 +50,8 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "move_strafe_ballistic");
                 Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, Function.Call<int>(Hash.GET_HASH_KEY, "Ballistic"));
                 
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, Util.GetRandomInt(7), 0, 0);
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, Util.GetRandomInt(7), 0, 0);
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, 1, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 2, 0, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 3, 1, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 4, 1, 0, 0);
@@ -58,7 +59,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, 7, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 9, 1, 0, 0);
 
-                switch (Util.GetRandomInt(3))
+                switch (Util.GetRandomInt(4))
                 {
                     case 0:
                         Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 5, 0, true);
@@ -70,6 +71,10 @@ namespace AdvancedWorld
 
                     case 2:
                         Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 2, 0, true);
+                        break;
+
+                    case 3:
+                        Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, 3, 0, true);
                         break;
                 }
                 
@@ -116,12 +121,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p))
-                    {
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-
-                        p.Delete();
-                    }
+                    if (Util.ThereIs(p)) p.Delete();
                 }
             }
             else
@@ -130,9 +130,9 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(p))
                     {
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-
                         p.MarkAsNoLongerNeeded();
+
+                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
                     }
                 }
             }

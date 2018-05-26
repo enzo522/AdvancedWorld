@@ -43,10 +43,21 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p)) p.MarkAsNoLongerNeeded();
+                    if (Util.ThereIs(p))
+                    {
+                        p.AlwaysKeepTask = false;
+                        p.BlockPermanentEvents = false;
+                        Function.Call(Hash.SET_PED_AS_COP, p, true);
+                        p.MarkAsNoLongerNeeded();
+                    }
                 }
 
-                if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.MarkAsNoLongerNeeded();
+                if (Util.ThereIs(spawnedVehicle))
+                {
+                    spawnedVehicle.MarkAsNoLongerNeeded();
+
+                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+                }
             }
             
             if (relationship != 0)
