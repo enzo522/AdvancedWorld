@@ -10,7 +10,27 @@ namespace AdvancedWorld
         
         protected override void SetPedsOnDuty()
         {
-            if (TargetIsFound())
+            if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
+            if (onVehicleDuty)
+            {
+                if (ReadyToGoWith(members))
+                {
+                    if (Util.ThereIs(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.IgnoreLights);
+                    else
+                    {
+                        foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
+                }
+                else
+                {
+                    if (!VehicleSeatsCanBeSeatedBy(members))
+                    {
+                        Restore(false);
+                        return;
+                    }
+                }
+            }
+            else
             {
                 foreach (Ped p in members)
                 {
@@ -28,7 +48,7 @@ namespace AdvancedWorld
             }
         }
 
-        private new bool TargetIsFound()
+        protected override bool TargetIsFound()
         {
             target = null;
             targetPosition = Vector3.Zero;
@@ -38,14 +58,14 @@ namespace AdvancedWorld
             {
                 Vector3 position = outPos.GetResult<Vector3>();
 
-                if (!position.Equals(Vector3.Zero) && spawnedVehicle.IsInRangeOf(position, 100.0f))
+                if (!position.Equals(Vector3.Zero) && spawnedVehicle.IsInRangeOf(position, 200.0f))
                 {
                     targetPosition = position;
                     return true;
                 }
             }
 
-            Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 100.0f);
+            Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 200.0f);
 
             if (nearbyEntities.Length < 1) return false;
 

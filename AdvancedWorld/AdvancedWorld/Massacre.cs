@@ -9,7 +9,7 @@ namespace AdvancedWorld
     {
         private List<Ped> members;
 
-        public Massacre() : base(CriminalManager.EventType.Massacre) { this.members = new List<Ped>(); }
+        public Massacre() : base(EventManager.EventType.Massacre) { this.members = new List<Ped>(); }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)
         {
@@ -80,18 +80,27 @@ namespace AdvancedWorld
                 
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 0, false);
+                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
+                Function.Call(Hash.SET_PED_PATH_CAN_USE_CLIMBOVERS, p, false);
+                Function.Call(Hash.SET_PED_PATH_CAN_USE_LADDERS, p, false);
+                Function.Call(Hash.SET_PED_PATH_AVOID_FIRE, p, false);
+
                 p.RelationshipGroup = relationship;
+                p.IsPriorityTargetForEnemies = true;
                 p.AlwaysKeepTask = true;
+                p.BlockPermanentEvents = true;
 
                 p.FiringPattern = FiringPattern.FullAuto;
                 p.ShootRate = 1000;
                 p.CanRagdoll = false;
                 p.CanWrithe = false;
+
                 p.IsFireProof = true;
                 p.CanSwitchWeapons = true;
+                p.Task.FightAgainstHatedTargets(400.0f);
 
                 if (!Util.BlipIsOn(p))
                 {
@@ -108,8 +117,6 @@ namespace AdvancedWorld
                     Restore(true);
                     return false;
                 }
-
-                p.Task.FightAgainstHatedTargets(400.0f);
             }
 
             return true;
@@ -126,15 +133,7 @@ namespace AdvancedWorld
             }
             else
             {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p))
-                    {
-                        Util.NaturallyRemove(p);
-
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-                    }
-                }
+                foreach (Ped p in members) Util.NaturallyRemove(p);
             }
 
             if (relationship != 0) Util.CleanUpRelationship(relationship);
@@ -153,24 +152,15 @@ namespace AdvancedWorld
                     members.RemoveAt(i);
                     continue;
                 }
-
-                if (!members[i].IsDead) spawnedPed = members[i];
-                else
+                
+                if (members[i].IsDead || !members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
-                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
-
                     Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                     continue;
                 }
 
-                if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
-                {
-                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
-                    if (members[i].IsPersistent) Util.NaturallyRemove(members[i]);
-
-                    members.RemoveAt(i);
-                }
+                spawnedPed = members[i];
             }
 
             if (members.Count < 1)

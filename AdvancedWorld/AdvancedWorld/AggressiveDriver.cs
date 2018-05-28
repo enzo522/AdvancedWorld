@@ -8,7 +8,7 @@ namespace AdvancedWorld
     {
         private string name;
 
-        public AggressiveDriver(string name) : base(CriminalManager.EventType.AggressiveDriver) { this.name = name; }
+        public AggressiveDriver(string name) : base(EventManager.EventType.AggressiveDriver) { this.name = name; }
 
         public bool IsCreatedIn(float radius)
         {
@@ -38,6 +38,7 @@ namespace AdvancedWorld
             Util.Tune(spawnedVehicle, true, true);
 
             spawnedPed.RelationshipGroup = relationship;
+            spawnedPed.IsPriorityTargetForEnemies = true;
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
             spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
@@ -63,13 +64,8 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed))
-                {
-                    Util.NaturallyRemove(spawnedPed);
-
-                    if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-                }
-                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
+                Util.NaturallyRemove(spawnedPed);
+                Util.NaturallyRemove(spawnedVehicle);
             }
 
             if (relationship != 0) Util.CleanUpRelationship(relationship);

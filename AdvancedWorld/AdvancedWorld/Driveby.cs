@@ -10,7 +10,7 @@ namespace AdvancedWorld
         private List<Ped> members;
         private string name;
 
-        public Driveby(string name) : base(CriminalManager.EventType.Driveby)
+        public Driveby(string name) : base(EventManager.EventType.Driveby)
         {
             this.members = new List<Ped>();
             this.name = name;
@@ -50,6 +50,8 @@ namespace AdvancedWorld
                     break;
                 }
 
+                Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
+                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
                 Function.Call(Hash.SET_DRIVER_ABILITY, p, 1.0f);
@@ -59,13 +61,14 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
                 p.Weapons.Give(drivebyWeaponList[Util.GetRandomInt(drivebyWeaponList.Count)], 100, true, true);
                 p.Weapons.Current.InfiniteAmmo = true;
-
+                
                 p.ShootRate = 1000;
                 p.RelationshipGroup = relationship;
+                p.IsPriorityTargetForEnemies = true;
                 p.FiringPattern = FiringPattern.BurstFireDriveby;
             }
 
-            if (DriverExists()) return true;
+            if (SpawnedPedExists()) return true;
             else
             {
                 Restore(true);
@@ -86,17 +89,9 @@ namespace AdvancedWorld
             }
             else
             {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p))
-                    {
-                        Util.NaturallyRemove(p);
+                foreach (Ped p in members) Util.NaturallyRemove(p);
 
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-                    }
-                }
-
-                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
+                Util.NaturallyRemove(spawnedVehicle);
             }
 
             if (relationship != 0) Util.CleanUpRelationship(relationship);
@@ -104,34 +99,18 @@ namespace AdvancedWorld
             members.Clear();
         }
 
-        private bool DriverExists()
+        private bool SpawnedPedExists()
         {
+            spawnedPed = null;
+
             foreach (Ped p in members)
             {
-                spawnedPed = null;
-
-                if (!p.IsDead) spawnedPed = p;
-                else
+                if (Util.ThereIs(p) && !p.IsDead)
                 {
-                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-                    if (p.Equals(spawnedVehicle.Driver))
-                    {
-                        if (spawnedVehicle.Model.IsCar && p.IsSittingInVehicle(spawnedVehicle) && spawnedVehicle.IsStopped)
-                        {
-                            spawnedVehicle.OpenDoor(VehicleDoor.FrontLeftDoor, false, true);
-                            Script.Wait(100);
-                            Vector3 offset = p.Position + (p.RightVector * (-1.01f));
-                            p.Position = new Vector3(offset.X, offset.Y, offset.Z - 0.5f);
-                            Util.NaturallyRemove(p);
-                        }
-                    }
-                    else Util.NaturallyRemove(p);
-                }
+                    if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + spawnedVehicle.FriendlyName);
+                    else if (!p.CurrentBlip.Sprite.Equals(BlipSprite.GunCar)) p.CurrentBlip.Remove(); 
 
-                if (Util.ThereIs(spawnedPed))
-                {
-                    if (!Util.BlipIsOn(spawnedPed)) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + spawnedVehicle.FriendlyName);
-
+                    spawnedPed = p;
                     return true;
                 }
             }
@@ -139,24 +118,18 @@ namespace AdvancedWorld
             return false;
         }
 
-        private bool EveryoneIsSitting()
-        {
-            foreach (Ped p in members)
-            {
-                if (!p.Equals(spawnedPed) && !p.IsDead && !p.IsSittingInVehicle(spawnedVehicle)) return false;
-            }
-
-            return true;
-        }
-
         public override bool ShouldBeRemoved()
         {
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
+                if (!Util.ThereIs(members[i]))
+                {
+                    members.RemoveAt(i);
+                    continue;
+                }
             }
             
-            if (!Util.ThereIs(spawnedVehicle) || !DriverExists() || members.Count < 1 || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !SpawnedPedExists() || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;
@@ -169,13 +142,13 @@ namespace AdvancedWorld
                     if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                 }
             }
-            else if (EveryoneIsSitting())
+            else if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
                     foreach (Ped p in members)
                     {
-                        if (p.Equals(spawnedPed))
+                        if (p.Equals(spawnedVehicle.Driver))
                         {
                             if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                         }
@@ -192,7 +165,7 @@ namespace AdvancedWorld
                 if (!VehicleSeatsCanBeSeatedBy(members))
                 {
                     Restore(false);
-                    return false;
+                    return true;
                 }
             }
 

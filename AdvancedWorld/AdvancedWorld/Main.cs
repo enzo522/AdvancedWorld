@@ -610,7 +610,7 @@ namespace AdvancedWorld
             }
         }
 
-        public static void DispatchAgainst(Entity target, CriminalManager.EventType type)
+        public static void DispatchAgainst(Entity target, EventManager.EventType type)
         {
             if (NoDispatch) return; 
 
@@ -620,13 +620,13 @@ namespace AdvancedWorld
 
             switch (type)
             {
-                case CriminalManager.EventType.AggressiveDriver:
-                case CriminalManager.EventType.Racer:
+                case EventManager.EventType.AggressiveDriver:
+                case EventManager.EventType.Racer:
                     {
                         for (int i = 0; i < 2; i++)
                         {
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
-                            EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
@@ -643,10 +643,10 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Carjacker:
+                case EventManager.EventType.Carjacker:
                     {
                         int selectedType = Util.GetRandomInt(copCarNames.Count);
-                        EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                        EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                         if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                         else lspd.Restore(true);
@@ -654,18 +654,18 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Driveby:
+                case EventManager.EventType.Driveby:
                     {
                         for (int i = 0; i < 2; i++)
                         {
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
-                            EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
                         }
 
-                        EmergencyCar swat = new EmergencyCar(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
+                        EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
 
                         if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
                         else swat.Restore(true);
@@ -677,18 +677,11 @@ namespace AdvancedWorld
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
                             else swatheli.Restore(true);
                         }
-                        else
-                        {
-                            EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
-
-                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
-                            else lspdheli.Restore(true);
-                        }
 
                         break;
                     }
 
-                case CriminalManager.EventType.Fire:
+                case EventManager.EventType.Fire:
                     {
                         for (int i = 0; i < 2; i++)
                         {
@@ -706,12 +699,12 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.GangTeam:
+                case EventManager.EventType.GangTeam:
                     {
                         for (int i = 0; i < 2; i++)
                         {
                             int selectedType = Util.GetRandomInt(copCarNames.Count);
-                            EmergencyCar lspd = new EmergencyCar(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
@@ -725,16 +718,16 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Massacre:
+                case EventManager.EventType.Massacre:
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            EmergencyCar fib = new EmergencyCar(fibCarNames[Util.GetRandomInt(fibCarNames.Count)], target, "FIB");
+                            EmergencyGround fib = new EmergencyGround(fibCarNames[Util.GetRandomInt(fibCarNames.Count)], target, "FIB");
 
                             if (fib.IsCreatedIn(safePosition, fibModels)) DispatchManager.Add(fib, DispatchManager.DispatchType.Cop);
                             else fib.Restore(true);
 
-                            EmergencyCar swat = new EmergencyCar(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
+                            EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
 
                             if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
                             else swat.Restore(true);
@@ -748,11 +741,11 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Terrorist:
+                case EventManager.EventType.Terrorist:
                     {
                         for (int i = 0; i < 4; i++)
                         {
-                            EmergencyCar army = new EmergencyCar(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
+                            EmergencyGround army = new EmergencyGround(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
 
                             if (army.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(army, DispatchManager.DispatchType.Army);
                             else army.Restore(true);
@@ -771,7 +764,7 @@ namespace AdvancedWorld
             }
         }
 
-        public static void BlockRoadAgainst(Entity target, CriminalManager.EventType type)
+        public static void BlockRoadAgainst(Entity target, EventManager.EventType type)
         {
             if (NoDispatch) return;
 
@@ -781,8 +774,8 @@ namespace AdvancedWorld
 
             switch (type)
             {
-                case CriminalManager.EventType.AggressiveDriver:
-                case CriminalManager.EventType.Racer:
+                case EventManager.EventType.AggressiveDriver:
+                case EventManager.EventType.Racer:
                     {
                         int selectedType = Util.GetRandomInt(copCarNames.Count - 1);
                         EmergencyBlock lspdblock = new EmergencyBlock(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
@@ -793,7 +786,7 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Driveby:
+                case EventManager.EventType.Driveby:
                     {
                         EmergencyBlock swatblock = new EmergencyBlock(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
 
@@ -803,7 +796,7 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Terrorist:
+                case EventManager.EventType.Terrorist:
                     {
                         EmergencyBlock armyblock = new EmergencyBlock(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
 
@@ -827,17 +820,14 @@ namespace AdvancedWorld
         {
             if (eventTimeChecker == 1 || eventTimeChecker == 2 || eventTimeChecker == 3 || eventTimeChecker == 4)
             {
-                if (CriminalManager.ReplaceSlotIsAvailable)
-                {
-                    ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomInt(addOnCarNames.Count)]);
+                ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomInt(addOnCarNames.Count)]);
 
-                    if (rv.IsCreatedIn(radius))
-                    {
-                        CriminalManager.Add(rv, CriminalManager.EventType.ReplacedVehicle);
-                        Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-                    }
-                    else rv.Restore(true);
+                if (rv.IsCreatedIn(radius))
+                {
+                    EventManager.Add(rv, EventManager.EventType.ReplacedVehicle);
+                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                 }
+                else rv.Restore(true);
 
                 eventTimeChecker++;
             }
@@ -851,7 +841,7 @@ namespace AdvancedWorld
 
                             if (cj.IsCreatedIn(radius))
                             {
-                                CriminalManager.Add(cj, CriminalManager.EventType.Carjacker);
+                                EventManager.Add(cj, EventManager.EventType.Carjacker);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else cj.Restore(true);
@@ -865,7 +855,7 @@ namespace AdvancedWorld
 
                             if (ad.IsCreatedIn(radius))
                             {
-                                CriminalManager.Add(ad, CriminalManager.EventType.AggressiveDriver);
+                                EventManager.Add(ad, EventManager.EventType.AggressiveDriver);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else ad.Restore(true);
@@ -875,74 +865,35 @@ namespace AdvancedWorld
 
                     case 2:
                         {
-                            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(Game.Player.Character.Position, radius);
+                            OnFire of = new OnFire();
 
-                            if (nearbyVehicles.Length < 1)
+                            if (of.IsCreatedIn(radius, true))
                             {
-                                nearbyVehicles = null;
+                                EventManager.Add(of, EventManager.EventType.Fire);
+                                DispatchAgainst(of.OnFireVehicle, EventManager.EventType.Fire);
+                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
                                 break;
                             }
+                            else of.Restore(true);
 
-                            for (int trycount = 0; trycount < 5; trycount++)
-                            {
-                                Vehicle explosiveVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
-
-                                if (Util.WeCanReplace(explosiveVehicle))
-                                {
-                                    if (Util.BlipIsOn(explosiveVehicle))
-                                    {
-                                        explosiveVehicle.CurrentBlip.Remove();
-                                        Script.Wait(100);
-                                    }
-
-                                    Util.AddBlipOn(explosiveVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
-                                    DispatchAgainst(explosiveVehicle, CriminalManager.EventType.Fire);
-                                    explosiveVehicle.Explode();
-                                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-
-                                    break;
-                                }
-                                else explosiveVehicle = null;
-                            }
-
-                            nearbyVehicles = null;
                             break;
                         }
 
                     case 3:
                         {
-                            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(Game.Player.Character.Position, radius);
+                            OnFire of = new OnFire();
 
-                            if (nearbyVehicles.Length < 1)
+                            if (of.IsCreatedIn(radius, false))
                             {
-                                nearbyVehicles = null;
+                                EventManager.Add(of, EventManager.EventType.Fire);
+                                DispatchAgainst(of.OnFireVehicle, EventManager.EventType.Fire);
+                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
                                 break;
                             }
+                            else of.Restore(true);
 
-                            for (int trycount = 0; trycount < 5; trycount++)
-                            {
-                                Vehicle undriveableVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
-
-                                if (Util.WeCanReplace(undriveableVehicle))
-                                {
-                                    if (Util.BlipIsOn(undriveableVehicle))
-                                    {
-                                        undriveableVehicle.CurrentBlip.Remove();
-                                        Script.Wait(100);
-                                    }
-                                    
-                                    Util.AddBlipOn(undriveableVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
-                                    DispatchAgainst(undriveableVehicle, CriminalManager.EventType.Fire);
-                                    undriveableVehicle.EngineHealth = -900.0f;
-                                    undriveableVehicle.IsDriveable = false;
-                                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-
-                                    break;
-                                }
-                                else undriveableVehicle = null;
-                            }
-
-                            nearbyVehicles = null;
                             break;
                         }
 
@@ -962,8 +913,8 @@ namespace AdvancedWorld
 
                             if (teamANum == -1 || teamBNum == -1) break;
 
-                            int relationshipA = Util.NewRelationship(CriminalManager.EventType.GangTeam);
-                            int relationshipB = Util.NewRelationship(CriminalManager.EventType.GangTeam);
+                            int relationshipA = Util.NewRelationship(EventManager.EventType.GangTeam);
+                            int relationshipB = Util.NewRelationship(EventManager.EventType.GangTeam);
 
                             if (relationshipA == 0 || relationshipB == 0) break;
 
@@ -976,8 +927,8 @@ namespace AdvancedWorld
                             if (teamA.IsCreatedIn(radius, position1, gangModels[teamANum], relationshipA, BlipColor.Green, "A Team")
                                 && teamB.IsCreatedIn(radius, position2, gangModels[teamBNum], relationshipB, BlipColor.Red, "B Team"))
                             {
-                                CriminalManager.Add(teamA, CriminalManager.EventType.GangTeam);
-                                CriminalManager.Add(teamB, CriminalManager.EventType.GangTeam);
+                                EventManager.Add(teamA, EventManager.EventType.GangTeam);
+                                EventManager.Add(teamB, EventManager.EventType.GangTeam);
 
                                 teamA.PerformTask();
                                 teamB.PerformTask();
@@ -1003,7 +954,7 @@ namespace AdvancedWorld
                             
                             if (ms.IsCreatedIn(radius, safePosition))
                             {
-                                CriminalManager.Add(ms, CriminalManager.EventType.Massacre);
+                                EventManager.Add(ms, EventManager.EventType.Massacre);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else ms.Restore(true);
@@ -1025,7 +976,7 @@ namespace AdvancedWorld
 
                             if (r.IsCreatedIn(radius))
                             {
-                                CriminalManager.Add(r, CriminalManager.EventType.Racer);
+                                EventManager.Add(r, EventManager.EventType.Racer);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else r.Restore(true);
@@ -1039,7 +990,7 @@ namespace AdvancedWorld
 
                             if (db.IsCreatedIn(radius, gangModels[Util.GetRandomInt(gangModels.Count)]))
                             {
-                                CriminalManager.Add(db, CriminalManager.EventType.Driveby);
+                                EventManager.Add(db, EventManager.EventType.Driveby);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else db.Restore(true);
@@ -1053,7 +1004,7 @@ namespace AdvancedWorld
 
                             if (tr.IsCreatedIn(radius))
                             {
-                                CriminalManager.Add(tr, CriminalManager.EventType.Terrorist);
+                                EventManager.Add(tr, EventManager.EventType.Terrorist);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else tr.Restore(true);

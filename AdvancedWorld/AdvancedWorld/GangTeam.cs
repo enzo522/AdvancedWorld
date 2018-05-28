@@ -12,7 +12,7 @@ namespace AdvancedWorld
         private List<WeaponHash> standoffWeapons;
         private TaskSequence ts;
 
-        public GangTeam() : base(CriminalManager.EventType.GangTeam)
+        public GangTeam() : base(EventManager.EventType.GangTeam)
         {
             this.members = new List<Ped>();
             this.closeWeapons = new List<WeaponHash> { WeaponHash.Bat, WeaponHash.Hatchet, WeaponHash.Hammer, WeaponHash.Knife, WeaponHash.KnuckleDuster, WeaponHash.Machete, WeaponHash.Wrench, WeaponHash.BattleAxe, WeaponHash.Unarmed };
@@ -44,6 +44,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
                 p.RelationshipGroup = relationship;
+                p.IsPriorityTargetForEnemies = true;
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
                 p.Armor = Util.GetRandomInt(100);
@@ -79,15 +80,7 @@ namespace AdvancedWorld
             }
             else
             {
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p))
-                    {
-                        Util.NaturallyRemove(p);
-
-                        if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-                    }
-                }
+                foreach (Ped p in members) Util.NaturallyRemove(p);
             }
 
             if (relationship != 0) Util.CleanUpRelationship(relationship);
@@ -112,24 +105,16 @@ namespace AdvancedWorld
                     continue;
                 }
                 
-                if (!members[i].IsDead) spawnedPed = members[i];
-                else
+                if (members[i].IsDead || !members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
-                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
-
                     Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                     continue;
                 }
 
-                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop)) members[i].Task.PerformSequence(ts);
-                if (!members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
-                {
-                    if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
-                    if (members[i].IsPersistent) Util.NaturallyRemove(members[i]);
+                spawnedPed = members[i];
 
-                    members.RemoveAt(i);
-                }
+                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop)) members[i].Task.PerformSequence(ts);
             }
 
             if (members.Count < 1)
@@ -139,6 +124,7 @@ namespace AdvancedWorld
                 ts.Dispose();
                 return true;
             }
+
             if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
             return false;

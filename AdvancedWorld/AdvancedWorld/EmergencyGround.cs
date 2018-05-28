@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class EmergencyCar : Emergency
+    public class EmergencyGround : Emergency
     {
-        public EmergencyCar(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        public EmergencyGround(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -121,6 +121,7 @@ namespace AdvancedWorld
                 AddVarietyTo(p);
 
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
+                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
@@ -133,11 +134,10 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
 
                 p.RelationshipGroup = relationship;
+                p.IsPriorityTargetForEnemies = true;
                 p.NeverLeavesGroup = true;
             }
-
-            if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
-
+            
             spawnedVehicle.EngineRunning = true;
             SetPedsOnDuty();
 

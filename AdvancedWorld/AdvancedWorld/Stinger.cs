@@ -58,15 +58,12 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(stinger)) stinger.Delete();
             }
-            else
-            {
-                if (Util.ThereIs(stinger)) Util.NaturallyRemove(stinger);
-            }
+            else Util.NaturallyRemove(stinger);
         }
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(owner.Position, 300.0f) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;

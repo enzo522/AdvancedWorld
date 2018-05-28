@@ -88,13 +88,8 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed)) Util.NaturallyRemove(spawnedPed);
-                if (Util.ThereIs(spawnedVehicle))
-                {
-                    Util.NaturallyRemove(spawnedVehicle);
-
-                    if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
-                }
+                Util.NaturallyRemove(spawnedPed);
+                Util.NaturallyRemove(spawnedVehicle);
             }
         }
 

@@ -7,7 +7,7 @@ namespace AdvancedWorld
         private float radius;
         private int trycount;
 
-        public Carjacker() : base(CriminalManager.EventType.Carjacker)
+        public Carjacker() : base(EventManager.EventType.Carjacker)
         {
             this.radius = 0.0f;
             this.trycount = 0;
@@ -25,6 +25,7 @@ namespace AdvancedWorld
             
             this.radius = radius;
             spawnedPed.IsPersistent = true;
+            spawnedPed.IsPriorityTargetForEnemies = true;
             
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
@@ -45,10 +46,8 @@ namespace AdvancedWorld
 
         private void FindNewVehicle()
         {
-            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent) Util.NaturallyRemove(spawnedVehicle);
-
             trycount++;
-
+            Util.NaturallyRemove(spawnedVehicle);
             Vehicle[] nearbyVehicles = World.GetNearbyVehicles(spawnedPed.Position, radius / 2);
 
             if (nearbyVehicles.Length < 1) return;
@@ -82,13 +81,8 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed))
-                {
-                    Util.NaturallyRemove(spawnedPed);
-
-                    if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-                }
-                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
+                Util.NaturallyRemove(spawnedPed);
+                Util.NaturallyRemove(spawnedVehicle);
             }
             
             if (relationship != 0) Util.CleanUpRelationship(relationship);
@@ -102,7 +96,7 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f)) FindNewVehicle();
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped)) FindNewVehicle();
             if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle) && spawnedPed.RelationshipGroup != relationship) spawnedPed.RelationshipGroup = relationship;
             if (Util.ThereIs(spawnedPed)) CheckDispatch();
 

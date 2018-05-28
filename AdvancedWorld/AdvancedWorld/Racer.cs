@@ -9,7 +9,7 @@ namespace AdvancedWorld
         private string name;
         private Vector3 goal;
 
-        public Racer(string name, Vector3 goal) : base(CriminalManager.EventType.Racer)
+        public Racer(string name, Vector3 goal) : base(EventManager.EventType.Racer)
         {
             this.name = name;
             this.goal = goal;
@@ -34,9 +34,10 @@ namespace AdvancedWorld
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             Util.Tune(spawnedVehicle, true, true);
 
+            spawnedPed.RelationshipGroup = relationship;
+            spawnedPed.IsPriorityTargetForEnemies = true;
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
-            spawnedPed.RelationshipGroup = relationship;
 
             if (!Util.BlipIsOn(spawnedPed))
             {
@@ -74,13 +75,8 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed))
-                {
-                    Util.NaturallyRemove(spawnedPed);
-
-                    if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-                }
-                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
+                Util.NaturallyRemove(spawnedPed);
+                Util.NaturallyRemove(spawnedVehicle);
             }
 
             if (relationship != 0) Util.CleanUpRelationship(relationship);

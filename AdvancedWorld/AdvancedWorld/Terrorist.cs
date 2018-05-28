@@ -8,7 +8,7 @@ namespace AdvancedWorld
     {
         private string name;
 
-        public Terrorist(string name) : base(CriminalManager.EventType.Terrorist) { this.name = name; }
+        public Terrorist(string name) : base(EventManager.EventType.Terrorist) { this.name = name; }
 
         public bool IsCreatedIn(float radius)
         {
@@ -35,9 +35,13 @@ namespace AdvancedWorld
             Script.Wait(50);            
             Util.Tune(spawnedVehicle, false, false);
 
-            spawnedPed.RelationshipGroup = relationship;
+            Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, spawnedPed, 0, false);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 17, true);
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 46, true);
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, spawnedPed, 5, true);
+
+            spawnedPed.RelationshipGroup = relationship;
+            spawnedPed.IsPriorityTargetForEnemies = true;
 
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
@@ -64,13 +68,8 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedPed))
-                {
-                    Util.NaturallyRemove(spawnedPed);
-
-                    if (Util.BlipIsOn(spawnedPed)) spawnedPed.CurrentBlip.Remove();
-                }
-                if (Util.ThereIs(spawnedVehicle)) Util.NaturallyRemove(spawnedVehicle);
+                Util.NaturallyRemove(spawnedPed);
+                Util.NaturallyRemove(spawnedVehicle);
             }
 
             if (relationship != 0) Util.CleanUpRelationship(relationship);

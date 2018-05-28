@@ -73,7 +73,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) > 30.0f);
+                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) > 30.0f);
             }
         }
 
@@ -85,7 +85,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
 
-                return r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) > 30.0f;
+                return r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) > 30.0f;
             }
         }
 
@@ -218,15 +218,15 @@ namespace AdvancedWorld
             }
         }
 
-        public static int NewRelationship(CriminalManager.EventType type)
+        public static int NewRelationship(EventManager.EventType type)
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
             switch (type)
             {
-                case CriminalManager.EventType.AggressiveDriver:
-                case CriminalManager.EventType.Carjacker:
-                case CriminalManager.EventType.Racer:
+                case EventManager.EventType.AggressiveDriver:
+                case EventManager.EventType.Carjacker:
+                case EventManager.EventType.Racer:
                     {
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         
@@ -236,9 +236,9 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.Driveby:
-                case CriminalManager.EventType.Massacre:
-                case CriminalManager.EventType.Terrorist:
+                case EventManager.EventType.Driveby:
+                case EventManager.EventType.Massacre:
+                case EventManager.EventType.Terrorist:
                     {
                         foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
@@ -252,7 +252,7 @@ namespace AdvancedWorld
                         break;
                     }
 
-                case CriminalManager.EventType.GangTeam:
+                case EventManager.EventType.GangTeam:
                     {
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
@@ -403,8 +403,13 @@ namespace AdvancedWorld
 
         public static void NaturallyRemove(Entity en)
         {
-            Function.Call(Hash.SET_ENTITY_AS_MISSION_ENTITY, en, false, true);
-            en.MarkAsNoLongerNeeded();
+            if (ThereIs(en))
+            {
+                if (en.IsPersistent) Function.Call(Hash.SET_ENTITY_AS_MISSION_ENTITY, en, false, true);
+                if (BlipIsOn(en)) en.CurrentBlip.Remove();
+
+                en.MarkAsNoLongerNeeded();
+            }
         }
     }
 }

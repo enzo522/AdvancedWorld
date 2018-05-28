@@ -26,7 +26,14 @@ namespace AdvancedWorld
 
             if (emergencyType == "LSPD")
             {
-                for (int i = 0; i < 2; i++) members.Add(Util.Create(models[Util.GetRandomInt(models.Count)], World.GetNextPositionOnSidewalk(spawnedVehicle.Position.Around(5.0f))));
+                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 1; i++)
+                {
+                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                    {
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                        Script.Wait(50);
+                    }
+                }
             }
             else
             {
@@ -38,7 +45,14 @@ namespace AdvancedWorld
                     return false;
                 }
 
-                for (int i = 0; i < 2; i++) members.Add(Util.Create(selectedModel, World.GetNextPositionOnSidewalk(spawnedVehicle.Position.Around(5.0f))));
+                for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 1; i++)
+                {
+                    if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
+                    {
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModel));
+                        Script.Wait(50);
+                    }
+                }
             }
 
             foreach (Ped p in members)
@@ -82,12 +96,14 @@ namespace AdvancedWorld
                         }
                 }
 
+                if (p.IsInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, true);
+
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.CanSwitchWeapons = true;
                 AddVarietyTo(p);
 
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
-                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 1, true);
+                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
@@ -95,15 +111,16 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
-                p.Task.FightAgainstHatedTargets(200.0f);
 
                 p.RelationshipGroup = relationship;
+                p.IsPriorityTargetForEnemies = true;
                 p.NeverLeavesGroup = true;
             }
-
-            if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
-
+            
             spawnedVehicle.EngineRunning = true;
+            onVehicleDuty = false;
+            SetPedsOnDuty();
+
             return true;
         }
     }

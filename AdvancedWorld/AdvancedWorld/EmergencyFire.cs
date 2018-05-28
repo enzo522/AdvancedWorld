@@ -59,13 +59,14 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
             }
 
-            if (spawnedVehicle.HasSiren) spawnedVehicle.SirenActive = true;
             if (Util.ThereIs(spawnedVehicle.Driver))
             {
                 Function.Call(Hash.SET_DRIVER_ABILITY, spawnedVehicle.Driver, 1.0f);
                 Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedVehicle.Driver, 1.0f);
-                spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTraffic);
             }
+
+            spawnedVehicle.EngineRunning = true;
+            SetPedsOnDuty();
 
             return true;
         }
@@ -95,9 +96,9 @@ namespace AdvancedWorld
 
                 if (Util.ThereIs(spawnedVehicle))
                 {
-                    Util.NaturallyRemove(spawnedVehicle);
-
                     if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+
+                    Util.NaturallyRemove(spawnedVehicle);
                 }
             }
 
@@ -107,14 +108,7 @@ namespace AdvancedWorld
         protected new abstract void SetPedsOnDuty();
         protected new void SetPedsOffDuty()
         {
-            if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive)
-            {
-                spawnedVehicle.SirenActive = false;
-
-                foreach (Ped p in members) p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE");
-            }
-
-            if (EveryoneIsSitting())
+            if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
@@ -122,14 +116,17 @@ namespace AdvancedWorld
                     {
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
+                            if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                             if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
                             else p.Task.Wait(1000);
 
                             p.AlwaysKeepTask = false;
                             p.BlockPermanentEvents = false;
-                            p.MarkAsNoLongerNeeded();
+                            Util.NaturallyRemove(p);
                         }
                     }
+
+                    if (spawnedVehicle.IsPersistent) Util.NaturallyRemove(spawnedVehicle);
                 }
                 else
                 {
@@ -145,7 +142,8 @@ namespace AdvancedWorld
                 }
             }
         }
-        
+
+        protected abstract new bool TargetIsFound();
         private new void AddVarietyTo(Ped p)
         {
             if (emergencyType == "FIREMAN")
@@ -190,10 +188,10 @@ namespace AdvancedWorld
                     members.RemoveAt(i);
                     continue;
                 }
-                
+
                 if (members[i].IsDead)
                 {
-                    members[i].MarkAsNoLongerNeeded();
+                    Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
                 }
             }
@@ -204,8 +202,14 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (targetPosition.Equals(Vector3.Zero)) SetPedsOffDuty();
-            else if (spawnedVehicle.IsInRangeOf(targetPosition, 30.0f) || !EveryoneIsSitting()) SetPedsOnDuty();
+            if (!TargetIsFound()) SetPedsOffDuty();
+            else
+            {
+                if (spawnedVehicle.IsInRangeOf(targetPosition, 30.0f)) onVehicleDuty = false;
+                else onVehicleDuty = true;
+
+                SetPedsOnDuty();
+            }
 
             return false;
         }

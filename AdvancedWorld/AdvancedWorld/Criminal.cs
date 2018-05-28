@@ -5,9 +5,9 @@
         protected int relationship;
         protected int dispatchCooldown;
         protected int blockCooldown;
-        protected CriminalManager.EventType type;
+        protected EventManager.EventType type;
 
-        public Criminal(CriminalManager.EventType type) : base()
+        public Criminal(EventManager.EventType type) : base()
         {
             this.dispatchCooldown = 7;
             this.blockCooldown = 0;

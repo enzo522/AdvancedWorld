@@ -27,7 +27,6 @@ namespace AdvancedWorld
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
-
         public override void Restore(bool instantly)
         {
             if (instantly)
@@ -43,7 +42,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p) && p.IsPersistent)
+                    if (Util.ThereIs(p))
                     {
                         p.AlwaysKeepTask = false;
                         p.BlockPermanentEvents = false;
@@ -54,9 +53,9 @@ namespace AdvancedWorld
 
                 if (Util.ThereIs(spawnedVehicle))
                 {
-                    Util.NaturallyRemove(spawnedVehicle);
-
                     if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+
+                    Util.NaturallyRemove(spawnedVehicle);
                 }
             }
             
@@ -71,9 +70,10 @@ namespace AdvancedWorld
 
         protected void SetPedsOnDuty()
         {
+            if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
             if (onVehicleDuty)
             {
-                if (EveryoneIsSitting())
+                if (ReadyToGoWith(members))
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver))
                     {
@@ -103,7 +103,7 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedVehicle) && Util.ThereIs(spawnedVehicle.Driver))
+                if (Util.ThereIs(spawnedVehicle.Driver))
                 {
                     TaskSequence ts = new TaskSequence();
                     Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, 0, spawnedVehicle, 1, 1000);
@@ -126,8 +126,7 @@ namespace AdvancedWorld
 
         protected void SetPedsOffDuty()
         {
-            if (!spawnedVehicle.IsDriveable) Restore(false);
-            else if (EveryoneIsSitting())
+            if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
@@ -144,6 +143,8 @@ namespace AdvancedWorld
                             Util.NaturallyRemove(p);
                         }
                     }
+
+                    if (spawnedVehicle.IsPersistent) Util.NaturallyRemove(spawnedVehicle);
                 }
                 else
                 {
@@ -179,16 +180,6 @@ namespace AdvancedWorld
             return false;
         }
 
-        protected bool EveryoneIsSitting()
-        {
-            foreach (Ped p in members)
-            {
-                if (Util.ThereIs(p) && !p.IsDead && !p.IsSittingInVehicle(spawnedVehicle)) return false;
-            }
-
-            return true;
-        }
-
         protected void AddVarietyTo(Ped p)
         {
             if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0) > 0
@@ -217,7 +208,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (members.Count < 1 || !Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;

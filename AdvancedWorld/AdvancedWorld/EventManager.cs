@@ -4,20 +4,19 @@ using System.Collections.Generic;
 
 namespace AdvancedWorld
 {
-    public class CriminalManager : Script
+    public class EventManager : Script
     {
         private static List<AdvancedEntity> aggressiveList;
         private static List<AdvancedEntity> carjackerList;
         private static List<AdvancedEntity> drivebyList;
         private static List<AdvancedEntity> gangList;
         private static List<AdvancedEntity> massacreList;
+        private static List<AdvancedEntity> onFireList;
         private static List<AdvancedEntity> racerList;
         private static List<AdvancedEntity> replacedList;
         private static List<AdvancedEntity> terroristList;
         private int timeChecker;
-
-        public static bool ReplaceSlotIsAvailable { get { return replacedList.Count < 5; } } 
-
+        
         public enum EventType
         {
             AggressiveDriver,
@@ -31,13 +30,14 @@ namespace AdvancedWorld
             Terrorist
         }
 
-        static CriminalManager()
+        static EventManager()
         {
             aggressiveList = new List<AdvancedEntity>();
             carjackerList = new List<AdvancedEntity>();
             drivebyList = new List<AdvancedEntity>();
             gangList = new List<AdvancedEntity>();
             massacreList = new List<AdvancedEntity>();
+            onFireList = new List<AdvancedEntity>();
             racerList = new List<AdvancedEntity>();
             replacedList = new List<AdvancedEntity>();
             terroristList = new List<AdvancedEntity>();
@@ -65,6 +65,12 @@ namespace AdvancedWorld
                         break;
                     }
 
+                case EventType.Fire:
+                    {
+                        onFireList.Add(en);
+                        break;
+                    }
+
                 case EventType.GangTeam:
                     {
                         gangList.Add(en);
@@ -85,6 +91,12 @@ namespace AdvancedWorld
 
                 case EventType.ReplacedVehicle:
                     {
+                        if (replacedList.Count > 4)
+                        {
+                            replacedList[0].Restore(false);
+                            replacedList.RemoveAt(0);
+                        }
+
                         replacedList.Add(en);
                         break;
                     }
@@ -97,7 +109,7 @@ namespace AdvancedWorld
             }
         }
 
-        public CriminalManager()
+        public EventManager()
         {
             timeChecker = 0;
             Tick += OnTick;
@@ -112,6 +124,7 @@ namespace AdvancedWorld
                 CleanUp(drivebyList);
                 CleanUp(gangList);
                 CleanUp(massacreList);
+                CleanUp(onFireList);
                 CleanUp(racerList);
                 CleanUp(replacedList);
                 CleanUp(terroristList);

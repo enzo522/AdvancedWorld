@@ -89,6 +89,7 @@ namespace AdvancedWorld
                 p.CanSwitchWeapons = true;
 
                 Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
+                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
 
@@ -97,6 +98,7 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
 
                 p.RelationshipGroup = relationship;
+                p.IsPriorityTargetForEnemies = true;
                 p.NeverLeavesGroup = true;
             }
 
@@ -114,16 +116,22 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(spawnedVehicle) && p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
-                    else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                    if (Util.ThereIs(p))
+                    {
+                        if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
+                        else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                    }
                 }
             }
             else
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
-                    else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                    if (Util.ThereIs(p))
+                    {
+                        if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                    }
                 }
             }
         }
@@ -148,7 +156,7 @@ namespace AdvancedWorld
                 else if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
             }
 
-            if (!TargetIsFound() || alive < 1 || members.Count < 1 || !Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !TargetIsFound() || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;

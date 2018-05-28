@@ -43,7 +43,6 @@ namespace AdvancedWorld
             
             Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Gang1H"));
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);
-            owner.CanPlayGestures = false;
             attached = false;
 
             return true;
@@ -55,10 +54,7 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(shield)) shield.Delete();
             }
-            else
-            {
-                if (Util.ThereIs(shield)) Util.NaturallyRemove(shield);
-            }
+            else Util.NaturallyRemove(shield);
         }
 
         public override bool ShouldBeRemoved()
@@ -74,7 +70,7 @@ namespace AdvancedWorld
 
         public void CheckShieldable()
         {
-            if (owner.IsInVehicle()) Detach(false);
+            if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
             else if (owner.IsDead) Detach(true);
             else Attach();
         }
