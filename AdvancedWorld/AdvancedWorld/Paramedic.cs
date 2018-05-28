@@ -54,7 +54,7 @@ namespace AdvancedWorld
                         TaskSequence ts = new TaskSequence();
                         ts.AddTask.RunTo(dest);
                         ts.AddTask.LookAt(targetPosition, 500);
-                        ts.AddTask.StartScenario(scenarios[Util.GetRandomInt(scenarios.Count)], dest);
+                        ts.AddTask.StartScenario(scenarios[Util.GetRandomIntBelow(scenarios.Count)], dest);
                         ts.AddTask.Wait(1000);
                         ts.Close();
 

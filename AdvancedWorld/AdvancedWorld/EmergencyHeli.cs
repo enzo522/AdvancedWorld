@@ -20,14 +20,14 @@ namespace AdvancedWorld
                 {
                     if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
                     {
-                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomIntBelow(models.Count)]));
                         Script.Wait(50);
                     }
                 }
             }
             else
             {
-                string selectedModel = models[Util.GetRandomInt(models.Count)];
+                string selectedModel = models[Util.GetRandomIntBelow(models.Count)];
 
                 if (selectedModel == null)
                 {
@@ -163,7 +163,7 @@ namespace AdvancedWorld
             }
             else
             {
-                if (!spawnedVehicle.IsDriveable && spawnedVehicle.IsOnAllWheels) onVehicleDuty = false;
+                if (!Util.WeCanEnter(spawnedVehicle) && spawnedVehicle.IsOnAllWheels) onVehicleDuty = false;
                 else onVehicleDuty = true;
 
                 SetPedsOnDuty();

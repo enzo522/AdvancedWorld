@@ -19,7 +19,7 @@ namespace AdvancedWorld
 
             if (nearbyPeds.Length < 1) return false;
 
-            spawnedPed = nearbyPeds[Util.GetRandomInt(nearbyPeds.Length)];
+            spawnedPed = nearbyPeds[Util.GetRandomIntBelow(nearbyPeds.Length)];
 
             if (!Util.ThereIs(spawnedPed) || spawnedPed.IsPersistent || spawnedPed.Equals(Game.Player.Character) || !spawnedPed.IsHuman || spawnedPed.IsDead) return false;
             
@@ -48,17 +48,23 @@ namespace AdvancedWorld
         {
             trycount++;
             Util.NaturallyRemove(spawnedVehicle);
+            spawnedVehicle = null;
             Vehicle[] nearbyVehicles = World.GetNearbyVehicles(spawnedPed.Position, radius / 2);
 
             if (nearbyVehicles.Length < 1) return;
 
-            spawnedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
-
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || Game.Player.Character.IsInVehicle(spawnedVehicle) || spawnedPed.IsInVehicle(spawnedVehicle))
+            for (int cnt = 0; cnt < 5; cnt++)
             {
-                spawnedVehicle = null;
-                return;
+                Vehicle v = nearbyVehicles[Util.GetRandomIntBelow(nearbyVehicles.Length)];
+
+                if (Util.ThereIs(v) && Util.WeCanEnter(v) && !Game.Player.Character.IsInVehicle(v) && !spawnedPed.IsInVehicle(v))
+                {
+                    spawnedVehicle = v;
+                    break;
+                }
             }
+
+            if (!Util.ThereIs(spawnedVehicle)) return;
 
             spawnedVehicle.IsPersistent = true;
 
@@ -85,7 +91,7 @@ namespace AdvancedWorld
                 Util.NaturallyRemove(spawnedVehicle);
             }
             
-            if (relationship != 0) Util.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUp(relationship);
         }
 
         public override bool ShouldBeRemoved()
@@ -96,7 +102,7 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f) || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped)) FindNewVehicle();
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f) || !Util.WeCanEnter(spawnedVehicle)) FindNewVehicle();
             if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle) && spawnedPed.RelationshipGroup != relationship) spawnedPed.RelationshipGroup = relationship;
             if (Util.ThereIs(spawnedPed)) CheckDispatch();
 

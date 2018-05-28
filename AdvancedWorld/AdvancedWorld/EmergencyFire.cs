@@ -11,14 +11,21 @@ namespace AdvancedWorld
 
         public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
-            Util.CleanUpRelationship(this.relationship, DispatchManager.DispatchType.Cop);
+            Util.CleanUp(this.relationship, DispatchManager.DispatchType.Cop);
             this.relationship = 0;
             this.targetPosition = target.Position;
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
-            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
+            Road road = new Road(Vector3.Zero, 0.0f);
+
+            for (int cnt = 0; cnt < 5; cnt++)
+            {
+                road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(10.0f));
+
+                if (!road.Position.Equals(Vector3.Zero)) break;
+            }
 
             if (road.Position.Equals(Vector3.Zero)) return false;
 
@@ -32,7 +39,7 @@ namespace AdvancedWorld
             {
                 if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
                 {
-                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomIntBelow(models.Count)]));
                     Script.Wait(50);
                 }
             }
@@ -148,7 +155,7 @@ namespace AdvancedWorld
         {
             if (emergencyType == "FIREMAN")
             {
-                switch (Util.GetRandomInt(3))
+                switch (Util.GetRandomIntBelow(3))
                 {
                     case 1:
                         Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
@@ -161,7 +168,7 @@ namespace AdvancedWorld
             }
             else
             {
-                switch (Util.GetRandomInt(4))
+                switch (Util.GetRandomIntBelow(4))
                 {
                     case 1:
                         Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 0, 0, false);
@@ -196,7 +203,7 @@ namespace AdvancedWorld
                 }
             }
             
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;

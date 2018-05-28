@@ -35,7 +35,7 @@ namespace AdvancedWorld
                 Ped p = Util.Create("hc_gunman", position);
 
                 if (!Util.ThereIs(p)) continue;
-                if (Util.GetRandomInt(4) == 1) p.Weapons.Give(WeaponHash.RPG, 25, true, true);
+                if (Util.GetRandomIntBelow(4) == 1) p.Weapons.Give(WeaponHash.RPG, 25, true, true);
                 else p.Weapons.Give(WeaponHash.Minigun, 1000, true, true);
 
                 p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
@@ -50,7 +50,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_STRAFE_CLIPSET, p, "move_strafe_ballistic");
                 Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, p, Function.Call<int>(Hash.GET_HASH_KEY, "Ballistic"));
                 
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, Util.GetRandomInt(7), 0, 0);
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 0, Util.GetRandomIntBelow(7), 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 1, 1, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 2, 0, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 3, 1, 0, 0);
@@ -59,7 +59,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, 7, 0, 0);
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 9, 1, 0, 0);
 
-                switch (Util.GetRandomInt(4))
+                switch (Util.GetRandomIntBelow(4))
                 {
                     case 0:
                         Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, 5, 0, true);
@@ -136,7 +136,7 @@ namespace AdvancedWorld
                 foreach (Ped p in members) Util.NaturallyRemove(p);
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUp(relationship);
 
             members.Clear();
         }
@@ -165,7 +165,7 @@ namespace AdvancedWorld
 
             if (members.Count < 1)
             {
-                if (relationship != 0) Util.CleanUpRelationship(relationship);
+                if (relationship != 0) Util.CleanUp(relationship);
 
                 return true;
             }

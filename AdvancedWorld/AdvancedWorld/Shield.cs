@@ -29,7 +29,7 @@ namespace AdvancedWorld
         {
             if (position.Equals(Vector3.Zero)) return false;
 
-            Model m = shieldModels[Util.GetRandomInt(shieldModels.Count)];
+            Model m = shieldModels[Util.GetRandomIntBelow(shieldModels.Count)];
             shield = World.CreateProp(m, position, true, true);
             m.MarkAsNoLongerNeeded();
 

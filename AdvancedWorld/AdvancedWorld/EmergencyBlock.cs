@@ -11,7 +11,14 @@ namespace AdvancedWorld
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
-            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
+            Road road = new Road(Vector3.Zero, 0.0f);
+
+            for (int cnt = 0; cnt < 5; cnt++)
+            {
+                road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(10.0f));
+
+                if (!road.Position.Equals(Vector3.Zero)) break;
+            }
 
             if (road.Position.Equals(Vector3.Zero)) return false;
 
@@ -30,14 +37,14 @@ namespace AdvancedWorld
                 {
                     if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
                     {
-                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomInt(models.Count)]));
+                        members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, models[Util.GetRandomIntBelow(models.Count)]));
                         Script.Wait(50);
                     }
                 }
             }
             else
             {
-                string selectedModel = models[Util.GetRandomInt(models.Count)];
+                string selectedModel = models[Util.GetRandomIntBelow(models.Count)];
 
                 if (selectedModel == null)
                 {

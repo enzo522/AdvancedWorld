@@ -51,7 +51,7 @@ namespace AdvancedWorld
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
         private static int count = 0;
 
-        public static int GetRandomInt(int maxValue)
+        public static int GetRandomIntBelow(int maxValue)
         {
             return dice.Next(maxValue);
         }
@@ -66,7 +66,7 @@ namespace AdvancedWorld
             return (en.CurrentBlip != null && en.CurrentBlip.Exists());
         }
 
-        public static bool SomethingIsBetween(Entity en)
+        public static bool SomethingIsBetweenPlayerAnd(Entity en)
         {
             if (!ThereIs(en) || en.IsInRangeOf(Game.Player.Character.Position, 50.0f)) return false;
             else
@@ -77,10 +77,9 @@ namespace AdvancedWorld
             }
         }
 
-        public static bool SomethingIsBetween(Vector3 position)
+        public static bool SomethingIsBetweenPlayerPositionAnd(Vector3 position)
         {
-            if (Game.Player.Character.IsInRangeOf(position, 50.0f)) return false;
-            else if (!Game.Player.Character.IsInRangeOf(position, 100.0f)) return true;
+            if (Game.Player.Character.IsInRangeOf(position, 50.0f) || Vector3.Subtract(GameplayCamera.Position + GameplayCamera.Direction * 50.0f, position).Length() < 50.0f) return false;
             else
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
@@ -97,7 +96,7 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetween(en)) return en.Position;
+                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetweenPlayerAnd(en)) return en.Position;
                 }
             }
 
@@ -112,7 +111,7 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetween(en)) return en.Position;
+                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetweenPlayerAnd(en)) return en.Position;
                 }
             }
 
@@ -124,6 +123,11 @@ namespace AdvancedWorld
             if (ThereIs(v) && (v.Model.IsCar || v.Model.IsBike || v.Model.IsQuadbike) && v.IsDriveable) return !Game.Player.Character.IsInVehicle(v);
 
             return false;
+        }
+
+        public static bool WeCanEnter(Vehicle v)
+        {
+            return v.IsDriveable && !v.IsOnFire && (!v.IsUpsideDown || !v.IsStopped);
         }
 
         public static void AddBlipOn(Entity en, float scale, BlipSprite bs, BlipColor bc, string bn)
@@ -182,7 +186,7 @@ namespace AdvancedWorld
             {
                 v.InstallModKit();
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
-                v.CanTiresBurst = GetRandomInt(2) == 1;
+                v.CanTiresBurst = GetRandomIntBelow(2) == 1;
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
 
                 foreach (VehicleMod m in mods)
@@ -218,7 +222,7 @@ namespace AdvancedWorld
             }
         }
 
-        public static int NewRelationship(EventManager.EventType type)
+        public static int NewRelationshipOf(EventManager.EventType type)
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
@@ -269,7 +273,7 @@ namespace AdvancedWorld
             return newRel;
         }
 
-        public static int NewRelationship(DispatchManager.DispatchType type)
+        public static int NewRelationshipOf(DispatchManager.DispatchType type)
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
@@ -315,14 +319,14 @@ namespace AdvancedWorld
             return newRel;
         }
 
-        public static void CleanUpRelationship(int relationship)
+        public static void CleanUp(int relationship)
         {
             World.RemoveRelationshipGroup(relationship);
 
             if (criminalRelationships.Contains(relationship)) criminalRelationships.Remove(relationship);
         }
 
-        public static void CleanUpRelationship(int relationship, DispatchManager.DispatchType type)
+        public static void CleanUp(int relationship, DispatchManager.DispatchType type)
         {
             switch (type)
             {
@@ -387,13 +391,13 @@ namespace AdvancedWorld
             OutputArgument outPos = new OutputArgument();
             OutputArgument roadHeading = new OutputArgument();
 
-            for (int i = 1; i < 100; i++)
+            for (int i = 1; i < 20; i++)
             {
                 if (Function.Call<bool>(Hash.GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING, position.X, position.Y, position.Z, i, outPos, roadHeading, new OutputArgument(), 9, 3.0f, 2.5f))
                 {
                     Vector3 roadPos = outPos.GetResult<Vector3>();
 
-                    if (SomethingIsBetween(roadPos) && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
+                    if (SomethingIsBetweenPlayerPositionAnd(roadPos) && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
                         return new Road(roadPos, roadHeading.GetResult<float>());
                 }
             }

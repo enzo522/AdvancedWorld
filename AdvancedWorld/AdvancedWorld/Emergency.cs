@@ -22,8 +22,8 @@ namespace AdvancedWorld
             this.emergencyType = emergencyType;
             this.onVehicleDuty = true;
 
-            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationship(DispatchManager.DispatchType.Army);
-            else this.relationship = Util.NewRelationship(DispatchManager.DispatchType.Cop);
+            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
+            else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Cop);
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
@@ -61,8 +61,8 @@ namespace AdvancedWorld
             
             if (relationship != 0)
             {
-                if (emergencyType == "ARMY") Util.CleanUpRelationship(relationship, DispatchManager.DispatchType.Army);
-                else Util.CleanUpRelationship(relationship, DispatchManager.DispatchType.Cop);
+                if (emergencyType == "ARMY") Util.CleanUp(relationship, DispatchManager.DispatchType.Army);
+                else Util.CleanUp(relationship, DispatchManager.DispatchType.Cop);
             }
 
             members.Clear();
@@ -183,12 +183,12 @@ namespace AdvancedWorld
         protected void AddVarietyTo(Ped p)
         {
             if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0) > 0
-                && Util.GetRandomInt(2) == 1)
-                Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
+                && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
 
             if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0) > 0
-                && Util.GetRandomInt(2) == 1)
-                Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomInt(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0)), 0, false);
+                && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0)), 0, false);
         }
 
         public override bool ShouldBeRemoved()
@@ -208,7 +208,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Restore(false);
                 return true;
@@ -217,7 +217,7 @@ namespace AdvancedWorld
             if (!TargetIsFound()) SetPedsOffDuty();
             else
             {
-                if (!spawnedVehicle.IsDriveable || (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f)))
+                if (!Util.WeCanEnter(spawnedVehicle) || (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f)))
                     onVehicleDuty = false;
                 else onVehicleDuty = true;
 

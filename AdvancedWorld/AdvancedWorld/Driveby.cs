@@ -21,8 +21,15 @@ namespace AdvancedWorld
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
             if (safePosition.Equals(Vector3.Zero) || selectedModels == null) return false;
-            
-            Road road = Util.GetNextPositionOnStreetWithHeading(safePosition);
+
+            Road road = new Road(Vector3.Zero, 0.0f);
+
+            for (int cnt = 0; cnt < 5; cnt++)
+            {
+                road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(10.0f));
+
+                if (!road.Position.Equals(Vector3.Zero)) break;
+            }
 
             if (road.Position.Equals(Vector3.Zero)) return false;
 
@@ -31,13 +38,13 @@ namespace AdvancedWorld
             if (!Util.ThereIs(spawnedVehicle)) return false;
             
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };
-            Util.Tune(spawnedVehicle, false, (Util.GetRandomInt(3) == 1));
+            Util.Tune(spawnedVehicle, false, (Util.GetRandomIntBelow(3) == 1));
             
             for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
             {
                 if (spawnedVehicle.IsSeatFree((VehicleSeat)i))
                 {
-                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModels[Util.GetRandomInt(selectedModels.Count)]));
+                    members.Add(spawnedVehicle.CreatePedOnSeat((VehicleSeat)i, selectedModels[Util.GetRandomIntBelow(selectedModels.Count)]));
                     Script.Wait(50);
                 }
             }
@@ -59,7 +66,7 @@ namespace AdvancedWorld
 
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
-                p.Weapons.Give(drivebyWeaponList[Util.GetRandomInt(drivebyWeaponList.Count)], 100, true, true);
+                p.Weapons.Give(drivebyWeaponList[Util.GetRandomIntBelow(drivebyWeaponList.Count)], 100, true, true);
                 p.Weapons.Current.InfiniteAmmo = true;
                 
                 p.ShootRate = 1000;
@@ -94,7 +101,7 @@ namespace AdvancedWorld
                 Util.NaturallyRemove(spawnedVehicle);
             }
 
-            if (relationship != 0) Util.CleanUpRelationship(relationship);
+            if (relationship != 0) Util.CleanUp(relationship);
 
             members.Clear();
         }
@@ -135,7 +142,7 @@ namespace AdvancedWorld
                 return true;
             }
 
-            if (spawnedVehicle.IsOnFire || !spawnedVehicle.IsDriveable || (spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped))
+            if (!Util.WeCanEnter(spawnedVehicle))
             {
                 foreach (Ped p in members)
                 {

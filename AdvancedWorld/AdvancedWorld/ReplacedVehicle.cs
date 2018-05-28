@@ -18,9 +18,9 @@ namespace AdvancedWorld
 
             for (int trycount = 0; trycount < 5; trycount++)
             {
-                Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
+                Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomIntBelow(nearbyVehicles.Length)];
 
-                if (Util.WeCanReplace(selectedVehicle) && !selectedVehicle.IsPersistent && !Function.Call<bool>(Hash.IS_VEHICLE_ATTACHED_TO_TRAILER, selectedVehicle) && Util.SomethingIsBetween(selectedVehicle))
+                if (Util.WeCanReplace(selectedVehicle) && !selectedVehicle.IsPersistent && !selectedVehicle.IsAttached() && !Util.ThereIs(selectedVehicle.GetEntityAttachedTo()) && Util.SomethingIsBetweenPlayerAnd(selectedVehicle))
                 {
                     Vector3 selectedPosition = selectedVehicle.Position;
                     float selectedHeading = selectedVehicle.Heading;
@@ -51,11 +51,11 @@ namespace AdvancedWorld
                         }
                     }
                     
-                    if (Util.GetRandomInt(3) == 1)
+                    if (Util.GetRandomIntBelow(3) == 1)
                     {
                         selectedBlipName = "Tuned ";
                         selectedBlipColor = BlipColor.Blue;
-                        Util.Tune(spawnedVehicle, Util.GetRandomInt(2) == 1, Util.GetRandomInt(3) == 1);
+                        Util.Tune(spawnedVehicle, Util.GetRandomIntBelow(2) == 1, Util.GetRandomIntBelow(3) == 1);
                     }
                     else
                     {
@@ -95,7 +95,7 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsDriveable || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+            if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
             {
                 Restore(false);
                 return true;

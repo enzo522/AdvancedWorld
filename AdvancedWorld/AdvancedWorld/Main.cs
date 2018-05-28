@@ -625,8 +625,8 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            int selectedType = Util.GetRandomInt(copCarNames.Count);
-                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                            int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
+                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
@@ -634,9 +634,9 @@ namespace AdvancedWorld
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
-                            EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
+                            EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomIntBelow(copHeliNames.Count)], target, "LSPD");
 
-                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomIntBelow(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
                             else lspdheli.Restore(true);
                         }
 
@@ -645,8 +645,8 @@ namespace AdvancedWorld
 
                 case EventManager.EventType.Carjacker:
                     {
-                        int selectedType = Util.GetRandomInt(copCarNames.Count);
-                        EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                        int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
+                        EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                         if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                         else lspd.Restore(true);
@@ -658,21 +658,21 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            int selectedType = Util.GetRandomInt(copCarNames.Count);
-                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                            int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
+                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
                         }
 
-                        EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
+                        EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
                         if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
                         else swat.Restore(true);
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
-                            EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
+                            EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
                             else swatheli.Restore(true);
@@ -685,13 +685,13 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomInt(fireCarNames.Count)], target);
+                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomIntBelow(fireCarNames.Count)], target);
 
                             if (ff.IsCreatedIn(safePosition, fireModels)) DispatchManager.Add(ff, DispatchManager.DispatchType.Emergency);
                             else ff.Restore(true);
                         }
 
-                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomInt(emCarNames.Count)], target);
+                        Paramedic pm = new Paramedic(emCarNames[Util.GetRandomIntBelow(emCarNames.Count)], target);
 
                         if (pm.IsCreatedIn(safePosition, emModels)) DispatchManager.Add(pm, DispatchManager.DispatchType.Emergency);
                         else pm.Restore(true);
@@ -703,16 +703,16 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            int selectedType = Util.GetRandomInt(copCarNames.Count);
-                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                            int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
+                            EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
                         }
 
-                        EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomInt(copHeliNames.Count)], target, "LSPD");
+                        EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomIntBelow(copHeliNames.Count)], target, "LSPD");
 
-                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomInt(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
+                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomIntBelow(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
                         else lspdheli.Restore(true);
 
                         break;
@@ -722,17 +722,17 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            EmergencyGround fib = new EmergencyGround(fibCarNames[Util.GetRandomInt(fibCarNames.Count)], target, "FIB");
+                            EmergencyGround fib = new EmergencyGround(fibCarNames[Util.GetRandomIntBelow(fibCarNames.Count)], target, "FIB");
 
                             if (fib.IsCreatedIn(safePosition, fibModels)) DispatchManager.Add(fib, DispatchManager.DispatchType.Cop);
                             else fib.Restore(true);
 
-                            EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
+                            EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
                             if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
                             else swat.Restore(true);
 
-                            EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomInt(swatHeliNames.Count)], target, "SWAT");
+                            EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
                             else swatheli.Restore(true);
@@ -745,7 +745,7 @@ namespace AdvancedWorld
                     {
                         for (int i = 0; i < 4; i++)
                         {
-                            EmergencyGround army = new EmergencyGround(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
+                            EmergencyGround army = new EmergencyGround(armyCarNames[Util.GetRandomIntBelow(armyCarNames.Count)], target, "ARMY");
 
                             if (army.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(army, DispatchManager.DispatchType.Army);
                             else army.Restore(true);
@@ -753,7 +753,7 @@ namespace AdvancedWorld
 
                         for (int i = 0; i < 2; i++)
                         {
-                            EmergencyHeli armyheli = new EmergencyHeli(armyHeliNames[Util.GetRandomInt(armyHeliNames.Count)], target, "ARMY");
+                            EmergencyHeli armyheli = new EmergencyHeli(armyHeliNames[Util.GetRandomIntBelow(armyHeliNames.Count)], target, "ARMY");
 
                             if (armyheli.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(armyheli, DispatchManager.DispatchType.ArmyHeli);
                             else armyheli.Restore(true);
@@ -777,8 +777,8 @@ namespace AdvancedWorld
                 case EventManager.EventType.AggressiveDriver:
                 case EventManager.EventType.Racer:
                     {
-                        int selectedType = Util.GetRandomInt(copCarNames.Count - 1);
-                        EmergencyBlock lspdblock = new EmergencyBlock(copCarNames[selectedType][Util.GetRandomInt(copCarNames[selectedType].Count)], target, "LSPD");
+                        int selectedType = Util.GetRandomIntBelow(copCarNames.Count - 1);
+                        EmergencyBlock lspdblock = new EmergencyBlock(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                         if (lspdblock.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspdblock, DispatchManager.DispatchType.CopRoadBlock);
                         else lspdblock.Restore(true);
@@ -788,7 +788,7 @@ namespace AdvancedWorld
 
                 case EventManager.EventType.Driveby:
                     {
-                        EmergencyBlock swatblock = new EmergencyBlock(swatCarNames[Util.GetRandomInt(swatCarNames.Count)], target, "SWAT");
+                        EmergencyBlock swatblock = new EmergencyBlock(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
                         if (swatblock.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatblock, DispatchManager.DispatchType.CopRoadBlock);
                         else swatblock.Restore(true);
@@ -798,7 +798,7 @@ namespace AdvancedWorld
 
                 case EventManager.EventType.Terrorist:
                     {
-                        EmergencyBlock armyblock = new EmergencyBlock(armyCarNames[Util.GetRandomInt(armyCarNames.Count)], target, "ARMY");
+                        EmergencyBlock armyblock = new EmergencyBlock(armyCarNames[Util.GetRandomIntBelow(armyCarNames.Count)], target, "ARMY");
 
                         if (armyblock.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(armyblock, DispatchManager.DispatchType.ArmyRoadBlock);
                         else armyblock.Restore(true);
@@ -820,7 +820,7 @@ namespace AdvancedWorld
         {
             if (eventTimeChecker == 1 || eventTimeChecker == 2 || eventTimeChecker == 3 || eventTimeChecker == 4)
             {
-                ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomInt(addOnCarNames.Count)]);
+                ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomIntBelow(addOnCarNames.Count)]);
 
                 if (rv.IsCreatedIn(radius))
                 {
@@ -833,7 +833,7 @@ namespace AdvancedWorld
             }
             else if (eventTimeChecker == 5)
             {
-                switch (Util.GetRandomInt(9))
+                switch (Util.GetRandomIntBelow(9))
                 {
                     case 0:
                         {
@@ -851,7 +851,7 @@ namespace AdvancedWorld
 
                     case 1:
                         {
-                            AggressiveDriver ad = new AggressiveDriver(racerCarNames[Util.GetRandomInt(racerCarNames.Count)]);
+                            AggressiveDriver ad = new AggressiveDriver(racerCarNames[Util.GetRandomIntBelow(racerCarNames.Count)]);
 
                             if (ad.IsCreatedIn(radius))
                             {
@@ -906,15 +906,15 @@ namespace AdvancedWorld
                             GangTeam teamA = new GangTeam();
                             GangTeam teamB = new GangTeam();
 
-                            int teamANum = Util.GetRandomInt(gangModels.Count);
+                            int teamANum = Util.GetRandomIntBelow(gangModels.Count);
                             int teamBNum = -1;
 
-                            while (teamBNum == -1 || teamANum == teamBNum) teamBNum = Util.GetRandomInt(gangModels.Count);
+                            while (teamBNum == -1 || teamANum == teamBNum) teamBNum = Util.GetRandomIntBelow(gangModels.Count);
 
                             if (teamANum == -1 || teamBNum == -1) break;
 
-                            int relationshipA = Util.NewRelationship(EventManager.EventType.GangTeam);
-                            int relationshipB = Util.NewRelationship(EventManager.EventType.GangTeam);
+                            int relationshipA = Util.NewRelationshipOf(EventManager.EventType.GangTeam);
+                            int relationshipB = Util.NewRelationshipOf(EventManager.EventType.GangTeam);
 
                             if (relationshipA == 0 || relationshipB == 0) break;
 
@@ -964,14 +964,14 @@ namespace AdvancedWorld
 
                     case 6:
                         {
-                            Vector3 goal = racingPosition[Util.GetRandomInt(racingPosition.Count)];
+                            Vector3 goal = racingPosition[Util.GetRandomIntBelow(racingPosition.Count)];
                             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
                             if (safePosition.Equals(Vector3.Zero)) break;
 
                             Racers r = null;
 
-                            if (Util.GetRandomInt(4) == 1) r = new Racers(racerBikeNames, safePosition, goal);
+                            if (Util.GetRandomIntBelow(4) == 1) r = new Racers(racerBikeNames, safePosition, goal);
                             else r = new Racers(racerCarNames, safePosition, goal);
 
                             if (r.IsCreatedIn(radius))
@@ -986,9 +986,9 @@ namespace AdvancedWorld
 
                     case 7:
                         {
-                            Driveby db = new Driveby(drivebyCarNames[Util.GetRandomInt(drivebyCarNames.Count)]);
+                            Driveby db = new Driveby(drivebyCarNames[Util.GetRandomIntBelow(drivebyCarNames.Count)]);
 
-                            if (db.IsCreatedIn(radius, gangModels[Util.GetRandomInt(gangModels.Count)]))
+                            if (db.IsCreatedIn(radius, gangModels[Util.GetRandomIntBelow(gangModels.Count)]))
                             {
                                 EventManager.Add(db, EventManager.EventType.Driveby);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
@@ -1000,7 +1000,7 @@ namespace AdvancedWorld
 
                     case 8:
                         {
-                            Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomInt(terroristCarNames.Count)]);
+                            Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomIntBelow(terroristCarNames.Count)]);
 
                             if (tr.IsCreatedIn(radius))
                             {

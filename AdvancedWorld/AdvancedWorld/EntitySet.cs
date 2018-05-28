@@ -26,7 +26,7 @@ namespace AdvancedWorld
                         {
                             spawnedVehicle.OpenDoor(VehicleDoor.FrontLeftDoor, false, true);
                             Script.Wait(100);
-                            Vector3 offset = p.Position + (p.RightVector * (-1.01f));
+                            Vector3 offset = p.Position + p.RightVector * (-1.01f);
                             p.Position = new Vector3(offset.X, offset.Y, offset.Z - 1.0f);
                         }
 

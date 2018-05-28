@@ -12,7 +12,7 @@
             this.dispatchCooldown = 7;
             this.blockCooldown = 0;
             this.type = type;
-            this.relationship = Util.NewRelationship(type);
+            this.relationship = Util.NewRelationshipOf(type);
         }
 
         protected void CheckDispatch()

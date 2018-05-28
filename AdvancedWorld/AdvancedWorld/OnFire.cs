@@ -16,7 +16,7 @@ namespace AdvancedWorld
 
             for (int trycount = 0; trycount < 5; trycount++)
             {
-                Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomInt(nearbyVehicles.Length)];
+                Vehicle selectedVehicle = nearbyVehicles[Util.GetRandomIntBelow(nearbyVehicles.Length)];
 
                 if (Util.WeCanReplace(selectedVehicle))
                 {
