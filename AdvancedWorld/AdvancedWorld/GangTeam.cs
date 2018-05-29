@@ -25,9 +25,11 @@ namespace AdvancedWorld
             ts.Close();
         }
 
-        public bool IsCreatedIn(float radius, Vector3 position, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
+        public bool IsCreatedIn(float radius, Vector3 safePosition, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
         {
-            if (selectedModels == null) return false;
+            Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
+
+            if (position.Equals(Vector3.Zero) || selectedModels == null) return false;
 
             this.relationship = teamID;
 

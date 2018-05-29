@@ -73,18 +73,18 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) > 30.0f);
+                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) < 50.0f);
             }
         }
 
         public static bool SomethingIsBetweenPlayerPositionAnd(Vector3 position)
         {
-            if (Game.Player.Character.IsInRangeOf(position, 50.0f) || Vector3.Subtract(GameplayCamera.Position + GameplayCamera.Direction * 50.0f, position).Length() < 50.0f) return false;
+            if (Game.Player.Character.IsInRangeOf(position, 50.0f)) return false;
             else
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
 
-                return r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) > 30.0f;
+                return Vector3.Subtract(GameplayCamera.Position + GameplayCamera.Direction * 100.0f, position).Length() > 100.0f || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) < 50.0f);
             }
         }
 
@@ -96,7 +96,7 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetweenPlayerAnd(en)) return en.Position;
+                    if (ThereIs(en) && SomethingIsBetweenPlayerAnd(en)) return en.Position;
                 }
             }
 
@@ -111,7 +111,7 @@ namespace AdvancedWorld
             {
                 foreach (Entity en in nearbyEntities)
                 {
-                    if (ThereIs(en) && !en.IsPersistent && SomethingIsBetweenPlayerAnd(en)) return en.Position;
+                    if (ThereIs(en) && SomethingIsBetweenPlayerAnd(en)) return en.Position;
                 }
             }
 

@@ -903,6 +903,17 @@ namespace AdvancedWorld
 
                             if (safePosition.Equals(Vector3.Zero)) break;
 
+                            Road road = new Road(Vector3.Zero, 0.0f);
+
+                            for (int cnt = 0; cnt < 5; cnt++)
+                            {
+                                road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(50.0f));
+
+                                if (!road.Position.Equals(Vector3.Zero)) break;
+                            }
+
+                            if (road.Position.Equals(Vector3.Zero)) break;
+
                             GangTeam teamA = new GangTeam();
                             GangTeam teamB = new GangTeam();
 
@@ -919,13 +930,9 @@ namespace AdvancedWorld
                             if (relationshipA == 0 || relationshipB == 0) break;
 
                             World.SetRelationshipBetweenGroups(Relationship.Hate, relationshipA, relationshipB);
-                            Vector3 position1 = World.GetNextPositionOnSidewalk(safePosition.Around(5.0f));
-                            Vector3 position2 = World.GetNextPositionOnSidewalk(safePosition.Around(5.0f));
 
-                            if (position1.Equals(Vector3.Zero) || position2.Equals(Vector3.Zero)) break;
-
-                            if (teamA.IsCreatedIn(radius, position1, gangModels[teamANum], relationshipA, BlipColor.Green, "A Team")
-                                && teamB.IsCreatedIn(radius, position2, gangModels[teamBNum], relationshipB, BlipColor.Red, "B Team"))
+                            if (teamA.IsCreatedIn(radius, road.Position.Around(5.0f), gangModels[teamANum], relationshipA, BlipColor.Green, "A Team")
+                                && teamB.IsCreatedIn(radius, road.Position.Around(5.0f), gangModels[teamBNum], relationshipB, BlipColor.Red, "B Team"))
                             {
                                 EventManager.Add(teamA, EventManager.EventType.GangTeam);
                                 EventManager.Add(teamB, EventManager.EventType.GangTeam);
@@ -950,9 +957,20 @@ namespace AdvancedWorld
 
                             if (safePosition.Equals(Vector3.Zero)) break;
 
+                            Road road = new Road(Vector3.Zero, 0.0f);
+
+                            for (int cnt = 0; cnt < 5; cnt++)
+                            {
+                                road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(50.0f));
+
+                                if (!road.Position.Equals(Vector3.Zero)) break;
+                            }
+
+                            if (road.Position.Equals(Vector3.Zero)) break;
+
                             Massacre ms = new Massacre();
                             
-                            if (ms.IsCreatedIn(radius, safePosition))
+                            if (ms.IsCreatedIn(radius, road.Position))
                             {
                                 EventManager.Add(ms, EventManager.EventType.Massacre);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
