@@ -28,12 +28,12 @@ namespace AdvancedWorld
             {
                 if (ReadyToGoWith(members))
                 {
-                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                     else
                     {
                         foreach (Ped p in members)
                         {
-                            if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                            if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
                 }
@@ -52,11 +52,11 @@ namespace AdvancedWorld
                 {
                     Vector3 dest = targetPosition.Around(1.0f);
 
-                    if (p.TaskSequenceProgress < 0 && Util.NewTaskCanBeDoneBy(p))
+                    if (p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))
                     {
                         TaskSequence ts = new TaskSequence();
                         ts.AddTask.RunTo(dest);
-                        Function.Call(Hash.TASK_START_SCENARIO_AT_POSITION, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], dest.X, dest.Y, dest.Z, (dest - targetPosition).ToHeading(), 0, 0, 1);
+                        Function.Call(Hash.TASK_START_SCENARIO_AT_POSITION, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], dest.X, dest.Y, dest.Z, (targetPosition - dest).ToHeading(), 0, 0, 1);
                         ts.AddTask.Wait(1000);
                         ts.Close();
 

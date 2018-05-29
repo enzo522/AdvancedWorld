@@ -64,7 +64,7 @@ namespace AdvancedWorld
                 }
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !Util.NewTaskCanBeDoneBy(spawnedPed)) return;
+            if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanGiveTaskTo(spawnedPed)) return;
 
             spawnedVehicle.IsPersistent = true;
 

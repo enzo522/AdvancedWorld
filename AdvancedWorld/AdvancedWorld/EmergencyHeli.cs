@@ -98,7 +98,6 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
 
                 p.RelationshipGroup = relationship;
-                p.IsPriorityTargetForEnemies = true;
                 p.NeverLeavesGroup = true;
             }
 
@@ -116,7 +115,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p) && Util.NewTaskCanBeDoneBy(p))
+                    if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                     {
                         if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
                         else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
@@ -127,7 +126,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p) && Util.NewTaskCanBeDoneBy(p))
+                    if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                     {
                         if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);

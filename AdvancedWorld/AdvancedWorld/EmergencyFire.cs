@@ -125,7 +125,7 @@ namespace AdvancedWorld
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
                             if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
-                            if (Util.NewTaskCanBeDoneBy(p))
+                            if (Util.WeCanGiveTaskTo(p))
                             {
                                 if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
                                 else p.Task.Wait(1000);
@@ -143,7 +143,7 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                     }
                 }
             }

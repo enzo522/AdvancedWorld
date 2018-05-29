@@ -6,7 +6,9 @@ namespace AdvancedWorld
     {
         public Vehicle OnFireVehicle { get; private set; }
 
-        public OnFire() { }
+        private int dispatchCooldown;
+
+        public OnFire() { this.dispatchCooldown = 7; }
 
         public bool IsCreatedIn(float radius, bool instantly)
         {
@@ -60,6 +62,14 @@ namespace AdvancedWorld
             {
                 Restore(false);
                 return true;
+            }
+
+            if (dispatchCooldown < 15) dispatchCooldown++;
+            else
+            {
+                dispatchCooldown = 0;
+
+                if (!Util.AnyEmergencyIsNear(OnFireVehicle.Position, DispatchManager.DispatchType.Emergency)) Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire);
             }
 
             return false;

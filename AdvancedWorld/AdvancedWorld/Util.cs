@@ -17,8 +17,8 @@ namespace AdvancedWorld
 
         private static Random dice = new Random();
         private static int[] wheelTypes = { 0, 1, 2, 3, 4, 5, 7, 8, 9 };
-        private static int[] wheelColors = { 156, 0, 1, 11, 2, 8, 122, 27, 30, 45, 35, 33, 136, 135, 36, 41, 138, 37, 99, 90, 95, 115, 109, 153, 154, 88, 89, 91, 55, 125, 53, 56, 151, 82, 64, 87, 70, 140, 81, 145, 142, 134 };
-        
+        private static int[] wheelColors = { 0, 1, 2, 8, 11, 27, 30, 33, 35, 36, 37, 41, 45, 53, 55, 56, 64, 70, 81, 82, 87, 88, 89, 90, 91, 95, 99, 109, 115, 122, 125, 134, 135, 136, 138, 140, 142, 145, 151, 153, 154, 156 };
+
         private static List<int> oldRelationships = new List<int>
         {
             Function.Call<int>(Hash.GET_HASH_KEY, "CIVMALE"),
@@ -128,6 +128,11 @@ namespace AdvancedWorld
         public static bool WeCanEnter(Vehicle v)
         {
             return v.IsDriveable && !v.IsOnFire && (v.Model.IsBicycle || v.Model.IsBike || v.Model.IsQuadbike || !v.IsUpsideDown || !v.IsStopped);
+        }
+
+        public static bool WeCanGiveTaskTo(Ped p)
+        {
+            return !p.IsDead && !p.IsInjured;
         }
 
         public static void AddBlipOn(Entity en, float scale, BlipSprite bs, BlipColor bc, string bn)
@@ -362,20 +367,21 @@ namespace AdvancedWorld
                     {
                         case DispatchManager.DispatchType.Army:
                             {
-                                foreach (int i in armyRelationships)
-                                {
-                                    if (p.RelationshipGroup == i) return true;
-                                }
+                                if (armyRelationships.Contains(p.RelationshipGroup)) return true;
 
                                 break;
                             }
 
                         case DispatchManager.DispatchType.Cop:
                             {
-                                foreach (int i in copRelationships)
-                                {
-                                    if (p.RelationshipGroup == i) return true;
-                                }
+                                if (copRelationships.Contains(p.RelationshipGroup)) return true;
+
+                                break;
+                            }
+
+                        case DispatchManager.DispatchType.Emergency:
+                            {
+                                if (p.RelationshipGroup == Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN")) return true;
 
                                 break;
                             }
@@ -414,11 +420,6 @@ namespace AdvancedWorld
 
                 en.MarkAsNoLongerNeeded();
             }
-        }
-
-        public static bool NewTaskCanBeDoneBy(Ped p)
-        {
-            return !p.IsDead && !p.IsInjured;
         }
     }
 }

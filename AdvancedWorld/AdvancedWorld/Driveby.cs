@@ -146,7 +146,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (!p.IsInCombat && Util.NewTaskCanBeDoneBy(p)) p.Task.FightAgainstHatedTargets(400.0f);
+                    if (!p.IsInCombat && Util.WeCanGiveTaskTo(p)) p.Task.FightAgainstHatedTargets(400.0f);
                 }
             }
             else if (ReadyToGoWith(members))
@@ -155,7 +155,7 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (Util.NewTaskCanBeDoneBy(p))
+                        if (Util.WeCanGiveTaskTo(p))
                         {
                             if (p.Equals(spawnedVehicle.Driver))
                             {
@@ -169,7 +169,7 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                     }
                 }
             }

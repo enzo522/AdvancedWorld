@@ -870,10 +870,7 @@ namespace AdvancedWorld
                             if (of.IsCreatedIn(radius, true))
                             {
                                 EventManager.Add(of, EventManager.EventType.Fire);
-                                DispatchAgainst(of.OnFireVehicle, EventManager.EventType.Fire);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-
-                                break;
                             }
                             else of.Restore(true);
 
@@ -887,10 +884,7 @@ namespace AdvancedWorld
                             if (of.IsCreatedIn(radius, false))
                             {
                                 EventManager.Add(of, EventManager.EventType.Fire);
-                                DispatchAgainst(of.OnFireVehicle, EventManager.EventType.Fire);
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-
-                                break;
                             }
                             else of.Restore(true);
 

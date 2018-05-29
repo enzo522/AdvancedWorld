@@ -120,7 +120,6 @@ namespace AdvancedWorld
                 p.BlockPermanentEvents = true;
 
                 p.RelationshipGroup = relationship;
-                p.IsPriorityTargetForEnemies = true;
                 p.NeverLeavesGroup = true;
             }
             

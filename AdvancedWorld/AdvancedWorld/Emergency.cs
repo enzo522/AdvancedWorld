@@ -79,7 +79,7 @@ namespace AdvancedWorld
                     {
                         foreach (Ped p in members)
                         {
-                            if (Util.NewTaskCanBeDoneBy(p))
+                            if (Util.WeCanGiveTaskTo(p))
                             {
                                 if (p.Equals(spawnedVehicle.Driver))
                                 {
@@ -94,7 +94,7 @@ namespace AdvancedWorld
                     {
                         foreach (Ped p in members)
                         {
-                            if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                            if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
                 }
@@ -109,7 +109,7 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver))
+                if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
                 {
                     TaskSequence ts = new TaskSequence();
                     Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, 0, spawnedVehicle, 1, 1000);
@@ -124,7 +124,7 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (!p.IsInCombat && Util.NewTaskCanBeDoneBy(p)) p.Task.FightAgainstHatedTargets(400.0f);
+                        if (!p.IsInCombat && Util.WeCanGiveTaskTo(p)) p.Task.FightAgainstHatedTargets(400.0f);
                     }
                 }
             }
@@ -142,7 +142,7 @@ namespace AdvancedWorld
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
                             if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
-                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
 
                             p.AlwaysKeepTask = false;
                             p.BlockPermanentEvents = false;
@@ -157,7 +157,7 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                     }
                 }
             }

@@ -45,19 +45,31 @@ namespace AdvancedWorld
 
             int startingSeat = 0;
 
-            if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
+            if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
             else startingSeat = -1;
 
             for (int i = startingSeat, j = 0; j < members.Count; j++)
             { 
-                if (Util.ThereIs(members[j]) && members[j].IsOnFoot && Util.NewTaskCanBeDoneBy(members[j]) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 195))
+                if (Util.ThereIs(members[j]) && members[j].IsOnFoot && Util.WeCanGiveTaskTo(members[j]))
                 {
-                    while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) && !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
+                    if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 160))
                     {
-                        if (++i >= spawnedVehicle.PassengerSeats) return false;
-                    }
+                        while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) && !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
+                        {
+                            if (++i >= spawnedVehicle.PassengerSeats) return false;
+                        }
 
-                    members[j].Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i++, 10000, 2.0f, 1);
+                        members[j].Task.EnterVehicle(spawnedVehicle, (VehicleSeat)i++, -1, 2.0f, 1);
+                    }
+                    else if (Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 195))
+                    {
+                        if ((spawnedVehicle.Model.IsBicycle || spawnedVehicle.Model.IsBike || spawnedVehicle.Model.IsQuadbike) &&
+                            spawnedVehicle.IsUpsideDown && spawnedVehicle.IsStopped && !spawnedVehicle.PlaceOnGround()) spawnedVehicle.PlaceOnNextStreet();
+
+                        if (spawnedVehicle.IsSeatFree((VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j])))
+                            members[j].SetIntoVehicle(spawnedVehicle, (VehicleSeat)Function.Call<int>(Hash.GET_SEAT_PED_IS_TRYING_TO_ENTER, members[j]));
+                        else members[j].Task.ClearAllImmediately();
+                    }
                 }
             }
 
