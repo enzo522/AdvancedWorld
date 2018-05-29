@@ -45,12 +45,12 @@ namespace AdvancedWorld
 
             int startingSeat = 0;
 
-            if (Util.ThereIs(spawnedVehicle.Driver) && !spawnedVehicle.Driver.IsDead) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
+            if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
             else startingSeat = -1;
 
             for (int i = startingSeat, j = 0; j < members.Count; j++)
-            {
-                if (Util.ThereIs(members[j]) && members[j].IsOnFoot && !members[j].IsDead && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 195))
+            { 
+                if (Util.ThereIs(members[j]) && members[j].IsOnFoot && Util.NewTaskCanBeDoneBy(members[j]) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, members[j], 195))
                 {
                     while (!spawnedVehicle.IsSeatFree((VehicleSeat)i) && !spawnedVehicle.GetPedOnSeat((VehicleSeat)i).IsDead)
                     {

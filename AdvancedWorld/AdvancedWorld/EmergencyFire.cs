@@ -93,7 +93,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p))
+                    if (Util.ThereIs(p) && p.IsPersistent)
                     {
                         p.AlwaysKeepTask = false;
                         p.BlockPermanentEvents = false;
@@ -101,7 +101,7 @@ namespace AdvancedWorld
                     }
                 }
 
-                if (Util.ThereIs(spawnedVehicle))
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent)
                 {
                     if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
 
@@ -115,7 +115,8 @@ namespace AdvancedWorld
         protected new abstract void SetPedsOnDuty();
         protected new void SetPedsOffDuty()
         {
-            if (ReadyToGoWith(members))
+            if (!Util.WeCanEnter(spawnedVehicle)) Restore(false);
+            else if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
@@ -124,8 +125,11 @@ namespace AdvancedWorld
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
                             if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
-                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
-                            else p.Task.Wait(1000);
+                            if (Util.NewTaskCanBeDoneBy(p))
+                            {
+                                if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                                else p.Task.Wait(1000);
+                            }
 
                             p.AlwaysKeepTask = false;
                             p.BlockPermanentEvents = false;
@@ -137,7 +141,10 @@ namespace AdvancedWorld
                 }
                 else
                 {
-                    foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    foreach (Ped p in members)
+                    {
+                        if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
                 }
             }
             else
@@ -194,12 +201,6 @@ namespace AdvancedWorld
                 {
                     members.RemoveAt(i);
                     continue;
-                }
-
-                if (members[i].IsDead)
-                {
-                    Util.NaturallyRemove(members[i]);
-                    members.RemoveAt(i);
                 }
             }
             

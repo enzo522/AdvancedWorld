@@ -73,7 +73,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) < 50.0f);
+                return !en.IsOnScreen || en.IsOccluded || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) < 50.0f);
             }
         }
 
@@ -127,7 +127,7 @@ namespace AdvancedWorld
 
         public static bool WeCanEnter(Vehicle v)
         {
-            return v.IsDriveable && !v.IsOnFire && (!v.IsUpsideDown || !v.IsStopped);
+            return v.IsDriveable && !v.IsOnFire && (v.Model.IsBicycle || v.Model.IsBike || v.Model.IsQuadbike || !v.IsUpsideDown || !v.IsStopped);
         }
 
         public static void AddBlipOn(Entity en, float scale, BlipSprite bs, BlipColor bc, string bn)
@@ -414,6 +414,11 @@ namespace AdvancedWorld
 
                 en.MarkAsNoLongerNeeded();
             }
+        }
+
+        public static bool NewTaskCanBeDoneBy(Ped p)
+        {
+            return !p.IsDead && !p.IsInjured;
         }
     }
 }

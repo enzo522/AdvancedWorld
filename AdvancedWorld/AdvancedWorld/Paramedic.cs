@@ -28,10 +28,13 @@ namespace AdvancedWorld
             {
                 if (ReadyToGoWith(members))
                 {
-                    if (Util.ThereIs(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.IgnoreLights);
+                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                     else
                     {
-                        foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        foreach (Ped p in members)
+                        {
+                            if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
                     }
                 }
                 else
@@ -49,19 +52,18 @@ namespace AdvancedWorld
                 {
                     Vector3 dest = targetPosition.Around(1.0f);
 
-                    if (p.TaskSequenceProgress < 0)
+                    if (p.TaskSequenceProgress < 0 && Util.NewTaskCanBeDoneBy(p))
                     {
                         TaskSequence ts = new TaskSequence();
                         ts.AddTask.RunTo(dest);
-                        ts.AddTask.LookAt(targetPosition, 500);
-                        ts.AddTask.StartScenario(scenarios[Util.GetRandomIntBelow(scenarios.Count)], dest);
+                        Function.Call(Hash.TASK_START_SCENARIO_AT_POSITION, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], dest.X, dest.Y, dest.Z, (dest - targetPosition).ToHeading(), 0, 0, 1);
                         ts.AddTask.Wait(1000);
                         ts.Close();
 
                         p.Task.PerformSequence(ts);
                         ts.Dispose();
                     }
-                    else if (p.TaskSequenceProgress == 3 && !checkedPeds.Contains(target.Handle)) checkedPeds.Add(target.Handle);
+                    else if (p.TaskSequenceProgress == 2 && !checkedPeds.Contains(target.Handle)) checkedPeds.Add(target.Handle);
                 }
             }
         }

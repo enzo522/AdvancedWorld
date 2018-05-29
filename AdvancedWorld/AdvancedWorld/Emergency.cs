@@ -42,7 +42,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (Util.ThereIs(p))
+                    if (Util.ThereIs(p) && p.IsPersistent)
                     {
                         p.AlwaysKeepTask = false;
                         p.BlockPermanentEvents = false;
@@ -51,7 +51,7 @@ namespace AdvancedWorld
                     }
                 }
 
-                if (Util.ThereIs(spawnedVehicle))
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent)
                 {
                     if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
 
@@ -79,17 +79,23 @@ namespace AdvancedWorld
                     {
                         foreach (Ped p in members)
                         {
-                            if (p.Equals(spawnedVehicle.Driver))
+                            if (Util.NewTaskCanBeDoneBy(p))
                             {
-                                if (target.Model.IsPed && ((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
-                                else p.Task.DriveTo(spawnedVehicle, target.Position, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                                if (p.Equals(spawnedVehicle.Driver))
+                                {
+                                    if (target.Model.IsPed && ((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
+                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                                }
+                                else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                             }
-                            else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                         }
                     }
                     else
                     {
-                        foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        foreach (Ped p in members)
+                        {
+                            if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
                     }
                 }
                 else
@@ -103,7 +109,7 @@ namespace AdvancedWorld
             }
             else
             {
-                if (Util.ThereIs(spawnedVehicle.Driver))
+                if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver))
                 {
                     TaskSequence ts = new TaskSequence();
                     Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, 0, spawnedVehicle, 1, 1000);
@@ -118,7 +124,7 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                        if (!p.IsInCombat && Util.NewTaskCanBeDoneBy(p)) p.Task.FightAgainstHatedTargets(400.0f);
                     }
                 }
             }
@@ -126,7 +132,8 @@ namespace AdvancedWorld
 
         protected void SetPedsOffDuty()
         {
-            if (ReadyToGoWith(members))
+            if (!Util.WeCanEnter(spawnedVehicle)) Restore(false);
+            else if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
@@ -135,7 +142,7 @@ namespace AdvancedWorld
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
                             if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
-                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
 
                             p.AlwaysKeepTask = false;
                             p.BlockPermanentEvents = false;
@@ -148,7 +155,10 @@ namespace AdvancedWorld
                 }
                 else
                 {
-                    foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    foreach (Ped p in members)
+                    {
+                        if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
                 }
             }
             else
@@ -199,12 +209,6 @@ namespace AdvancedWorld
                 {
                     members.RemoveAt(i);
                     continue;
-                }
-
-                if (members[i].IsDead)
-                {
-                    Util.NaturallyRemove(members[i]);
-                    members.RemoveAt(i);
                 }
             }
 

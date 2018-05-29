@@ -146,7 +146,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                    if (!p.IsInCombat && Util.NewTaskCanBeDoneBy(p)) p.Task.FightAgainstHatedTargets(400.0f);
                 }
             }
             else if (ReadyToGoWith(members))
@@ -155,16 +155,22 @@ namespace AdvancedWorld
                 {
                     foreach (Ped p in members)
                     {
-                        if (p.Equals(spawnedVehicle.Driver))
+                        if (Util.NewTaskCanBeDoneBy(p))
                         {
-                            if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                            if (p.Equals(spawnedVehicle.Driver))
+                            {
+                                if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                            }
+                            else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                         }
-                        else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                     }
                 }
                 else
                 {
-                    foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    foreach (Ped p in members)
+                    {
+                        if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
                 }
             }
             else

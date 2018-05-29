@@ -15,10 +15,13 @@ namespace AdvancedWorld
             {
                 if (ReadyToGoWith(members))
                 {
-                    if (Util.ThereIs(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.IgnoreLights);
+                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.NewTaskCanBeDoneBy(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                     else
                     {
-                        foreach (Ped p in members) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        foreach (Ped p in members)
+                        {
+                            if (Util.NewTaskCanBeDoneBy(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
                     }
                 }
                 else
@@ -34,7 +37,7 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    if (p.TaskSequenceProgress < 0)
+                    if (p.TaskSequenceProgress < 0 && Util.NewTaskCanBeDoneBy(p))
                     {
                         TaskSequence ts = new TaskSequence();
                         ts.AddTask.RunTo(targetPosition.Around(3.0f));

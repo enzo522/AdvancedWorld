@@ -116,7 +116,7 @@ namespace AdvancedWorld
 
                 spawnedPed = members[i];
 
-                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop)) members[i].Task.PerformSequence(ts);
+                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop) && Util.NewTaskCanBeDoneBy(members[i])) members[i].Task.PerformSequence(ts);
             }
 
             if (members.Count < 1)
