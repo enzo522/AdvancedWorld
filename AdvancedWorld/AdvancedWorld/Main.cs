@@ -497,7 +497,6 @@ namespace AdvancedWorld
                 copCarNames[0].Add("police13");
                 copCarNames[0].Add("police15");
                 copCarNames[0].Add("police16");
-                copCarNames[0].Add("police17");
                 copCarNames[0].Add("police24");
                 copCarNames[0].Add("policet2");
                 copCarNames[0].Add("policet3");

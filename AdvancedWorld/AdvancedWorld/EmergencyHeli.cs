@@ -103,6 +103,8 @@ namespace AdvancedWorld
 
             spawnedVehicle.EngineRunning = true;
             spawnedVehicle.Livery = 0;
+            spawnedVehicle.PrimaryColor = VehicleColor.MetallicBlack;
+            spawnedVehicle.SecondaryColor = VehicleColor.MetallicBlack;
             Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
             SetPedsOnDuty();
 
