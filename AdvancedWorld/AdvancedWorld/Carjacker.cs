@@ -32,9 +32,9 @@ namespace AdvancedWorld
 
             if (!Util.BlipIsOn(spawnedPed))
             {
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
-                FindNewVehicle();
+                if (!Main.NoBlipOnCriminal) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
 
+                FindNewVehicle();
                 return true;
             }
             else

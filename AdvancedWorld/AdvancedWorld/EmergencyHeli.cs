@@ -7,7 +7,7 @@ namespace AdvancedWorld
 {
     public class EmergencyHeli : Emergency
     {
-        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.blipName += emergencyType + " Helicopter"; }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -111,14 +111,39 @@ namespace AdvancedWorld
             return true;
         }
 
+        private new void AddEmergencyBlip(bool forVehicle)
+        {
+            if (forVehicle)
+            {
+                if (Util.WeCanEnter(spawnedVehicle) && !Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PoliceHelicopterAnimated, (BlipColor)(-1), blipName);
+
+                foreach (Ped p in members)
+                {
+                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+                }
+            }
+            else
+            {
+                if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
+
+                foreach (Ped p in members)
+                {
+                    if (Util.WeCanGiveTaskTo(p) && !Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.4f, BlipSprite.PoliceOfficer, (BlipColor)(-1), blipName);
+                }
+            }
+        }
+
         private new void SetPedsOnDuty()
         {
             if (onVehicleDuty)
             {
+                if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
+
                 foreach (Ped p in members)
                 {
                     if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                     {
+                        if (!Main.NoBlipOnDispatch && Util.BlipIsOn(p)) p.CurrentBlip.Remove();
                         if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
                         else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                     }
@@ -126,6 +151,8 @@ namespace AdvancedWorld
             }
             else
             {
+                if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
+
                 foreach (Ped p in members)
                 {
                     if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))

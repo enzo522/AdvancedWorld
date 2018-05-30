@@ -64,7 +64,8 @@ namespace AdvancedWorld
 
                     if (!Util.BlipIsOn(spawnedVehicle))
                     {
-                        Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, selectedBlipColor, selectedBlipName);
+                        if (!Main.NoBlipOnCriminal) Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, selectedBlipColor, selectedBlipName);
+
                         return true;
                     }
                     else Restore(true);

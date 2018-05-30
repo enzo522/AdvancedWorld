@@ -7,7 +7,7 @@ namespace AdvancedWorld
 {
     public class EmergencyGround : Emergency
     {
-        public EmergencyGround(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { }
+        public EmergencyGround(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.blipName += emergencyType + " Ground"; }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {

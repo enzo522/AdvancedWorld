@@ -142,7 +142,9 @@ namespace AdvancedWorld
                 en.AddBlip();
                 en.CurrentBlip.Scale = scale;
                 en.CurrentBlip.Sprite = bs;
-                en.CurrentBlip.Color = bc;
+
+                if (bc != (BlipColor)(-1)) en.CurrentBlip.Color = bc;
+
                 en.CurrentBlip.Name = bn;
                 en.CurrentBlip.IsShortRange = true;
             }

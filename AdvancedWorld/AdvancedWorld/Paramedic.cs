@@ -23,12 +23,17 @@ namespace AdvancedWorld
 
         protected override void SetPedsOnDuty()
         {
-            if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
             if (onVehicleDuty)
             {
                 if (ReadyToGoWith(members))
                 {
-                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
+                    {
+                        if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
+                        if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
+
+                        spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                    }
                     else
                     {
                         foreach (Ped p in members)
@@ -48,6 +53,8 @@ namespace AdvancedWorld
             }
             else if (target.Model.IsPed)
             {
+                if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
+
                 foreach (Ped p in members)
                 {
                     if (p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))

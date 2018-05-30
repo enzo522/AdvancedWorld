@@ -11,6 +11,7 @@ namespace AdvancedWorld
         protected string name;
         protected Entity target;
         protected string emergencyType;
+        protected string blipName;
         protected bool onVehicleDuty;
         protected int relationship;
 
@@ -20,6 +21,7 @@ namespace AdvancedWorld
             this.name = name;
             this.target = target;
             this.emergencyType = emergencyType;
+            this.blipName = "";
             this.onVehicleDuty = true;
 
             if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
@@ -68,15 +70,39 @@ namespace AdvancedWorld
             members.Clear();
         }
 
+        protected void AddEmergencyBlip(bool forVehicle)
+        {
+            if (forVehicle)
+            {
+                if (Util.WeCanEnter(spawnedVehicle) && !Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.5f, BlipSprite.PoliceOfficer, (BlipColor)(-1), blipName);
+
+                foreach (Ped p in members)
+                {
+                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+                }
+            }
+            else
+            {
+                if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
+
+                foreach (Ped p in members)
+                {
+                    if (Util.WeCanGiveTaskTo(p) && !Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.4f, BlipSprite.PoliceOfficer, (BlipColor)(-1), blipName);
+                }
+            }
+        }
+
         protected void SetPedsOnDuty()
         {
-            if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
             if (onVehicleDuty)
             {
                 if (ReadyToGoWith(members))
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver))
                     {
+                        if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
+                        if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
+
                         foreach (Ped p in members)
                         {
                             if (Util.WeCanGiveTaskTo(p))
@@ -122,6 +148,8 @@ namespace AdvancedWorld
                 }
                 else
                 {
+                    AddEmergencyBlip(false);
+
                     foreach (Ped p in members)
                     {
                         if (!p.IsInCombat && Util.WeCanGiveTaskTo(p)) p.Task.FightAgainstHatedTargets(400.0f);
@@ -205,7 +233,13 @@ namespace AdvancedWorld
         {
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
+                if (!Util.ThereIs(members[i]))
+                {
+                    members.RemoveAt(i);
+                    continue;
+                }
+
+                if (members[i].IsDead && Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
 
             if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))

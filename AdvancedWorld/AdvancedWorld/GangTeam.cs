@@ -55,7 +55,8 @@ namespace AdvancedWorld
 
                 if (!Util.BlipIsOn(p))
                 {
-                    Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, teamColor, teamName);
+                    if (!Main.NoBlipOnCriminal) Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, teamColor, teamName);
+
                     members.Add(p);
                 }
                 else p.Delete();

@@ -114,8 +114,11 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(p) && !p.IsDead)
                 {
-                    if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + spawnedVehicle.FriendlyName);
-                    else if (!p.CurrentBlip.Sprite.Equals(BlipSprite.GunCar)) p.CurrentBlip.Remove(); 
+                    if (!Main.NoBlipOnCriminal)
+                    {
+                        if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + spawnedVehicle.FriendlyName);
+                        else if (!p.CurrentBlip.Sprite.Equals(BlipSprite.GunCar)) p.CurrentBlip.Remove();
+                    }
 
                     spawnedPed = p;
                     return true;
@@ -129,7 +132,13 @@ namespace AdvancedWorld
         {
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
+                if (!Util.ThereIs(members[i]))
+                {
+                    members.RemoveAt(i);
+                    continue;
+                }
+
+                if (members[i].IsDead && Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
             
             if (!Util.ThereIs(spawnedVehicle) || !SpawnedPedExists() || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))

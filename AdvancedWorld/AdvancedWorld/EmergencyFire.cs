@@ -11,6 +11,7 @@ namespace AdvancedWorld
 
         public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
+            this.blipName += emergencyType == "FIREMAN" ? "Fire Fighter" : "Paramedic";
             Util.CleanUp(this.relationship, DispatchManager.DispatchType.Cop);
             this.relationship = 0;
             this.targetPosition = target.Position;
@@ -112,6 +113,28 @@ namespace AdvancedWorld
             members.Clear();
         }
 
+        protected new void AddEmergencyBlip(bool forVehicle)
+        {
+            if (forVehicle)
+            {
+                if (Util.WeCanEnter(spawnedVehicle) && !Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.Hospital, BlipColor.Red, blipName);
+
+                foreach (Ped p in members)
+                {
+                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+                }
+            }
+            else
+            {
+                if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
+
+                foreach (Ped p in members)
+                {
+                    if (Util.WeCanGiveTaskTo(p) && !Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.5f, BlipSprite.Hospital, BlipColor.Red, blipName);
+                }
+            }
+        }
+
         protected new abstract void SetPedsOnDuty();
         protected new void SetPedsOffDuty()
         {
@@ -120,11 +143,12 @@ namespace AdvancedWorld
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
+                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+
                     foreach (Ped p in members)
                     {
                         if (Util.ThereIs(p) && p.IsPersistent)
                         {
-                            if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                             if (Util.WeCanGiveTaskTo(p))
                             {
                                 if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
@@ -197,7 +221,13 @@ namespace AdvancedWorld
         {
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
+                if (!Util.ThereIs(members[i]))
+                {
+                    members.RemoveAt(i);
+                    continue;
+                }
+
+                if (members[i].IsDead && Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
             
             if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))

@@ -7,7 +7,11 @@ namespace AdvancedWorld
 {
     public class EmergencyBlock : Emergency
     {
-        public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { onVehicleDuty = false; }
+        public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
+        {
+            this.blipName += emergencyType + " Road Block";
+            this.onVehicleDuty = false;
+        }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {

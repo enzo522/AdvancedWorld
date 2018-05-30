@@ -104,7 +104,8 @@ namespace AdvancedWorld
 
                 if (!Util.BlipIsOn(p))
                 {
-                    Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, BlipColor.White, "Massacre Squad");
+                    if (!Main.NoBlipOnCriminal) Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, BlipColor.White, "Massacre Squad");
+
                     members.Add(p);
                 }
                 else p.Delete();

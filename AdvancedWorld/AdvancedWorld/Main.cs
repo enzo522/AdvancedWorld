@@ -36,6 +36,9 @@ namespace AdvancedWorld
         public static bool NoDispatch;
         public static bool CriminalsCanFightWithPlayer;
         public static bool DispatchesCanFightWithPlayer;
+        public static bool NoMinimapFlash;
+        public static bool NoBlipOnCriminal;
+        public static bool NoBlipOnDispatch;
 
         private float radius;
         private int eventTimeChecker;
@@ -221,6 +224,9 @@ namespace AdvancedWorld
             NoDispatch = false;
             CriminalsCanFightWithPlayer = false;
             DispatchesCanFightWithPlayer = false;
+            NoMinimapFlash = false;
+            NoBlipOnCriminal = false;
+            NoBlipOnDispatch = false;
 
             CheckDLCs();
             SetUp();
@@ -242,8 +248,8 @@ namespace AdvancedWorld
                 racerCarNames.Add("entity2");
                 racerCarNames.Add("flashgt");
                 racerCarNames.Add("gb200");
-                racerCarNames.Add("jester3");
                 racerCarNames.Add("hotring");
+                racerCarNames.Add("jester3");
                 racerCarNames.Add("taipan");
                 racerCarNames.Add("tezeract");
                 racerCarNames.Add("tyrant");
@@ -579,6 +585,9 @@ namespace AdvancedWorld
             NoDispatch = ((XmlElement)element.SelectSingleNode("//Settings/NoDispatch")).GetAttribute("value") == "True";
             CriminalsCanFightWithPlayer = ((XmlElement)element.SelectSingleNode("//Settings/CriminalsCanFightWithPlayer")).GetAttribute("value") == "True";
             DispatchesCanFightWithPlayer = ((XmlElement)element.SelectSingleNode("//Settings/DispatchesCanFightWithPlayer")).GetAttribute("value") == "True";
+            NoMinimapFlash = ((XmlElement)element.SelectSingleNode("//Settings/NoMinimapFlash")).GetAttribute("value") == "True";
+            NoBlipOnCriminal = ((XmlElement)element.SelectSingleNode("//Settings/NoBlipOnCriminal")).GetAttribute("value") == "True";
+            NoBlipOnDispatch = ((XmlElement)element.SelectSingleNode("//Settings/NoBlipOnDispatch")).GetAttribute("value") == "True";
 
             foreach (XmlElement e in element.SelectNodes("//AddOn/spawn"))
             {
@@ -821,7 +830,8 @@ namespace AdvancedWorld
                     if (rv.IsCreatedIn(radius))
                     {
                         EventManager.Add(rv, EventManager.EventType.ReplacedVehicle);
-                        Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                        if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                     }
                     else rv.Restore(true);
                 }
@@ -839,7 +849,8 @@ namespace AdvancedWorld
                             if (cj.IsCreatedIn(radius))
                             {
                                 EventManager.Add(cj, EventManager.EventType.Carjacker);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else cj.Restore(true);
 
@@ -853,7 +864,8 @@ namespace AdvancedWorld
                             if (ad.IsCreatedIn(radius))
                             {
                                 EventManager.Add(ad, EventManager.EventType.AggressiveDriver);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else ad.Restore(true);
 
@@ -867,7 +879,8 @@ namespace AdvancedWorld
                             if (of.IsCreatedIn(radius, true))
                             {
                                 EventManager.Add(of, EventManager.EventType.Fire);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else of.Restore(true);
 
@@ -881,7 +894,8 @@ namespace AdvancedWorld
                             if (of.IsCreatedIn(radius, false))
                             {
                                 EventManager.Add(of, EventManager.EventType.Fire);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else of.Restore(true);
 
@@ -931,7 +945,7 @@ namespace AdvancedWorld
                                 teamA.PerformTask();
                                 teamB.PerformTask();
 
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else
                             {
@@ -964,7 +978,8 @@ namespace AdvancedWorld
                             if (ms.IsCreatedIn(radius, road.Position))
                             {
                                 EventManager.Add(ms, EventManager.EventType.Massacre);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else ms.Restore(true);
 
@@ -986,7 +1001,8 @@ namespace AdvancedWorld
                             if (r.IsCreatedIn(radius))
                             {
                                 EventManager.Add(r, EventManager.EventType.Racer);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else r.Restore(true);
 
@@ -1000,7 +1016,8 @@ namespace AdvancedWorld
                             if (db.IsCreatedIn(radius, gangModels[Util.GetRandomIntBelow(gangModels.Count)]))
                             {
                                 EventManager.Add(db, EventManager.EventType.Driveby);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else db.Restore(true);
 
@@ -1014,7 +1031,8 @@ namespace AdvancedWorld
                             if (tr.IsCreatedIn(radius))
                             {
                                 EventManager.Add(tr, EventManager.EventType.Terrorist);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+
+                                if (!NoMinimapFlash) Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             }
                             else tr.Restore(true);
 
