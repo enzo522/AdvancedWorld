@@ -121,7 +121,7 @@ namespace AdvancedWorld
 
                 if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop) && Util.WeCanGiveTaskTo(members[i])) members[i].Task.PerformSequence(ts);
             }
-
+            
             if (members.Count < 1)
             {
                 if (relationship != 0) Util.CleanUp(relationship);
@@ -129,7 +129,7 @@ namespace AdvancedWorld
                 ts.Dispose();
                 return true;
             }
-
+            
             if (Util.ThereIs(spawnedPed)) CheckDispatch();
 
             return false;
