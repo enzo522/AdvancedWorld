@@ -45,7 +45,21 @@ namespace AdvancedWorld
 
         public static bool ReplaceSlotIsAvailable()
         {
-            return replacedList.Count < 5;
+            if (replacedList.Count < 5) return true;
+            else
+            {
+                foreach (ReplacedVehicle rv in replacedList)
+                {
+                    if (rv.CanBeNaturallyRemoved())
+                    {
+                        rv.Restore(true);
+                        replacedList.Remove(rv);
+                        break;
+                    }
+                }
+
+                return replacedList.Count < 5;
+            }
         }
 
         public static void Add(AdvancedEntity en, EventType type)

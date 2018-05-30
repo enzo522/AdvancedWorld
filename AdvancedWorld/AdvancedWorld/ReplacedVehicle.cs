@@ -98,5 +98,10 @@ namespace AdvancedWorld
 
             return false;
         }
+
+        public bool CanBeNaturallyRemoved()
+        {
+            return Util.SomethingIsBetweenPlayerAnd(spawnedVehicle);
+        }
     }
 }

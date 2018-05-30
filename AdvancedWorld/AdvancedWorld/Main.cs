@@ -701,7 +701,7 @@ namespace AdvancedWorld
 
                 case EventManager.EventType.GangTeam:
                     {
-                        for (int i = 0; i < 2; i++)
+                        for (int i = 0; i < 3; i++)
                         {
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
@@ -709,11 +709,6 @@ namespace AdvancedWorld
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
                             else lspd.Restore(true);
                         }
-
-                        EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomIntBelow(copHeliNames.Count)], target, "LSPD");
-
-                        if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomIntBelow(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
-                        else lspdheli.Restore(true);
 
                         break;
                     }
