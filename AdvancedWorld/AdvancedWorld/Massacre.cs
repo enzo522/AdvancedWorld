@@ -83,7 +83,6 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
-                Function.Call(Hash.SET_PED_COMBAT_MOVEMENT, p, 3);
 
                 Function.Call(Hash.SET_PED_PATH_CAN_USE_CLIMBOVERS, p, false);
                 Function.Call(Hash.SET_PED_PATH_CAN_USE_LADDERS, p, false);

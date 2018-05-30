@@ -73,7 +73,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return !en.IsOnScreen || en.IsOccluded || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) < 50.0f);
+                return !en.IsOnScreen || en.IsOccluded || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) < 50.0f);
             }
         }
 
@@ -84,7 +84,7 @@ namespace AdvancedWorld
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
 
-                return Vector3.Subtract(GameplayCamera.Position + GameplayCamera.Direction * 100.0f, position).Length() > 100.0f || (r.DitHitAnything && r.HitCoords.DistanceTo(Game.Player.Character.Position) < 50.0f);
+                return Vector3.Subtract(GameplayCamera.Position + GameplayCamera.Direction * 100.0f, position).Length() > 100.0f || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) < 50.0f);
             }
         }
 
@@ -191,12 +191,27 @@ namespace AdvancedWorld
             {
                 v.InstallModKit();
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
-                v.CanTiresBurst = GetRandomIntBelow(2) == 1;
+                v.ToggleMod(VehicleToggleMod.XenonHeadlights, dice.Next(2) == 1);
+
+                if (dice.Next(2) == 1)
+                {
+                    v.ToggleMod(VehicleToggleMod.TireSmoke, true);
+                    v.TireSmokeColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
+                }
+                
+                v.CanTiresBurst = dice.Next(2) == 1;
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
 
                 foreach (VehicleMod m in mods)
                 {
                     if (m != VehicleMod.Horns && m != VehicleMod.FrontWheels && m != VehicleMod.BackWheels && v.GetModCount(m) > 0) v.SetMod(m, dice.Next(-1, v.GetModCount(m)), false);
+                }
+
+                if (withNeons)
+                {
+                    v.NeonLightsColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
+
+                    foreach (VehicleNeonLight n in neonLights) v.SetNeonLightsOn(n, true);
                 }
 
                 if (withWheels)
@@ -216,13 +231,6 @@ namespace AdvancedWorld
                     }
 
                     v.RimColor = (VehicleColor)wheelColors[dice.Next(wheelColors.Length)];
-                }
-
-                if (withNeons)
-                {
-                    v.NeonLightsColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
-
-                    foreach (VehicleNeonLight n in neonLights) v.SetNeonLightsOn(n, true);
                 }
             }
         }

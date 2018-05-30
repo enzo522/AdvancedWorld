@@ -33,9 +33,6 @@ namespace AdvancedWorld
                     spawnedVehicle = Util.Create(name, selectedPosition, selectedHeading, true);
 
                     if (!Util.ThereIs(spawnedVehicle)) return false;
-
-                    System.IO.File.WriteAllText(@"lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("yyyy-MM-dd-HH:mm:ss") + "] " + name);
-
                     if (selectedEngineRunning)
                     {
                         spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
@@ -55,7 +52,7 @@ namespace AdvancedWorld
                     {
                         selectedBlipName = "Tuned ";
                         selectedBlipColor = BlipColor.Blue;
-                        Util.Tune(spawnedVehicle, Util.GetRandomIntBelow(2) == 1, Util.GetRandomIntBelow(3) == 1);
+                        Util.Tune(spawnedVehicle, Util.GetRandomIntBelow(2) == 1, Util.GetRandomIntBelow(2) == 1);
                     }
                     else
                     {
@@ -63,8 +60,7 @@ namespace AdvancedWorld
                         selectedBlipColor = BlipColor.White;
                     }
 
-                    if (spawnedVehicle.FriendlyName == "NULL") selectedBlipName += spawnedVehicle.DisplayName.ToUpper();
-                    else selectedBlipName += spawnedVehicle.FriendlyName;
+                    selectedBlipName += spawnedVehicle.FriendlyName == "NULL" ? spawnedVehicle.DisplayName.ToUpper() : spawnedVehicle.FriendlyName;
 
                     if (!Util.BlipIsOn(spawnedVehicle))
                     {
@@ -73,7 +69,6 @@ namespace AdvancedWorld
                     }
                     else Restore(true);
                 }
-                else selectedVehicle = null;
             }
 
             return false;

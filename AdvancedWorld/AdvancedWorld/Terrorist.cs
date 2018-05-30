@@ -49,6 +49,7 @@ namespace AdvancedWorld
 
             spawnedPed.RelationshipGroup = relationship;
             spawnedPed.IsPriorityTargetForEnemies = true;
+            spawnedPed.CanBeShotInVehicle = false;
 
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;

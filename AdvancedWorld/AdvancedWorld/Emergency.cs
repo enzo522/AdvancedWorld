@@ -84,7 +84,7 @@ namespace AdvancedWorld
                                 if (p.Equals(spawnedVehicle.Driver))
                                 {
                                     if (target.Model.IsPed && ((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
-                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 30.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
                                 }
                                 else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                             }
@@ -205,11 +205,7 @@ namespace AdvancedWorld
         {
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i]))
-                {
-                    members.RemoveAt(i);
-                    continue;
-                }
+                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
             }
 
             if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))

@@ -40,6 +40,7 @@ namespace AdvancedWorld
             shield.IsMeleeProof = true;
             shield.IsInvincible = true;
             shield.IsVisible = false;
+            shield.LodDistance = 200;
             
             Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Gang1H"));
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);

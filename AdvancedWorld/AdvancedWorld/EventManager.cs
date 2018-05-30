@@ -43,6 +43,11 @@ namespace AdvancedWorld
             terroristList = new List<AdvancedEntity>();
         }
 
+        public static bool ReplaceSlotIsAvailable()
+        {
+            return replacedList.Count < 5;
+        }
+
         public static void Add(AdvancedEntity en, EventType type)
         {
             switch (type)

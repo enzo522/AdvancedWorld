@@ -197,11 +197,7 @@ namespace AdvancedWorld
         {
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i]))
-                {
-                    members.RemoveAt(i);
-                    continue;
-                }
+                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
             }
             
             if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))

@@ -820,14 +820,17 @@ namespace AdvancedWorld
         {
             if (eventTimeChecker == 1 || eventTimeChecker == 2 || eventTimeChecker == 3 || eventTimeChecker == 4)
             {
-                ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomIntBelow(addOnCarNames.Count)]);
-
-                if (rv.IsCreatedIn(radius))
+                if (EventManager.ReplaceSlotIsAvailable())
                 {
-                    EventManager.Add(rv, EventManager.EventType.ReplacedVehicle);
-                    Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+                    ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomIntBelow(addOnCarNames.Count)]);
+
+                    if (rv.IsCreatedIn(radius))
+                    {
+                        EventManager.Add(rv, EventManager.EventType.ReplacedVehicle);
+                        Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+                    }
+                    else rv.Restore(true);
                 }
-                else rv.Restore(true);
 
                 eventTimeChecker++;
             }

@@ -50,20 +50,20 @@ namespace AdvancedWorld
             {
                 foreach (Ped p in members)
                 {
-                    Vector3 dest = targetPosition.Around(1.0f);
-
                     if (p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))
                     {
+                        Vector3 dest = targetPosition.Around(1.0f);
                         TaskSequence ts = new TaskSequence();
                         ts.AddTask.RunTo(dest);
-                        Function.Call(Hash.TASK_START_SCENARIO_AT_POSITION, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], dest.X, dest.Y, dest.Z, (targetPosition - dest).ToHeading(), 0, 0, 1);
+                        ts.AddTask.AchieveHeading((targetPosition - dest).ToHeading());
+                        Function.Call(Hash.TASK_START_SCENARIO_IN_PLACE, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], 0, 1);
                         ts.AddTask.Wait(1000);
                         ts.Close();
 
                         p.Task.PerformSequence(ts);
                         ts.Dispose();
                     }
-                    else if (p.TaskSequenceProgress == 2 && !checkedPeds.Contains(target.Handle)) checkedPeds.Add(target.Handle);
+                    else if (p.TaskSequenceProgress == 3 && !checkedPeds.Contains(target.Handle)) checkedPeds.Add(target.Handle);
                 }
             }
         }
