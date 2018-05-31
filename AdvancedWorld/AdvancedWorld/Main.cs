@@ -5,7 +5,7 @@ using System;
 using System.Xml;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class Main : Script
     {
@@ -814,6 +814,8 @@ namespace AdvancedWorld
             eventTimeChecker = 0;
             Interval = 15000;
             Tick += OnTick;
+
+            Logger.Init();
         }
 
         private void OnTick(Object sender, EventArgs e)

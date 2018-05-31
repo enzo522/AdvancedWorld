@@ -3,14 +3,14 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class EmergencyBlock : Emergency
     {
         public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             this.blipName += emergencyType + " Road Block";
-            this.onVehicleDuty = false;
+            Logger.Write("EmergencyBlock: Time to block road.", emergencyType + " " + name);
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
@@ -21,14 +21,29 @@ namespace AdvancedWorld
             {
                 road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(50.0f));
 
-                if (!road.Position.Equals(Vector3.Zero)) break;
+                if (!road.Position.Equals(Vector3.Zero))
+                {
+                    Logger.Write("EmergencyBlock: Found proper road.", emergencyType + " " + name);
+
+                    break;
+                }
             }
 
-            if (road.Position.Equals(Vector3.Zero)) return false;
+            if (road.Position.Equals(Vector3.Zero))
+            {
+                Logger.Error("EmergencyBlock: Couldn't find proper road. Abort.", emergencyType + " " + name);
+
+                return false;
+            }
 
             spawnedVehicle = Util.Create(name, road.Position, road.Heading + 90, false);
 
-            if (!Util.ThereIs(spawnedVehicle)) return false;
+            if (!Util.ThereIs(spawnedVehicle))
+            {
+                Logger.Error("EmergencyBlock: Couldn't create vehicle. Abort.", emergencyType + " " + name);
+
+                return false;
+            }
 
             Stinger s = new Stinger(spawnedVehicle);
 
@@ -52,7 +67,9 @@ namespace AdvancedWorld
 
                 if (selectedModel == null)
                 {
+                    Logger.Error("EmergencyBlock: Couldn't find model. Abort.", emergencyType + " " + name);
                     Restore(true);
+
                     return false;
                 }
 
@@ -66,11 +83,15 @@ namespace AdvancedWorld
                 }
             }
 
+            Logger.Write("EmergencyBlock: Tried to create stinger and created members.", emergencyType + " " + name);
+
             foreach (Ped p in members)
             {
                 if (!Util.ThereIs(p))
                 {
+                    Logger.Error("EmergencyBlock: There is a member who doesn't exist. Abort.", emergencyType + " " + name);
                     Restore(true);
+
                     return false;
                 }
 
@@ -108,7 +129,7 @@ namespace AdvancedWorld
                 }
 
                 if (p.IsInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
-
+                
                 p.Weapons.Current.InfiniteAmmo = true;
                 p.CanSwitchWeapons = true;
                 AddVarietyTo(p);
@@ -125,11 +146,12 @@ namespace AdvancedWorld
 
                 p.RelationshipGroup = relationship;
                 p.NeverLeavesGroup = true;
+                Logger.Write("EmergencyBlock: Characteristics are set.", emergencyType + " " + name);
             }
-            
+
             spawnedVehicle.EngineRunning = true;
-            onVehicleDuty = false;
-            SetPedsOnDuty();
+            SetPedsOnDuty(false);
+            Logger.Write("EmergencyBlock: Ready to dispatch.", emergencyType + " " + name);
 
             return true;
         }

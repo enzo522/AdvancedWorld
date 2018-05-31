@@ -3,7 +3,7 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class Paramedic : EmergencyFire
     {
@@ -19,9 +19,10 @@ namespace AdvancedWorld
                 "CODE_HUMAN_MEDIC_TEND_TO_DEAD",
                 "CODE_HUMAN_MEDIC_TIME_OF_DEATH"
             };
+            Logger.Write("Paramedic: Time to investigate dead bodies.", emergencyType + " " + name);
         }
 
-        protected override void SetPedsOnDuty()
+        protected override void SetPedsOnDuty(bool onVehicleDuty)
         {
             if (onVehicleDuty)
             {
@@ -29,13 +30,17 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
                     {
+                        Logger.Write("Paramedic: Time to go with vehicle.", emergencyType + " " + name);
+
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
                         if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
 
-                        spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, 262716);
+                        spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, 262708); // 4 + 16 + 32 + 512 + 262144
                     }
                     else
                     {
+                        Logger.Write("Paramedic: There is no driver when on duty. Re-enter everyone.", emergencyType + " " + name);
+
                         foreach (Ped p in members)
                         {
                             if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
@@ -46,13 +51,20 @@ namespace AdvancedWorld
                 {
                     if (!VehicleSeatsCanBeSeatedBy(members))
                     {
-                        Restore(false);
-                        return;
+                        Logger.Write("Paramedic: Something wrong with assigning seats when on duty. Re-enter everyone.", emergencyType + " " + name);
+
+                        foreach (Ped p in members)
+                        {
+                            if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
                     }
+                    else Logger.Write("Paramedic: Assigned seats successfully when on duty.", emergencyType + " " + name);
                 }
             }
             else if (target.Model.IsPed)
             {
+                Logger.Write("Paramedic: Time to investigate dead bodies.", emergencyType + " " + name);
+
                 if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
                 foreach (Ped p in members)
@@ -70,7 +82,11 @@ namespace AdvancedWorld
                         p.Task.PerformSequence(ts);
                         ts.Dispose();
                     }
-                    else if (p.TaskSequenceProgress == 3 && !checkedPeds.Contains(target.Handle)) checkedPeds.Add(target.Handle);
+                    else if (p.TaskSequenceProgress > 1 && !checkedPeds.Contains(target.Handle))
+                    {
+                        Logger.Write("Paramedic: A dead body is checked.", emergencyType + " " + name);
+                        checkedPeds.Add(target.Handle);
+                    }
                 }
             }
         }
@@ -81,7 +97,12 @@ namespace AdvancedWorld
             targetPosition = Vector3.Zero;
             Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 200.0f);
 
-            if (nearbyPeds.Length < 1) return false;
+            if (nearbyPeds.Length < 1)
+            {
+                Logger.Write("Paramedic: There is no dead body.", emergencyType + " " + name);
+
+                return false;
+            }
 
             foreach (Ped selectedPed in nearbyPeds)
             {
@@ -91,11 +112,15 @@ namespace AdvancedWorld
                     {
                         target = selectedPed;
                         targetPosition = Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f);
+                        Logger.Write("Paramedic: Found a dead body.", emergencyType + " " + name);
+
                         return true;
                     }
                 }
             }
-            
+
+            Logger.Write("Paramedic: There is no dead body.", emergencyType + " " + name);
+
             return false;
         }
     }

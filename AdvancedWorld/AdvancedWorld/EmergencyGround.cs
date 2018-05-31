@@ -3,11 +3,15 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class EmergencyGround : Emergency
     {
-        public EmergencyGround(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.blipName += emergencyType + " Ground"; }
+        public EmergencyGround(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
+        {
+            this.blipName += emergencyType + " Ground";
+            Logger.Write("EmergencyGround: Time to dispatch.", emergencyType + " " + name);
+        }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
@@ -17,14 +21,30 @@ namespace AdvancedWorld
             {
                 road = Util.GetNextPositionOnStreetWithHeading(safePosition.Around(50.0f));
 
-                if (!road.Position.Equals(Vector3.Zero)) break;
+                if (!road.Position.Equals(Vector3.Zero))
+                {
+                    Logger.Write("EmergencyGround: Found proper road.", emergencyType + " " + name);
+
+                    break;
+                }
             }
 
-            if (road.Position.Equals(Vector3.Zero)) return false;
+            if (road.Position.Equals(Vector3.Zero))
+            {
+                Logger.Error("EmergencyGround: Couldn't find proper road. Abort.", emergencyType + " " + name);
+
+                return false;
+            }
 
             spawnedVehicle = Util.Create(name, road.Position, road.Heading, false);
 
-            if (!Util.ThereIs(spawnedVehicle)) return false;
+            if (!Util.ThereIs(spawnedVehicle))
+            {
+                Logger.Error("EmergencyGround: Couldn't create vehicle. Abort.", emergencyType + " " + name);
+
+                return false;
+            }
+
             if (emergencyType == "LSPD")
             {
                 for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 1; i++)
@@ -42,7 +62,9 @@ namespace AdvancedWorld
 
                 if (selectedModel == null)
                 {
+                    Logger.Error("EmergencyGround: Couldn't find model. Abort.", emergencyType + " " + name);
                     Restore(true);
+
                     return false;
                 }
 
@@ -56,11 +78,15 @@ namespace AdvancedWorld
                 }
             }
 
+            Logger.Write("EmergencyGround: Created members.", emergencyType + " " + name);
+
             foreach (Ped p in members)
             {
                 if (!Util.ThereIs(p))
                 {
+                    Logger.Error("EmergencyGround: There is a member who doesn't exist. Abort.", emergencyType + " " + name);
                     Restore(true);
+
                     return false;
                 }
 
@@ -109,13 +135,13 @@ namespace AdvancedWorld
                                 }
                                 else s.Restore(true);
                             }
-                            
+
                             if (!p.Weapons.HasWeapon(WeaponHash.Pistol))
                             {
                                 p.Weapons.Give(WeaponHash.SMG, 300, true, true);
                                 p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
                             }
-                            
+
                             p.ShootRate = 700;
                             p.Armor = 70;
 
@@ -132,7 +158,7 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
                 Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
-                
+
                 Function.Call(Hash.SET_DRIVER_ABILITY, p, 1.0f);
                 Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, p, 1.0f);
 
@@ -142,10 +168,12 @@ namespace AdvancedWorld
 
                 p.RelationshipGroup = relationship;
                 p.NeverLeavesGroup = true;
+                Logger.Write("EmergencyGround: Characteristics are set.", emergencyType + " " + name);
             }
-            
+
             spawnedVehicle.EngineRunning = true;
-            SetPedsOnDuty();
+            SetPedsOnDuty(true);
+            Logger.Write("EmergencyGround: Ready to dispatch.", emergencyType + " " + name);
 
             return true;
         }

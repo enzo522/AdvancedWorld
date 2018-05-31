@@ -1,6 +1,6 @@
 ﻿using GTA.Math;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class Road
     {

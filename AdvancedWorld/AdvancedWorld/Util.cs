@@ -5,7 +5,7 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public static class Util
     {
@@ -200,7 +200,7 @@ namespace AdvancedWorld
                     v.ToggleMod(VehicleToggleMod.TireSmoke, true);
                     v.TireSmokeColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
                 }
-                
+
                 v.CanTiresBurst = dice.Next(2) == 1;
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
 
@@ -248,7 +248,7 @@ namespace AdvancedWorld
                 case EventManager.EventType.Racer:
                     {
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        
+
                         criminalRelationships.Add(newRel);
                         World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
 
@@ -261,7 +261,7 @@ namespace AdvancedWorld
                     {
                         foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                         foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        
+
                         criminalRelationships.Add(newRel);
                         World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class DispatchManager : Script
     {
@@ -50,63 +50,76 @@ namespace AdvancedWorld
                 case DispatchType.Army:
                     {
                         armyList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.ArmyHeli:
                     {
                         armyHeliList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.ArmyRoadBlock:
                     {
                         armyRoadblockList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.Cop:
                     {
                         copList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.CopHeli:
                     {
                         copHeliList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.CopRoadBlock:
                     {
                         copRoadblockList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.Emergency:
                     {
                         emList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.Shield:
                     {
                         shieldList.Add(en);
+
                         break;
                     }
 
                 case DispatchType.Stinger:
                     {
                         stingerList.Add(en);
+
                         break;
                     }
             }
+
+            Logger.Write("DispatchManager: Added new entity.", type.ToString());
         }
 
         public DispatchManager()
         {
             timeChecker = 0;
             Tick += OnTick;
+
+            Logger.Write("DispatchManager started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)

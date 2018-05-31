@@ -3,7 +3,7 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class Shield : AdvancedEntity
     {
@@ -27,24 +27,36 @@ namespace AdvancedWorld
 
         public bool IsCreatedIn(Vector3 position)
         {
-            if (position.Equals(Vector3.Zero)) return false;
+            if (position.Equals(Vector3.Zero))
+            {
+                Logger.Error("Shield: Couldn't find safe position. Abort.", "");
+
+                return false;
+            }
 
             Model m = shieldModels[Util.GetRandomIntBelow(shieldModels.Count)];
             shield = World.CreateProp(m, position, true, true);
             m.MarkAsNoLongerNeeded();
 
-            if (!Util.ThereIs(shield)) return false;
-            
+            if (!Util.ThereIs(shield))
+            {
+                Logger.Error("Shield: Couldn't create shield. Abort.", "");
+
+                return false;
+            }
+
             shield.IsPersistent = true;
             shield.IsFireProof = true;
             shield.IsMeleeProof = true;
             shield.IsInvincible = true;
             shield.IsVisible = false;
             shield.LodDistance = 200;
-            
+
             Function.Call(Hash.SET_WEAPON_ANIMATION_OVERRIDE, owner, Function.Call<int>(Hash.GET_HASH_KEY, "Gang1H"));
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);
             attached = false;
+
+            Logger.Write("Shield: Created shield successfully.", "");
 
             return true;
         }
@@ -53,16 +65,24 @@ namespace AdvancedWorld
         {
             if (instantly)
             {
+                Logger.Write("Shield: Restore instantly.", "");
+
                 if (Util.ThereIs(shield)) shield.Delete();
             }
-            else Util.NaturallyRemove(shield);
+            else
+            {
+                Logger.Write("Shield: Restore naturally.", "");
+                Util.NaturallyRemove(shield);
+            }
         }
 
         public override bool ShouldBeRemoved()
         {
             if (!Util.ThereIs(shield) || !Util.ThereIs(owner) || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
+                Logger.Write("Shield: Shield need to be restored.", "");
                 Restore(false);
+
                 return true;
             }
 
@@ -83,6 +103,7 @@ namespace AdvancedWorld
                 shield.AttachTo(owner, boneIndex, position, rotation);
                 shield.IsVisible = true;
                 attached = true;
+                Logger.Write("Shield: Attached to owner.", "");
             }
         }
 
@@ -93,6 +114,7 @@ namespace AdvancedWorld
                 shield.Detach();
                 shield.IsVisible = shouldBeVisible;
                 attached = false;
+                Logger.Write("Shield: Detached from owner.", "");
             }
         }
     }

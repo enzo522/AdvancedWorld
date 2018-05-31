@@ -1,4 +1,4 @@
-﻿namespace AdvancedWorld
+﻿namespace YouAreNotAlone
 {
     public abstract class AdvancedEntity
     {

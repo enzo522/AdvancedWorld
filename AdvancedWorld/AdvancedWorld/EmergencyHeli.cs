@@ -3,17 +3,31 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class EmergencyHeli : Emergency
     {
-        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType) { this.blipName += emergencyType + " Helicopter"; }
+        public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
+        {
+            this.blipName += emergencyType + " Helicopter";
+            Logger.Write("EmergencyHeli: Time to dispatch.", emergencyType + " " + name);
+        }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
-            spawnedVehicle = Util.Create(name, new Vector3(safePosition.X, safePosition.Y, safePosition.Z + 50.0f), (target.Position - safePosition).ToHeading(), false);
+            Vector3 position = World.GetNextPositionOnStreet(safePosition.Around(10.0f));
 
-            if (!Util.ThereIs(spawnedVehicle)) return false;
+            if (position.Equals(Vector3.Zero)) position = safePosition;
+
+            spawnedVehicle = Util.Create(name, new Vector3(position.X, position.Y, position.Z + 50.0f), (target.Position - position).ToHeading(), false);
+
+            if (!Util.ThereIs(spawnedVehicle))
+            {
+                Logger.Error("EmergencyHeli: Couldn't create vehicle. Abort.", emergencyType + " " + name);
+
+                return false;
+            }
+
             if (emergencyType == "LSPD")
             {
                 for (int i = -1; i < spawnedVehicle.PassengerSeats && i < 3; i++)
@@ -31,7 +45,9 @@ namespace AdvancedWorld
 
                 if (selectedModel == null)
                 {
+                    Logger.Error("EmergencyHeli: Couldn't find model. Abort.", emergencyType + " " + name);
                     Restore(true);
+
                     return false;
                 }
 
@@ -45,11 +61,15 @@ namespace AdvancedWorld
                 }
             }
 
+            Logger.Write("EmergencyHeli: Created members.", emergencyType + " " + name);
+
             foreach (Ped p in members)
             {
                 if (!Util.ThereIs(p))
                 {
+                    Logger.Error("EmergencyHeli: There is a member who doesn't exist. Abort.", emergencyType + " " + name);
                     Restore(true);
+
                     return false;
                 }
 
@@ -99,6 +119,7 @@ namespace AdvancedWorld
 
                 p.RelationshipGroup = relationship;
                 p.NeverLeavesGroup = true;
+                Logger.Write("EmergencyHeli: Characteristics are set.", emergencyType + " " + name);
             }
 
             spawnedVehicle.EngineRunning = true;
@@ -106,15 +127,18 @@ namespace AdvancedWorld
             spawnedVehicle.PrimaryColor = VehicleColor.MetallicBlack;
             spawnedVehicle.SecondaryColor = VehicleColor.MetallicBlack;
             Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
-            SetPedsOnDuty();
+            SetPedsOnDuty(true);
+            Logger.Write("EmergencyHeli: Ready to dispatch.", emergencyType + " " + name);
 
             return true;
         }
 
-        private new void AddEmergencyBlip(bool forVehicle)
+        private new void AddEmergencyBlip(bool onVehicle)
         {
-            if (forVehicle)
+            if (onVehicle)
             {
+                Logger.Write("EmergencyHeli: Members are in vehicle. Add blip on vehicle.", emergencyType + " " + name);
+
                 if (Util.WeCanEnter(spawnedVehicle))
                 {
                     if (!Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PoliceHelicopterAnimated, (BlipColor)(-1), blipName);
@@ -128,6 +152,8 @@ namespace AdvancedWorld
             }
             else
             {
+                Logger.Write("EmergencyHeli: Members are on foot. Add blips on members.", emergencyType + " " + name);
+
                 if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceHelicopterAnimated)) spawnedVehicle.CurrentBlip.Remove();
 
                 foreach (Ped p in members)
@@ -141,24 +167,55 @@ namespace AdvancedWorld
             }
         }
 
-        private new void SetPedsOnDuty()
+        private new void SetPedsOnDuty(bool onVehicleDuty)
         {
             if (onVehicleDuty)
             {
-                if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
-
-                foreach (Ped p in members)
+                if (ReadyToGoWith(members))
                 {
-                    if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
+                    if (Util.ThereIs(spawnedVehicle.Driver))
                     {
-                        if (!Main.NoBlipOnDispatch && Util.BlipIsOn(p)) p.CurrentBlip.Remove();
-                        if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
-                        else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                        Logger.Write("EmergencyHeli: Time to fight in vehicle.", emergencyType + " " + name);
+
+                        if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
+
+                        foreach (Ped p in members)
+                        {
+                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
+                            {
+                                if (p.Equals(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
+                                else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
+                            }
+                        }
                     }
+                    else if (spawnedVehicle.IsOnAllWheels)
+                    {
+                        Logger.Write("EmergencyHeli: Time to fight in vehicle.", emergencyType + " " + name);
+
+                        foreach (Ped p in members)
+                        {
+                            if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
+                    }
+                }
+                else if (spawnedVehicle.IsOnAllWheels)
+                {
+                    if (!VehicleSeatsCanBeSeatedBy(members))
+                    {
+                        Logger.Write("EmergencyHeli: Something wrong with assigning seats when on duty. Re-enter everyone.", emergencyType + " " + name);
+
+                        foreach (Ped p in members)
+                        {
+                            if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
+                    }
+                    else Logger.Write("EmergencyHeli: Assigned seats successfully when on duty.", emergencyType + " " + name);
                 }
             }
             else
             {
+                Logger.Write("EmergencyHeli: Time to fight on foot.", emergencyType + " " + name);
+
                 if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
                 foreach (Ped p in members)
@@ -184,25 +241,26 @@ namespace AdvancedWorld
                     continue;
                 }
 
-                if (members[i].IsDead)
+                if (Util.WeCanGiveTaskTo(members[i]))
                 {
-                    Util.NaturallyRemove(members[i]);
-                    members.RemoveAt(i);
+                    if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
                 }
-                else if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
+                else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
+
+            Logger.Write("EmergencyHeli: Alive members without driver - " + alive.ToString(), emergencyType + " " + name);
 
             if (!Util.ThereIs(spawnedVehicle) || !TargetIsFound() || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
+                Logger.Write("EmergencyHeli: Emergency helicopter need to be restored.", emergencyType + " " + name);
                 Restore(false);
+
                 return true;
             }
             else
             {
-                if (!Util.WeCanEnter(spawnedVehicle) && spawnedVehicle.IsOnAllWheels) onVehicleDuty = false;
-                else onVehicleDuty = true;
-
-                SetPedsOnDuty();
+                Logger.Write("EmergencyHeli: Found target. Time to be on duty.", emergencyType + " " + name);
+                SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsOnAllWheels);
             }
 
             return false;

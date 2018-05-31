@@ -3,7 +3,7 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public abstract class Emergency : EntitySet
     {
@@ -12,7 +12,6 @@ namespace AdvancedWorld
         protected Entity target;
         protected string emergencyType;
         protected string blipName;
-        protected bool onVehicleDuty;
         protected int relationship;
 
         public Emergency(string name, Entity target, string emergencyType) : base()
@@ -22,10 +21,11 @@ namespace AdvancedWorld
             this.target = target;
             this.emergencyType = emergencyType;
             this.blipName = "";
-            this.onVehicleDuty = true;
 
             if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
             else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Cop);
+
+            Logger.Write("Emergency: Time to dispatch.", emergencyType + " " + name);
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
@@ -33,6 +33,8 @@ namespace AdvancedWorld
         {
             if (instantly)
             {
+                Logger.Write("Emergency: Restore instantly.", emergencyType + " " + name);
+
                 foreach (Ped p in members)
                 {
                     if (Util.ThereIs(p)) p.Delete();
@@ -42,6 +44,8 @@ namespace AdvancedWorld
             }
             else
             {
+                Logger.Write("Emergency: Restore naturally.", emergencyType + " " + name);
+
                 foreach (Ped p in members)
                 {
                     if (Util.ThereIs(p) && p.IsPersistent)
@@ -60,7 +64,7 @@ namespace AdvancedWorld
                     Util.NaturallyRemove(spawnedVehicle);
                 }
             }
-            
+
             if (relationship != 0)
             {
                 if (emergencyType == "ARMY") Util.CleanUp(relationship, DispatchManager.DispatchType.Army);
@@ -70,10 +74,12 @@ namespace AdvancedWorld
             members.Clear();
         }
 
-        protected void AddEmergencyBlip(bool forVehicle)
+        protected void AddEmergencyBlip(bool onVehicle)
         {
-            if (forVehicle)
+            if (onVehicle)
             {
+                Logger.Write("Emergency: Members are in vehicle. Add blip on vehicle.", emergencyType + " " + name);
+
                 if (Util.WeCanEnter(spawnedVehicle))
                 {
                     if (!Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.5f, BlipSprite.PoliceOfficer, (BlipColor)(-1), blipName);
@@ -82,11 +88,13 @@ namespace AdvancedWorld
 
                 foreach (Ped p in members)
                 {
-                    if (Util.BlipIsOn(p) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) p.CurrentBlip.Remove();
+                    if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) p.CurrentBlip.Remove();
                 }
             }
             else
             {
+                Logger.Write("Emergency: Members are on foot. Add blips on members.", emergencyType + " " + name);
+
                 if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) spawnedVehicle.CurrentBlip.Remove();
 
                 foreach (Ped p in members)
@@ -100,7 +108,7 @@ namespace AdvancedWorld
             }
         }
 
-        protected void SetPedsOnDuty()
+        protected void SetPedsOnDuty(bool onVehicleDuty)
         {
             if (onVehicleDuty)
             {
@@ -108,6 +116,8 @@ namespace AdvancedWorld
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver))
                     {
+                        Logger.Write("Emergency: Time to fight in vehicle.", emergencyType + " " + name);
+
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
                         if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
 
@@ -118,7 +128,7 @@ namespace AdvancedWorld
                                 if (p.Equals(spawnedVehicle.Driver))
                                 {
                                     if (target.Model.IsPed && ((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
-                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, 262716);
+                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, 262708); // 4 + 16 + 32 + 512 + 262144
                                 }
                                 else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                             }
@@ -126,6 +136,8 @@ namespace AdvancedWorld
                     }
                     else
                     {
+                        Logger.Write("Emergency: There is no driver when on duty. Re-enter everyone.", emergencyType + " " + name);
+
                         foreach (Ped p in members)
                         {
                             if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
@@ -136,15 +148,21 @@ namespace AdvancedWorld
                 {
                     if (!VehicleSeatsCanBeSeatedBy(members))
                     {
-                        Restore(false);
-                        return;
+                        Logger.Write("Emergency: Something wrong with assigning seats when on duty. Re-enter everyone.", emergencyType + " " + name);
+
+                        foreach (Ped p in members)
+                        {
+                            if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                        }
                     }
+                    else Logger.Write("Emergency: Assigned seats successfully when on duty.", emergencyType + " " + name);
                 }
             }
             else
             {
                 if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
                 {
+                    Logger.Write("Emergency: Near the criminals. Time to get out of vehicle.", emergencyType + " " + name);
                     TaskSequence ts = new TaskSequence();
                     Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, 0, spawnedVehicle, 1, 1000);
                     ts.AddTask.LeaveVehicle(spawnedVehicle, false);
@@ -156,6 +174,8 @@ namespace AdvancedWorld
                 }
                 else
                 {
+                    Logger.Write("Emergency: Time to fight on foot.", emergencyType + " " + name);
+
                     if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
                     foreach (Ped p in members)
@@ -168,29 +188,34 @@ namespace AdvancedWorld
 
         protected void SetPedsOffDuty()
         {
-            if (!Util.WeCanEnter(spawnedVehicle)) Restore(false);
-            else if (ReadyToGoWith(members))
+            if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
-                    foreach (Ped p in members)
-                    {
-                        if (Util.ThereIs(p) && p.IsPersistent)
-                        {
-                            if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
-                            if (p.Equals(spawnedVehicle.Driver) && !Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                    Logger.Write("Emergency: Time to be off duty.", emergencyType + " " + name);
 
-                            p.AlwaysKeepTask = false;
-                            p.BlockPermanentEvents = false;
-                            Function.Call(Hash.SET_PED_AS_COP, p, true);
-                            Util.NaturallyRemove(p);
+                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+                    if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) spawnedVehicle.CurrentBlip.Remove();
+                    if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedVehicle.Driver, 151))
+                    {
+                        foreach (Ped p in members)
+                        {
+                            if (Util.ThereIs(p))
+                            {
+                                if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) p.CurrentBlip.Remove();
+                                if (Util.WeCanGiveTaskTo(p))
+                                {
+                                    if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                                    else p.Task.Wait(1000);
+                                }
+                            }
                         }
                     }
-
-                    if (spawnedVehicle.IsPersistent) Util.NaturallyRemove(spawnedVehicle);
                 }
                 else
                 {
+                    Logger.Write("Emergency: There is no driver when off duty. Re-enter everyone.", emergencyType + " " + name);
+
                     foreach (Ped p in members)
                     {
                         if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
@@ -201,9 +226,14 @@ namespace AdvancedWorld
             {
                 if (!VehicleSeatsCanBeSeatedBy(members))
                 {
-                    Restore(false);
-                    return;
+                    Logger.Write("Emergency: Something wrong with assigning seats when off duty. Re-enter everyone.", emergencyType + " " + name);
+
+                    foreach (Ped p in members)
+                    {
+                        if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
                 }
+                else Logger.Write("Emergency: Assigned seats successfully when off duty.", emergencyType + " " + name);
             }
         }
 
@@ -212,16 +242,25 @@ namespace AdvancedWorld
             target = null;
             Ped[] nearbyPeds = World.GetNearbyPeds(spawnedVehicle.Position, 300.0f);
 
-            if (nearbyPeds.Length < 1) return false;
+            if (nearbyPeds.Length < 1)
+            {
+                Logger.Write("Emergency: There is no peds nearby. Abort finding target.", emergencyType + " " + name);
+
+                return false;
+            }
 
             foreach (Ped p in nearbyPeds)
             {
                 if (Util.ThereIs(p) && !p.IsDead && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup).Equals(Relationship.Hate))
                 {
+                    Logger.Write("Emergency: Found target.", emergencyType + " " + name);
                     target = p;
+
                     return true;
                 }
             }
+
+            Logger.Write("Emergency: Couldn't find target.", emergencyType + " " + name);
 
             return false;
         }
@@ -239,25 +278,60 @@ namespace AdvancedWorld
 
         public override bool ShouldBeRemoved()
         {
+            int alive = 0;
+
             for (int i = members.Count - 1; i >= 0; i--)
             {
-                if (!Util.ThereIs(members[i])) members.RemoveAt(i);
+                if (!Util.ThereIs(members[i]))
+                {
+                    members.RemoveAt(i);
+
+                    continue;
+                }
+
+                if (Util.WeCanGiveTaskTo(members[i])) alive++;
+                else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            Logger.Write("Emergency: Alive members - " + alive.ToString(), emergencyType + " " + name);
+
+            if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
+                Logger.Write("Emergency: Emergency need to be restored.", emergencyType + " " + name);
                 Restore(false);
+
                 return true;
             }
 
-            if (!TargetIsFound()) SetPedsOffDuty();
+            if (!TargetIsFound())
+            {
+                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+                {
+                    Logger.Write("Emergency: Target not found and too far from player. Time to be restored.", emergencyType + " " + name);
+                    Restore(false);
+
+                    return true;
+                }
+                else
+                {
+                    Logger.Write("Emergency: Target not found. Time to be off duty.", emergencyType + " " + name);
+                    SetPedsOffDuty();
+                }
+            }
             else
             {
-                if (!Util.WeCanEnter(spawnedVehicle) || (spawnedVehicle.IsInRangeOf(target.Position, 30.0f) && target.Model.IsPed && (!((Ped)target).IsInVehicle() || ((Ped)target).CurrentVehicle.Speed < 10.0f)))
-                    onVehicleDuty = false;
-                else onVehicleDuty = true;
+                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                {
+                    Logger.Write("Emergency: Target found but too far from player. Time to be restored.", emergencyType + " " + name);
+                    Restore(false);
 
-                SetPedsOnDuty();
+                    return true;
+                }
+                else
+                {
+                    Logger.Write("Emergency: Target found. Time to be on duty.", emergencyType + " " + name);
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && (!spawnedVehicle.IsInRangeOf(target.Position, 30.0f) || (target.Model.IsPed && ((Ped)target).IsInVehicle() && ((Ped)target).CurrentVehicle.Speed > 10.0f)));
+                }
             }
 
             return false;

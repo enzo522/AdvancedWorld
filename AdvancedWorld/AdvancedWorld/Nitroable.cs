@@ -3,7 +3,7 @@ using GTA.Math;
 using GTA.Native;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public abstract class Nitroable : Criminal
     {

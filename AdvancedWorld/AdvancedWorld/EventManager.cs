@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AdvancedWorld
+namespace YouAreNotAlone
 {
     public class EventManager : Script
     {
@@ -16,7 +16,7 @@ namespace AdvancedWorld
         private static List<AdvancedEntity> replacedList;
         private static List<AdvancedEntity> terroristList;
         private int timeChecker;
-        
+
         public enum EventType
         {
             AggressiveDriver,
@@ -54,6 +54,7 @@ namespace AdvancedWorld
                     {
                         rv.Restore(true);
                         replacedList.Remove(rv);
+
                         break;
                     }
                 }
@@ -69,63 +70,76 @@ namespace AdvancedWorld
                 case EventType.AggressiveDriver:
                     {
                         aggressiveList.Add(en);
+
                         break;
                     }
 
                 case EventType.Carjacker:
                     {
                         carjackerList.Add(en);
+
                         break;
                     }
 
                 case EventType.Driveby:
                     {
                         drivebyList.Add(en);
+
                         break;
                     }
 
                 case EventType.Fire:
                     {
                         onFireList.Add(en);
+
                         break;
                     }
 
                 case EventType.GangTeam:
                     {
                         gangList.Add(en);
+
                         break;
                     }
 
                 case EventType.Massacre:
                     {
                         massacreList.Add(en);
+
                         break;
                     }
 
                 case EventType.Racer:
                     {
                         racerList.Add(en);
+
                         break;
                     }
 
                 case EventType.ReplacedVehicle:
                     {
                         replacedList.Add(en);
+
                         break;
                     }
 
                 case EventType.Terrorist:
                     {
                         terroristList.Add(en);
+
                         break;
                     }
             }
+
+            Logger.Write("EventManager: Added new entity.", type.ToString());
         }
 
         public EventManager()
         {
             timeChecker = 0;
             Tick += OnTick;
+
+            Logger.Write("EventManager started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)
