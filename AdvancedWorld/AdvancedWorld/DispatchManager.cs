@@ -131,15 +131,18 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                CleanUp(armyList);
-                CleanUp(armyHeliList);
-                CleanUp(armyRoadblockList);
-                CleanUp(copList);
-                CleanUp(copHeliList);
-                CleanUp(copRoadblockList);
-                CleanUp(emList);
-                CleanUp(shieldList);
-                CleanUp(stingerList);
+                lock (lockObject)
+                {
+                    CleanUp(armyList);
+                    CleanUp(armyHeliList);
+                    CleanUp(armyRoadblockList);
+                    CleanUp(copList);
+                    CleanUp(copHeliList);
+                    CleanUp(copRoadblockList);
+                    CleanUp(emList);
+                    CleanUp(shieldList);
+                    CleanUp(stingerList);
+                }
 
                 timeChecker = 0;
             }
@@ -151,12 +154,9 @@ namespace YouAreNotAlone
 
         private void CleanUp(List<AdvancedEntity> l)
         {
-            lock (lockObject)
+            for (int i = l.Count - 1; i >= 0; i--)
             {
-                for (int i = l.Count - 1; i >= 0; i--)
-                {
-                    if (l[i].ShouldBeRemoved()) l.RemoveAt(i);
-                }
+                if (l[i].ShouldBeRemoved()) l.RemoveAt(i);
             }
         }
     }
