@@ -48,7 +48,7 @@ namespace AdvancedWorld
             spawnedPed.IsPriorityTargetForEnemies = true;
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
-            spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+            spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 100.0f, 262716);
 
             if (!Util.BlipIsOn(spawnedPed))
             {

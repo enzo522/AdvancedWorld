@@ -118,7 +118,7 @@ namespace AdvancedWorld
                                 if (p.Equals(spawnedVehicle.Driver))
                                 {
                                     if (target.Model.IsPed && ((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
-                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                                    else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, 262716);
                                 }
                                 else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                             }
@@ -156,7 +156,7 @@ namespace AdvancedWorld
                 }
                 else
                 {
-                    if (!Main.NoBlipOnCriminal) AddEmergencyBlip(false);
+                    if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
                     foreach (Ped p in members)
                     {

@@ -218,7 +218,7 @@ namespace AdvancedWorld
             };
             fireCarNames = new List<string>
             {
-                "firetruck"
+                "firetruk"
             };
 
             NoDispatch = false;
@@ -593,7 +593,7 @@ namespace AdvancedWorld
             {
                 string spawnName = e.GetAttribute("name");
 
-                if (((Model)spawnName).IsValid && (((Model)spawnName).IsCar || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) addOnCarNames.Add(spawnName);
+                if (((Model)spawnName).IsValid && (((Model)spawnName).IsCar || ((Model)spawnName).IsBicycle || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) addOnCarNames.Add(spawnName);
             }
 
             foreach (XmlElement e in element.SelectNodes("//RaceCar/spawn"))
@@ -691,13 +691,10 @@ namespace AdvancedWorld
 
                 case EventManager.EventType.Fire:
                     {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomIntBelow(fireCarNames.Count)], target);
+                        Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomIntBelow(fireCarNames.Count)], target);
 
-                            if (ff.IsCreatedIn(safePosition, fireModels)) DispatchManager.Add(ff, DispatchManager.DispatchType.Emergency);
-                            else ff.Restore(true);
-                        }
+                        if (ff.IsCreatedIn(safePosition, fireModels)) DispatchManager.Add(ff, DispatchManager.DispatchType.Emergency);
+                        else ff.Restore(true);
 
                         Paramedic pm = new Paramedic(emCarNames[Util.GetRandomIntBelow(emCarNames.Count)], target);
 

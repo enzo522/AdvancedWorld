@@ -25,7 +25,7 @@ namespace AdvancedWorld
                     Vector3 selectedPosition = selectedVehicle.Position;
                     float selectedHeading = selectedVehicle.Heading;
                     float selectedSpeed = selectedVehicle.Speed;
-                    bool selectedEngineRunning = selectedVehicle.EngineRunning;
+                    bool selectedEngineRunning = Util.ThereIs(selectedVehicle.Driver);
                     string selectedBlipName;
                     BlipColor selectedBlipColor;
 

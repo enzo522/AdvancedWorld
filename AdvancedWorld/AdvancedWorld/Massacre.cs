@@ -87,7 +87,6 @@ namespace AdvancedWorld
                 Function.Call(Hash.SET_PED_PATH_CAN_USE_CLIMBOVERS, p, false);
                 Function.Call(Hash.SET_PED_PATH_CAN_USE_LADDERS, p, false);
                 Function.Call(Hash.SET_PED_PATH_AVOID_FIRE, p, false);
-                Function.Call(Hash.SET_PED_COMBAT_MOVEMENT, p, 2);
 
                 p.RelationshipGroup = relationship;
                 p.IsPriorityTargetForEnemies = true;

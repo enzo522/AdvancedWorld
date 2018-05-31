@@ -167,7 +167,7 @@ namespace AdvancedWorld
                         {
                             if (p.Equals(spawnedVehicle.Driver))
                             {
-                                if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                                if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, p, 151)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, 262716);
                             }
                             else if (!p.IsInCombat) p.Task.FightAgainstHatedTargets(400.0f);
                         }

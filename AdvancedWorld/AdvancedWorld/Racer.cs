@@ -49,13 +49,14 @@ namespace AdvancedWorld
                 }
 
                 TaskSequence ts = new TaskSequence();
-                ts.AddTask.DriveTo(spawnedVehicle, goal, 10.0f, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                ts.AddTask.DriveTo(spawnedVehicle, goal, 10.0f, 100.0f, 262716); // 4 + 8 + 16 + 32 + 512 + 262144
                 ts.AddTask.Wait(10000);
-                ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+                ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, 262716);
                 ts.Close();
 
                 spawnedPed.Task.PerformSequence(ts);
                 ts.Dispose();
+
                 return true;
             }
             else

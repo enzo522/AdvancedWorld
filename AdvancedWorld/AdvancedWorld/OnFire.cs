@@ -70,8 +70,7 @@ namespace AdvancedWorld
             else
             {
                 dispatchCooldown = 0;
-
-                if (!Util.AnyEmergencyIsNear(OnFireVehicle.Position, DispatchManager.DispatchType.Emergency)) Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire);
+                Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire);
             }
 
             return false;

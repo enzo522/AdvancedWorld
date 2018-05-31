@@ -71,7 +71,7 @@ namespace AdvancedWorld
             TaskSequence ts = new TaskSequence();
             ts.AddTask.ClearAll();
             ts.AddTask.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
-            ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, (int)DrivingStyle.AvoidTrafficExtremely);
+            ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, 262716);
             ts.Close();
 
             spawnedPed.Task.PerformSequence(ts);
