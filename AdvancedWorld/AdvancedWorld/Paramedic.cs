@@ -19,7 +19,7 @@ namespace YouAreNotAlone
                 "CODE_HUMAN_MEDIC_TEND_TO_DEAD",
                 "CODE_HUMAN_MEDIC_TIME_OF_DEATH"
             };
-            Logger.Write("Paramedic: Time to investigate dead bodies.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Time to investigate dead bodies.", name);
         }
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)
@@ -30,7 +30,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
                     {
-                        Logger.Write("Paramedic: Time to go with vehicle.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Time to go with vehicle.", name);
 
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
                         if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
@@ -39,7 +39,7 @@ namespace YouAreNotAlone
                     }
                     else
                     {
-                        Logger.Write("Paramedic: There is no driver when on duty. Re-enter everyone.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": There is no driver when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -51,19 +51,19 @@ namespace YouAreNotAlone
                 {
                     if (!VehicleSeatsCanBeSeatedBy(members))
                     {
-                        Logger.Write("Paramedic: Something wrong with assigning seats when on duty. Re-enter everyone.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
                             if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
-                    else Logger.Write("Paramedic: Assigned seats successfully when on duty.", emergencyType + " " + name);
+                    else Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
                 }
             }
             else if (target.Model.IsPed)
             {
-                Logger.Write("Paramedic: Time to investigate dead bodies.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Time to investigate dead bodies.", name);
 
                 if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
@@ -84,7 +84,7 @@ namespace YouAreNotAlone
                     }
                     else if (p.TaskSequenceProgress > 1 && !checkedPeds.Contains(target.Handle))
                     {
-                        Logger.Write("Paramedic: A dead body is checked.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": A dead body is checked.", name);
                         checkedPeds.Add(target.Handle);
                     }
                 }
@@ -99,7 +99,7 @@ namespace YouAreNotAlone
 
             if (nearbyPeds.Length < 1)
             {
-                Logger.Write("Paramedic: There is no dead body.", emergencyType + " " + name);
+                Logger.Write(blipName + ": There is no dead body.", name);
 
                 return false;
             }
@@ -112,14 +112,14 @@ namespace YouAreNotAlone
                     {
                         target = selectedPed;
                         targetPosition = Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f);
-                        Logger.Write("Paramedic: Found a dead body.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Found a dead body.", name);
 
                         return true;
                     }
                 }
             }
 
-            Logger.Write("Paramedic: There is no dead body.", emergencyType + " " + name);
+            Logger.Write(blipName + ": There is no dead body.", name);
 
             return false;
         }

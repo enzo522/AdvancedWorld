@@ -6,7 +6,7 @@ namespace YouAreNotAlone
 {
     public class Firefighter : EmergencyFire
     {
-        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { Logger.Write("Firefighter: Time to put off fires.", emergencyType + " " + name); }
+        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { Logger.Write(blipName + ": Time to put off fires.", name); }
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)
         {
@@ -16,7 +16,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
                     {
-                        Logger.Write("Firefighter: Time to go with vehicle.", name);
+                        Logger.Write(blipName + ": Time to go with vehicle.", name);
 
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
                         if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
@@ -25,7 +25,7 @@ namespace YouAreNotAlone
                     }
                     else
                     {
-                        Logger.Write("Firefighter: There is no driver when on duty. Re-enter everyone.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": There is no driver when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -37,19 +37,19 @@ namespace YouAreNotAlone
                 {
                     if (!VehicleSeatsCanBeSeatedBy(members))
                     {
-                        Logger.Write("Firefighter: Something wrong with assigning seats when on duty. Re-enter everyone.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
                             if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
-                    else Logger.Write("Firefighter: Assigned seats successfully when on duty.", emergencyType + " " + name);
+                    else Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
                 }
             }
             else
             {
-                Logger.Write("Firefighter: Time to put off fires.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Time to put off fires.", name);
 
                 if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
@@ -81,19 +81,19 @@ namespace YouAreNotAlone
 
                 if (!position.Equals(Vector3.Zero) && spawnedVehicle.IsInRangeOf(position, 200.0f))
                 {
-                    Logger.Write("Firefighter: Found fire position.", emergencyType + " " + name);
+                    Logger.Write(blipName + ": Found fire position.", name);
                     targetPosition = position;
 
                     return true;
                 }
             }
 
-            Logger.Write("Firefighter: Couldn't find fire position. Try to find entity on fire.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Couldn't find fire position. Try to find entity on fire.", name);
             Entity[] nearbyEntities = World.GetNearbyEntities(spawnedVehicle.Position, 200.0f);
 
             if (nearbyEntities.Length < 1)
             {
-                Logger.Write("Firefighter: There is no fire near.", emergencyType + " " + name);
+                Logger.Write(blipName + ": There is no fire near.", name);
 
                 return false;
             }
@@ -104,13 +104,13 @@ namespace YouAreNotAlone
                 {
                     target = en;
                     targetPosition = target.Position;
-                    Logger.Write("Firefighter: Found entity on fire.", emergencyType + " " + name);
+                    Logger.Write(blipName + ": Found entity on fire.", name);
 
                     return true;
                 }
             }
 
-            Logger.Write("Firefighter: There is no fire near.", emergencyType + " " + name);
+            Logger.Write(blipName + ": There is no fire near.", name);
 
             return false;
         }

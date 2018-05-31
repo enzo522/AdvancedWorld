@@ -10,7 +10,7 @@ namespace YouAreNotAlone
         public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             this.blipName += emergencyType + " Road Block";
-            Logger.Write("EmergencyBlock: Time to block road.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Time to block road.", name);
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
@@ -23,7 +23,7 @@ namespace YouAreNotAlone
 
                 if (!road.Position.Equals(Vector3.Zero))
                 {
-                    Logger.Write("EmergencyBlock: Found proper road.", emergencyType + " " + name);
+                    Logger.Write(blipName + ": Found proper road.", name);
 
                     break;
                 }
@@ -31,7 +31,7 @@ namespace YouAreNotAlone
 
             if (road.Position.Equals(Vector3.Zero))
             {
-                Logger.Error("EmergencyBlock: Couldn't find proper road. Abort.", emergencyType + " " + name);
+                Logger.Error(blipName + ": Couldn't find proper road. Abort.", name);
 
                 return false;
             }
@@ -40,7 +40,7 @@ namespace YouAreNotAlone
 
             if (!Util.ThereIs(spawnedVehicle))
             {
-                Logger.Error("EmergencyBlock: Couldn't create vehicle. Abort.", emergencyType + " " + name);
+                Logger.Error(blipName + ": Couldn't create vehicle. Abort.", name);
 
                 return false;
             }
@@ -67,7 +67,7 @@ namespace YouAreNotAlone
 
                 if (selectedModel == null)
                 {
-                    Logger.Error("EmergencyBlock: Couldn't find model. Abort.", emergencyType + " " + name);
+                    Logger.Error(blipName + ": Couldn't find model. Abort.", name);
                     Restore(true);
 
                     return false;
@@ -83,13 +83,13 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("EmergencyBlock: Tried to create stinger and created members.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Tried to create stinger and created members.", name);
 
             foreach (Ped p in members)
             {
                 if (!Util.ThereIs(p))
                 {
-                    Logger.Error("EmergencyBlock: There is a member who doesn't exist. Abort.", emergencyType + " " + name);
+                    Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
                     Restore(true);
 
                     return false;
@@ -146,12 +146,12 @@ namespace YouAreNotAlone
 
                 p.RelationshipGroup = relationship;
                 p.NeverLeavesGroup = true;
-                Logger.Write("EmergencyBlock: Characteristics are set.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Characteristics are set.", name);
             }
 
             spawnedVehicle.EngineRunning = true;
             SetPedsOnDuty(false);
-            Logger.Write("EmergencyBlock: Ready to dispatch.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Ready to dispatch.", name);
 
             return true;
         }

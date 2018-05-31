@@ -10,7 +10,7 @@ namespace YouAreNotAlone
         public EmergencyHeli(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             this.blipName += emergencyType + " Helicopter";
-            Logger.Write("EmergencyHeli: Time to dispatch.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Time to dispatch.", name);
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
@@ -23,7 +23,7 @@ namespace YouAreNotAlone
 
             if (!Util.ThereIs(spawnedVehicle))
             {
-                Logger.Error("EmergencyHeli: Couldn't create vehicle. Abort.", emergencyType + " " + name);
+                Logger.Error(blipName + ": Couldn't create vehicle. Abort.", name);
 
                 return false;
             }
@@ -45,7 +45,7 @@ namespace YouAreNotAlone
 
                 if (selectedModel == null)
                 {
-                    Logger.Error("EmergencyHeli: Couldn't find model. Abort.", emergencyType + " " + name);
+                    Logger.Error(blipName + ": Couldn't find model. Abort.", name);
                     Restore(true);
 
                     return false;
@@ -61,13 +61,13 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("EmergencyHeli: Created members.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Created members.", name);
 
             foreach (Ped p in members)
             {
                 if (!Util.ThereIs(p))
                 {
-                    Logger.Error("EmergencyHeli: There is a member who doesn't exist. Abort.", emergencyType + " " + name);
+                    Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
                     Restore(true);
 
                     return false;
@@ -119,7 +119,7 @@ namespace YouAreNotAlone
 
                 p.RelationshipGroup = relationship;
                 p.NeverLeavesGroup = true;
-                Logger.Write("EmergencyHeli: Characteristics are set.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Characteristics are set.", name);
             }
 
             spawnedVehicle.EngineRunning = true;
@@ -128,7 +128,7 @@ namespace YouAreNotAlone
             spawnedVehicle.SecondaryColor = VehicleColor.MetallicBlack;
             Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
             SetPedsOnDuty(true);
-            Logger.Write("EmergencyHeli: Ready to dispatch.", emergencyType + " " + name);
+            Logger.Write(blipName + ": Ready to dispatch.", name);
 
             return true;
         }
@@ -137,7 +137,7 @@ namespace YouAreNotAlone
         {
             if (onVehicle)
             {
-                Logger.Write("EmergencyHeli: Members are in vehicle. Add blip on vehicle.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Members are in vehicle. Add blip on vehicle.", name);
 
                 if (Util.WeCanEnter(spawnedVehicle))
                 {
@@ -152,7 +152,7 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write("EmergencyHeli: Members are on foot. Add blips on members.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Members are on foot. Add blips on members.", name);
 
                 if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceHelicopterAnimated)) spawnedVehicle.CurrentBlip.Remove();
 
@@ -175,7 +175,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver))
                     {
-                        Logger.Write("EmergencyHeli: Time to fight in vehicle.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Time to fight in vehicle.", name);
 
                         if (!Main.NoBlipOnDispatch) AddEmergencyBlip(true);
 
@@ -190,7 +190,7 @@ namespace YouAreNotAlone
                     }
                     else if (spawnedVehicle.IsOnAllWheels)
                     {
-                        Logger.Write("EmergencyHeli: Time to fight in vehicle.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Time to fight in vehicle.", name);
 
                         foreach (Ped p in members)
                         {
@@ -202,19 +202,19 @@ namespace YouAreNotAlone
                 {
                     if (!VehicleSeatsCanBeSeatedBy(members))
                     {
-                        Logger.Write("EmergencyHeli: Something wrong with assigning seats when on duty. Re-enter everyone.", emergencyType + " " + name);
+                        Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
                             if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
-                    else Logger.Write("EmergencyHeli: Assigned seats successfully when on duty.", emergencyType + " " + name);
+                    else Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
                 }
             }
             else
             {
-                Logger.Write("EmergencyHeli: Time to fight on foot.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Time to fight on foot.", name);
 
                 if (!Main.NoBlipOnDispatch) AddEmergencyBlip(false);
 
@@ -248,18 +248,18 @@ namespace YouAreNotAlone
                 else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
 
-            Logger.Write("EmergencyHeli: Alive members without driver - " + alive.ToString(), emergencyType + " " + name);
+            Logger.Write(blipName + ": Alive members without driver - " + alive.ToString(), name);
 
             if (!Util.ThereIs(spawnedVehicle) || !TargetIsFound() || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("EmergencyHeli: Emergency helicopter need to be restored.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Emergency helicopter need to be restored.", name);
                 Restore(false);
 
                 return true;
             }
             else
             {
-                Logger.Write("EmergencyHeli: Found target. Time to be on duty.", emergencyType + " " + name);
+                Logger.Write(blipName + ": Found target. Time to be on duty.", name);
                 SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsOnAllWheels);
             }
 
