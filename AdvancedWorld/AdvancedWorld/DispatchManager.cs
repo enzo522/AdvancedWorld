@@ -6,6 +6,7 @@ namespace YouAreNotAlone
 {
     public class DispatchManager : Script
     {
+        private static Object lockObject;
         private static List<AdvancedEntity> armyList;
         private static List<AdvancedEntity> armyHeliList;
         private static List<AdvancedEntity> armyRoadblockList;
@@ -32,6 +33,7 @@ namespace YouAreNotAlone
 
         static DispatchManager()
         {
+            lockObject = new Object();
             armyList = new List<AdvancedEntity>();
             armyHeliList = new List<AdvancedEntity>();
             armyRoadblockList = new List<AdvancedEntity>();
@@ -45,73 +47,76 @@ namespace YouAreNotAlone
 
         public static void Add(AdvancedEntity en, DispatchType type)
         {
-            switch (type)
+            lock (lockObject)
             {
-                case DispatchType.Army:
-                    {
-                        armyList.Add(en);
+                switch (type)
+                {
+                    case DispatchType.Army:
+                        {
+                            armyList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.ArmyHeli:
-                    {
-                        armyHeliList.Add(en);
+                    case DispatchType.ArmyHeli:
+                        {
+                            armyHeliList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.ArmyRoadBlock:
-                    {
-                        armyRoadblockList.Add(en);
+                    case DispatchType.ArmyRoadBlock:
+                        {
+                            armyRoadblockList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Cop:
-                    {
-                        copList.Add(en);
+                    case DispatchType.Cop:
+                        {
+                            copList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.CopHeli:
-                    {
-                        copHeliList.Add(en);
+                    case DispatchType.CopHeli:
+                        {
+                            copHeliList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.CopRoadBlock:
-                    {
-                        copRoadblockList.Add(en);
+                    case DispatchType.CopRoadBlock:
+                        {
+                            copRoadblockList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Emergency:
-                    {
-                        emList.Add(en);
+                    case DispatchType.Emergency:
+                        {
+                            emList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Shield:
-                    {
-                        shieldList.Add(en);
+                    case DispatchType.Shield:
+                        {
+                            shieldList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Stinger:
-                    {
-                        stingerList.Add(en);
+                    case DispatchType.Stinger:
+                        {
+                            stingerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
+                }
+
+                Logger.Write("DispatchManager: Added new entity.", type.ToString());
             }
-
-            Logger.Write("DispatchManager: Added new entity.", type.ToString());
         }
 
         public DispatchManager()
@@ -126,15 +131,18 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                CleanUp(armyList);
-                CleanUp(armyHeliList);
-                CleanUp(armyRoadblockList);
-                CleanUp(copList);
-                CleanUp(copHeliList);
-                CleanUp(copRoadblockList);
-                CleanUp(emList);
-                CleanUp(shieldList);
-                CleanUp(stingerList);
+                lock (lockObject)
+                {
+                    CleanUp(armyList);
+                    CleanUp(armyHeliList);
+                    CleanUp(armyRoadblockList);
+                    CleanUp(copList);
+                    CleanUp(copHeliList);
+                    CleanUp(copRoadblockList);
+                    CleanUp(emList);
+                    CleanUp(shieldList);
+                    CleanUp(stingerList);
+                }
 
                 timeChecker = 0;
             }

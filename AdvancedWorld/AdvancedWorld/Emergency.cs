@@ -24,8 +24,6 @@ namespace YouAreNotAlone
 
             if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
             else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Cop);
-
-            Logger.Write("Emergency: Time to dispatch.", emergencyType + " " + name);
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);

@@ -39,6 +39,7 @@ namespace YouAreNotAlone
         public static bool NoMinimapFlash;
         public static bool NoBlipOnCriminal;
         public static bool NoBlipOnDispatch;
+        public static bool NoLog;
 
         private float radius;
         private int eventTimeChecker;
@@ -227,6 +228,7 @@ namespace YouAreNotAlone
             NoMinimapFlash = false;
             NoBlipOnCriminal = false;
             NoBlipOnDispatch = false;
+            NoLog = false;
 
             CheckDLCs();
             SetUp();
@@ -588,6 +590,7 @@ namespace YouAreNotAlone
             NoMinimapFlash = ((XmlElement)element.SelectSingleNode("//Settings/NoMinimapFlash")).GetAttribute("value") == "True";
             NoBlipOnCriminal = ((XmlElement)element.SelectSingleNode("//Settings/NoBlipOnCriminal")).GetAttribute("value") == "True";
             NoBlipOnDispatch = ((XmlElement)element.SelectSingleNode("//Settings/NoBlipOnDispatch")).GetAttribute("value") == "True";
+            NoLog = ((XmlElement)element.SelectSingleNode("//Settings/NoLog")).GetAttribute("value") == "True";
 
             foreach (XmlElement e in element.SelectNodes("//AddOn/spawn"))
             {

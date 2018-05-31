@@ -9,19 +9,25 @@ namespace YouAreNotAlone
 
         public static void Init()
         {
-            File.WriteAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + "YouAreNotAlone started. (" + GTA.Game.Version.ToString() + ")\n");
+            if (!Main.NoLog) File.WriteAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + "YouAreNotAlone started. (" + GTA.Game.Version.ToString() + ")\n");
         }
 
         public static void Write(string s, string name)
         {
-            if (name == "") File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + s + " " + name + "\n");
-            else File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + s + " (" + name + ")\n");
+            if (!Main.NoLog)
+            {
+                if (name == "") File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + s + " " + name + "\n");
+                else File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + s + " (" + name + ")\n");
+            }
         }
 
         public static void Error(string s, string name)
         {
-            if (name == "") File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] [ERROR] " + s + " " + name + "\n");
-            else File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] [ERROR] " + s + " (" + name + ")\n");
+            if (!Main.NoLog)
+            {
+                if (name == "") File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] [ERROR] " + s + " " + name + "\n");
+                else File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] [ERROR] " + s + " (" + name + ")\n");
+            }
         }
     }
 }

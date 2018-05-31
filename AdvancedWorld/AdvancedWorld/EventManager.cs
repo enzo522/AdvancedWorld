@@ -6,6 +6,7 @@ namespace YouAreNotAlone
 {
     public class EventManager : Script
     {
+        private static Object lockObject;
         private static List<AdvancedEntity> aggressiveList;
         private static List<AdvancedEntity> carjackerList;
         private static List<AdvancedEntity> drivebyList;
@@ -32,6 +33,7 @@ namespace YouAreNotAlone
 
         static EventManager()
         {
+            lockObject = new Object();
             aggressiveList = new List<AdvancedEntity>();
             carjackerList = new List<AdvancedEntity>();
             drivebyList = new List<AdvancedEntity>();
@@ -48,12 +50,15 @@ namespace YouAreNotAlone
             if (replacedList.Count < 5) return true;
             else
             {
+                Logger.Write("EventManager: Replace slot is full. Search for removable one.", "");
+
                 foreach (ReplacedVehicle rv in replacedList)
                 {
                     if (rv.CanBeNaturallyRemoved())
                     {
                         rv.Restore(true);
                         replacedList.Remove(rv);
+                        Logger.Write("EventManager: Found removable one.", "");
 
                         break;
                     }
@@ -65,73 +70,76 @@ namespace YouAreNotAlone
 
         public static void Add(AdvancedEntity en, EventType type)
         {
-            switch (type)
+            lock (lockObject)
             {
-                case EventType.AggressiveDriver:
-                    {
-                        aggressiveList.Add(en);
+                switch (type)
+                {
+                    case EventType.AggressiveDriver:
+                        {
+                            aggressiveList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Carjacker:
-                    {
-                        carjackerList.Add(en);
+                    case EventType.Carjacker:
+                        {
+                            carjackerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Driveby:
-                    {
-                        drivebyList.Add(en);
+                    case EventType.Driveby:
+                        {
+                            drivebyList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Fire:
-                    {
-                        onFireList.Add(en);
+                    case EventType.Fire:
+                        {
+                            onFireList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.GangTeam:
-                    {
-                        gangList.Add(en);
+                    case EventType.GangTeam:
+                        {
+                            gangList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Massacre:
-                    {
-                        massacreList.Add(en);
+                    case EventType.Massacre:
+                        {
+                            massacreList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Racer:
-                    {
-                        racerList.Add(en);
+                    case EventType.Racer:
+                        {
+                            racerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.ReplacedVehicle:
-                    {
-                        replacedList.Add(en);
+                    case EventType.ReplacedVehicle:
+                        {
+                            replacedList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Terrorist:
-                    {
-                        terroristList.Add(en);
+                    case EventType.Terrorist:
+                        {
+                            terroristList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
+                }
+
+                Logger.Write("EventManager: Added new entity.", type.ToString());
             }
-
-            Logger.Write("EventManager: Added new entity.", type.ToString());
         }
 
         public EventManager()
@@ -146,15 +154,18 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                CleanUp(aggressiveList);
-                CleanUp(carjackerList);
-                CleanUp(drivebyList);
-                CleanUp(gangList);
-                CleanUp(massacreList);
-                CleanUp(onFireList);
-                CleanUp(racerList);
-                CleanUp(replacedList);
-                CleanUp(terroristList);
+                lock (lockObject)
+                {
+                    CleanUp(aggressiveList);
+                    CleanUp(carjackerList);
+                    CleanUp(drivebyList);
+                    CleanUp(gangList);
+                    CleanUp(massacreList);
+                    CleanUp(onFireList);
+                    CleanUp(racerList);
+                    CleanUp(replacedList);
+                    CleanUp(terroristList);
+                }
 
                 timeChecker = 0;
             }
