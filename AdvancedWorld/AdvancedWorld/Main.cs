@@ -9,6 +9,14 @@ namespace YouAreNotAlone
 {
     public class Main : Script
     {
+        public static bool NoDispatch;
+        public static bool CriminalsCanFightWithPlayer;
+        public static bool DispatchesCanFightWithPlayer;
+        public static bool NoMinimapFlash;
+        public static bool NoBlipOnCriminal;
+        public static bool NoBlipOnDispatch;
+        public static bool NoLog;
+
         private static List<string> addOnCarNames;
         private static List<string> racerCarNames;
         private static List<string> racerBikeNames;
@@ -33,19 +41,20 @@ namespace YouAreNotAlone
         private static List<string> fireModels;
         private static List<string> fireCarNames;
 
-        public static bool NoDispatch;
-        public static bool CriminalsCanFightWithPlayer;
-        public static bool DispatchesCanFightWithPlayer;
-        public static bool NoMinimapFlash;
-        public static bool NoBlipOnCriminal;
-        public static bool NoBlipOnDispatch;
-        public static bool NoLog;
-
         private float radius;
         private int eventTimeChecker;
 
         static Main()
         {
+            NoDispatch = false;
+            CriminalsCanFightWithPlayer = false;
+            DispatchesCanFightWithPlayer = false;
+            NoMinimapFlash = false;
+            NoBlipOnCriminal = false;
+            NoBlipOnDispatch = false;
+            NoLog = true;
+            Logger.Init();
+
             addOnCarNames = new List<string>();
             racerCarNames = new List<string>
             {
@@ -222,13 +231,7 @@ namespace YouAreNotAlone
                 "firetruk"
             };
 
-            NoDispatch = false;
-            CriminalsCanFightWithPlayer = false;
-            DispatchesCanFightWithPlayer = false;
-            NoMinimapFlash = false;
-            NoBlipOnCriminal = false;
-            NoBlipOnDispatch = false;
-            NoLog = false;
+            Logger.Write("Main: Added default models.", "");
 
             CheckDLCs();
             SetUp();
@@ -238,6 +241,7 @@ namespace YouAreNotAlone
         {
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpapartment")))
             {
+                Logger.Write("Main: Found MPApartment.", "");
                 racerCarNames.Add("verlierer2");
                 drivebyCarNames.Add("baller3");
                 armyHeliNames.Add("valkyrie2");
@@ -245,6 +249,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpassault")))
             {
+                Logger.Write("Main: Found MPAssault.", "");
                 racerCarNames.Add("dominator3");
                 racerCarNames.Add("ellie");
                 racerCarNames.Add("entity2");
@@ -259,6 +264,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpbiker")))
             {
+                Logger.Write("Main: Found MPBiker.", "");
                 racerBikeNames.Add("defiler");
                 racerBikeNames.Add("hakuchou2");
                 racerBikeNames.Add("shotaro");
@@ -270,6 +276,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpbusiness2")))
             {
+                Logger.Write("Main: Found MPBusiness2.", "");
                 racerCarNames.Add("zentorno");
                 drivebyCarNames.Add("huntley");
                 drivebyCarNames.Add("thrust");
@@ -277,6 +284,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpchristmas2017")))
             {
+                Logger.Write("Main: Found MPChristmans2017.", "");
                 racerCarNames.Add("autarch");
                 racerCarNames.Add("comet5");
                 racerCarNames.Add("deluxo");
@@ -298,6 +306,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpexecutive")))
             {
+                Logger.Write("Main: Found MPExecutive.", "");
                 racerCarNames.Add("fmj");
                 racerCarNames.Add("pfister811");
                 racerCarNames.Add("prototipo");
@@ -307,6 +316,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpgunrunning")))
             {
+                Logger.Write("Main: Found MPGunrunning.", "");
                 racerCarNames.Add("ardent");
                 racerCarNames.Add("cheetah2");
                 racerCarNames.Add("torero");
@@ -319,6 +329,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpheist")))
             {
+                Logger.Write("Main: Found MPHeist.", "");
                 racerBikeNames.Add("lectro");
                 drivebyCarNames.Add("enduro");
                 fibModels.Add("s_m_m_fibsec_01");
@@ -333,6 +344,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpimportexport")))
             {
+                Logger.Write("Main: Found MPImportExport.", "");
                 racerCarNames.Add("comet3");
                 racerCarNames.Add("elegy");
                 racerCarNames.Add("italigtb");
@@ -349,12 +361,14 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpjanuary2016")))
             {
+                Logger.Write("Main: Found MPJanuary2016.", "");
                 racerCarNames.Add("banshee2");
                 racerCarNames.Add("sultanrs");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplowrider")))
             {
+                Logger.Write("Main: Found MPLowrider.", "");
                 drivebyCarNames.Add("buccaneer2");
                 drivebyCarNames.Add("chino2");
                 drivebyCarNames.Add("voodoo");
@@ -362,6 +376,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplowrider2")))
             {
+                Logger.Write("Main: Found MPLowrider2.", "");
                 drivebyCarNames.Add("faction3");
                 drivebyCarNames.Add("sabregt2");
                 drivebyCarNames.Add("virgo2");
@@ -369,18 +384,21 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplts")))
             {
+                Logger.Write("Main: Found MPLTS.", "");
                 racerBikeNames.Add("hakuchou");
                 drivebyCarNames.Add("innovation");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpluxe")))
             {
+                Logger.Write("Main: Found MPLuxe.", "");
                 racerCarNames.Add("feltzer3");
                 racerCarNames.Add("osiris");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpluxe2")))
             {
+                Logger.Write("Main: Found MPLuxe2.", "");
                 racerCarNames.Add("t20");
                 drivebyCarNames.Add("chino");
                 drivebyCarNames.Add("vindicator");
@@ -388,6 +406,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpsmuggler")))
             {
+                Logger.Write("Main: Found MPSmuggler.", "");
                 racerCarNames.Add("cyclone");
                 racerCarNames.Add("rapidgt3");
                 racerCarNames.Add("visione");
@@ -396,6 +415,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpspecialraces")))
             {
+                Logger.Write("Main: Found MPSpecialRaces.", "");
                 racerCarNames.Add("gp1");
                 racerCarNames.Add("infernus2");
                 racerCarNames.Add("turismo2");
@@ -403,6 +423,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpstunt")))
             {
+                Logger.Write("Main: Found MPStunt.", "");
                 racerCarNames.Add("le7b");
                 racerCarNames.Add("sheava");
                 racerCarNames.Add("tyrus");
@@ -412,11 +433,13 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "spupgrade")))
             {
+                Logger.Write("Main: Found SPUpgrade.", "");
                 drivebyCarNames.Add("stalion");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "pres")))
             {
+                Logger.Write("Main: Found IVPack.", "");
                 racerCarNames.Add("cheetah3");
                 racerCarNames.Add("sentinel4");
                 racerCarNames.Add("supergt");
@@ -437,6 +460,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "wov")))
             {
+                Logger.Write("Main: Found World of Variety.", "");
                 copModels[3].Add("s_m_y_bcop_01");
                 copCarNames[1].Add("sheriff3");
                 copHeliNames.Add("shemav");
@@ -446,6 +470,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "vwe")))
             {
+                Logger.Write("Main: Found Vanillaworks Extended.", "");
                 racerCarNames.Add("blista4");
                 racerCarNames.Add("cheetah4");
                 racerCarNames.Add("comet6");
@@ -478,6 +503,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dw")))
             {
+                Logger.Write("Main: Found Dispatchworks.", "");
                 copCarNames[1].Add("bcso4");
                 copCarNames[1].Add("bcso5");
                 copCarNames[1].Add("bcso6");
@@ -537,6 +563,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dov")))
             {
+                Logger.Write("Main: Found Dispatch of Variety.", "");
                 terroristCarNames.Add("dovnapc");
                 copModels[2].Add("d_o_v_dick_01");
                 copModels[3].Add("d_o_v_npatrol_01");
@@ -577,10 +604,20 @@ namespace YouAreNotAlone
             {
                 doc.Load(@"scripts\\AdvancedWorld.xml");
 
-                if (doc != null) break;
+                if (doc != null)
+                {
+                    Logger.Write("Main: Found XML file.", "");
+
+                    break;
+                }
             }
 
-            if (doc == null) return;
+            if (doc == null)
+            {
+                Logger.Write("Main: Couldn't find XML file.", "");
+
+                return;
+            }
 
             XmlElement element = doc.DocumentElement;
 
@@ -619,11 +656,13 @@ namespace YouAreNotAlone
 
                 if (((Model)spawnName).IsValid && (((Model)spawnName).IsCar || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) drivebyCarNames.Add(spawnName);
             }
+
+            Logger.Write("Main: Completed setting.", "");
         }
 
         public static void DispatchAgainst(Entity target, EventManager.EventType type)
         {
-            if (NoDispatch) return; 
+            if (NoDispatch) return;
 
             Vector3 safePosition = Util.GetSafePositionNear(target.Position);
 
@@ -817,15 +856,14 @@ namespace YouAreNotAlone
             eventTimeChecker = 0;
             Interval = 15000;
             Tick += OnTick;
-
-            Logger.Init();
+            Logger.Write("YouAreNotAlone started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)
         {
             if (eventTimeChecker == 1 || eventTimeChecker == 2 || eventTimeChecker == 3 || eventTimeChecker == 4)
             {
-                if (EventManager.ReplaceSlotIsAvailable())
+                if (EventManager.ReplaceSlotIsAvailable() && addOnCarNames.Count > 0)
                 {
                     ReplacedVehicle rv = new ReplacedVehicle(addOnCarNames[Util.GetRandomIntBelow(addOnCarNames.Count)]);
 
@@ -861,6 +899,8 @@ namespace YouAreNotAlone
 
                     case 1:
                         {
+                            if (racerCarNames.Count < 1) break;
+
                             AggressiveDriver ad = new AggressiveDriver(racerCarNames[Util.GetRandomIntBelow(racerCarNames.Count)]);
 
                             if (ad.IsCreatedIn(radius))
@@ -976,7 +1016,7 @@ namespace YouAreNotAlone
                             if (road.Position.Equals(Vector3.Zero)) break;
 
                             Massacre ms = new Massacre();
-                            
+
                             if (ms.IsCreatedIn(radius, road.Position))
                             {
                                 EventManager.Add(ms, EventManager.EventType.Massacre);
@@ -990,6 +1030,8 @@ namespace YouAreNotAlone
 
                     case 6:
                         {
+                            if (racingPosition.Count < 1) break;
+
                             Vector3 goal = racingPosition[Util.GetRandomIntBelow(racingPosition.Count)];
                             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
@@ -997,8 +1039,18 @@ namespace YouAreNotAlone
 
                             Racers r = null;
 
-                            if (Util.GetRandomIntBelow(4) == 1) r = new Racers(racerBikeNames, safePosition, goal);
-                            else r = new Racers(racerCarNames, safePosition, goal);
+                            if (Util.GetRandomIntBelow(4) == 1)
+                            {
+                                if (racerBikeNames.Count < 1) break;
+
+                                r = new Racers(racerBikeNames, safePosition, goal);
+                            }
+                            else
+                            {
+                                if (racerCarNames.Count < 1) break;
+
+                                r = new Racers(racerCarNames, safePosition, goal);
+                            }
 
                             if (r.IsCreatedIn(radius))
                             {
@@ -1013,6 +1065,8 @@ namespace YouAreNotAlone
 
                     case 7:
                         {
+                            if (drivebyCarNames.Count < 1) break;
+
                             Driveby db = new Driveby(drivebyCarNames[Util.GetRandomIntBelow(drivebyCarNames.Count)]);
 
                             if (db.IsCreatedIn(radius, gangModels[Util.GetRandomIntBelow(gangModels.Count)]))
@@ -1028,6 +1082,8 @@ namespace YouAreNotAlone
 
                     case 8:
                         {
+                            if (terroristCarNames.Count < 1) break;
+
                             Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomIntBelow(terroristCarNames.Count)]);
 
                             if (tr.IsCreatedIn(radius))

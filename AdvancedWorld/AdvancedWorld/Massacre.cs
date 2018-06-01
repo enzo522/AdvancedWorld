@@ -131,8 +131,7 @@ namespace YouAreNotAlone
 
                 if (!Util.BlipIsOn(p))
                 {
-                    if (!Main.NoBlipOnCriminal) Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, BlipColor.White, "Massacre Squad");
-
+                    Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, BlipColor.White, "Massacre Squad");
                     Logger.Write("Massacre: Create a member successfully.", "");
                     members.Add(p);
                 }

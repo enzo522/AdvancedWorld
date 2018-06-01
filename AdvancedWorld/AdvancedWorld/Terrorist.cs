@@ -85,8 +85,7 @@ namespace YouAreNotAlone
 
             if (!Util.BlipIsOn(spawnedPed))
             {
-                if (!Main.NoBlipOnCriminal) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Red, "Terrorist " + spawnedVehicle.FriendlyName);
-
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Red, "Terrorist " + spawnedVehicle.FriendlyName);
                 Logger.Write("Terrorist: Created terrorist successfully.", name);
 
                 return true;

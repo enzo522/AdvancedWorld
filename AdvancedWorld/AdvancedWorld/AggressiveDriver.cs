@@ -54,7 +54,7 @@ namespace YouAreNotAlone
 
                 return false;
             }
-            
+
             spawnedPed = spawnedVehicle.CreateRandomPedOnSeat(VehicleSeat.Driver);
 
             if (!Util.ThereIs(spawnedPed))
@@ -81,8 +81,7 @@ namespace YouAreNotAlone
 
             if (!Util.BlipIsOn(spawnedPed))
             {
-                if (!Main.NoBlipOnCriminal) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + spawnedVehicle.FriendlyName);
-
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + spawnedVehicle.FriendlyName);
                 Logger.Write("AggressiveDriver: Created aggressive driver successfully.", name);
 
                 return true;

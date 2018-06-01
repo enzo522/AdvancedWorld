@@ -49,8 +49,7 @@ namespace YouAreNotAlone
 
                 if (!Util.BlipIsOn(spawnedPed))
                 {
-                    if (!Main.NoBlipOnCriminal) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
-
+                    Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
                     Logger.Write("Carjacker: Selected carjacker successfully.", "");
                     FindNewVehicle();
 
@@ -143,7 +142,7 @@ namespace YouAreNotAlone
 
                 return true;
             }
-            
+
             if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f) || !Util.WeCanEnter(spawnedVehicle)) FindNewVehicle();
             if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle) && spawnedPed.RelationshipGroup != relationship) spawnedPed.RelationshipGroup = relationship;
 

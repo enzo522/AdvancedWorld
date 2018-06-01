@@ -137,14 +137,26 @@ namespace YouAreNotAlone
 
         public static void AddBlipOn(Entity en, float scale, BlipSprite bs, BlipColor bc, string bn)
         {
+            if (Main.NoBlipOnCriminal) return;
             if (ThereIs(en))
             {
                 en.AddBlip();
                 en.CurrentBlip.Scale = scale;
                 en.CurrentBlip.Sprite = bs;
+                en.CurrentBlip.Color = bc;
+                en.CurrentBlip.Name = bn;
+                en.CurrentBlip.IsShortRange = true;
+            }
+        }
 
-                if (bc != (BlipColor)(-1)) en.CurrentBlip.Color = bc;
-
+        public static void AddEmergencyBlipOn(Entity en, float scale, BlipSprite bs, string bn)
+        {
+            if (Main.NoBlipOnDispatch) return;
+            if (ThereIs(en))
+            {
+                en.AddBlip();
+                en.CurrentBlip.Scale = scale;
+                en.CurrentBlip.Sprite = bs;
                 en.CurrentBlip.Name = bn;
                 en.CurrentBlip.IsShortRange = true;
             }
@@ -174,6 +186,8 @@ namespace YouAreNotAlone
 
                 if (ThereIs(v))
                 {
+                    System.IO.File.WriteAllText(@"YANA_lastCreatedVehicle.log", "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + v.DisplayName);
+
                     if (withColors)
                     {
                         v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));

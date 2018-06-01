@@ -68,8 +68,7 @@ namespace YouAreNotAlone
 
                 if (!Util.BlipIsOn(p))
                 {
-                    if (!Main.NoBlipOnCriminal) Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, teamColor, teamName);
-
+                    Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, teamColor, teamName);
                     Logger.Write("GangTeam: Create a member successfully.", "");
                     members.Add(p);
                 }

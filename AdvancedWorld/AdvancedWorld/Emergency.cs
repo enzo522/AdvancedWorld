@@ -80,7 +80,7 @@ namespace YouAreNotAlone
 
                 if (Util.WeCanEnter(spawnedVehicle))
                 {
-                    if (!Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.5f, BlipSprite.PoliceOfficer, (BlipColor)(-1), blipName);
+                    if (!Util.BlipIsOn(spawnedVehicle)) Util.AddEmergencyBlipOn(spawnedVehicle, 0.5f, BlipSprite.PoliceOfficer, blipName);
                 }
                 else if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) spawnedVehicle.CurrentBlip.Remove();
 
@@ -99,7 +99,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.WeCanGiveTaskTo(p))
                     {
-                        if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.4f, BlipSprite.PoliceOfficer, (BlipColor)(-1), blipName);
+                        if (!Util.BlipIsOn(p)) Util.AddEmergencyBlipOn(p, 0.4f, BlipSprite.PoliceOfficer, blipName);
                     }
                     else if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) p.CurrentBlip.Remove();
                 }

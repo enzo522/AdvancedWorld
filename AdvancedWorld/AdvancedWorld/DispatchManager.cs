@@ -144,7 +144,7 @@ namespace YouAreNotAlone
             {
                 foreach (Shield s in shieldList) s.CheckShieldable();
             }
-            
+
             lock (stingerList)
             {
                 foreach (Stinger s in stingerList) s.CheckStingable();
