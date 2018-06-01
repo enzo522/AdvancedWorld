@@ -68,7 +68,7 @@ namespace YouAreNotAlone
                 return replacedList.Count < 5;
             }
         }
-
+        
         public static void Add(AdvancedEntity en, EventType type)
         {
             switch (type)

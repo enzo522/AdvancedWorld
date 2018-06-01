@@ -490,7 +490,6 @@ namespace YouAreNotAlone
                 racerCarNames.Add("vigero3");
                 racerBikeNames.Add("kenshin");
                 drivebyCarNames.Add("greenwood");
-                copCarNames[1].Add("bcso1");
                 copCarNames[1].Add("bcso2");
                 copCarNames[1].Add("bcso3");
                 copCarNames[0].Add("hwaycar5");
@@ -526,11 +525,17 @@ namespace YouAreNotAlone
                 copCarNames[0].Add("pcpd2");
                 copCarNames[0].Add("pcpd3");
                 copCarNames[0].Add("police9");
+                copCarNames[0].Add("police10");
                 copCarNames[0].Add("police11");
                 copCarNames[0].Add("police12");
                 copCarNames[0].Add("police13");
                 copCarNames[0].Add("police15");
                 copCarNames[0].Add("police16");
+                copCarNames[0].Add("police17");
+                copCarNames[2].Add("police20");
+                copCarNames[2].Add("police25");
+                copCarNames[2].Add("police21");
+                copCarNames[2].Add("police22");
                 copCarNames[0].Add("police24");
                 copCarNames[0].Add("policet2");
                 copCarNames[0].Add("policet3");
@@ -542,6 +547,7 @@ namespace YouAreNotAlone
                 copCarNames[0].Add("rpdsuv2");
                 copCarNames[1].Add("sheriff7");
                 copCarNames[1].Add("sheriff9");
+                copCarNames[1].Add("sheriff12");
                 copCarNames[1].Add("uranushway");
                 copCarNames[1].Add("uranushway2");
                 copCarNames[2].Add("vaccapol");
@@ -556,8 +562,6 @@ namespace YouAreNotAlone
                 emCarNames.Add("ambulance2");
                 emCarNames.Add("ambulance3");
                 emCarNames.Add("emssuv");
-                emCarNames.Add("emsvan");
-                fireCarNames.Add("emertruk");
                 fireCarNames.Add("riot3");
             }
 
@@ -583,8 +587,6 @@ namespace YouAreNotAlone
                 copCarNames[1].Add("dovsheranch");
                 copCarNames[1].Add("dovshestan");
                 copCarNames[1].Add("dovshetrans");
-                copHeliNames.Add("dovpolmav");
-                copHeliNames.Add("dovshemav");
                 fibCarNames.Add("dovfibkur");
                 fibCarNames.Add("dovfibranch");
                 fibCarNames.Add("dovfibwash");
