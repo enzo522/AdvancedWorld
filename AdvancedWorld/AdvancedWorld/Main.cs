@@ -561,7 +561,6 @@ namespace YouAreNotAlone
                 swatCarNames.Add("police14");
                 emCarNames.Add("ambulance2");
                 emCarNames.Add("ambulance3");
-                emCarNames.Add("emssuv");
                 fireCarNames.Add("riot3");
             }
 
