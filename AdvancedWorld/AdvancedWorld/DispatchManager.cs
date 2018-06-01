@@ -6,7 +6,6 @@ namespace YouAreNotAlone
 {
     public class DispatchManager : Script
     {
-        private static Object lockObject;
         private static List<AdvancedEntity> armyList;
         private static List<AdvancedEntity> armyHeliList;
         private static List<AdvancedEntity> armyRoadblockList;
@@ -33,7 +32,6 @@ namespace YouAreNotAlone
 
         static DispatchManager()
         {
-            lockObject = new Object();
             armyList = new List<AdvancedEntity>();
             armyHeliList = new List<AdvancedEntity>();
             armyRoadblockList = new List<AdvancedEntity>();
@@ -47,76 +45,73 @@ namespace YouAreNotAlone
 
         public static void Add(AdvancedEntity en, DispatchType type)
         {
-            lock (lockObject)
+            switch (type)
             {
-                switch (type)
-                {
-                    case DispatchType.Army:
-                        {
-                            armyList.Add(en);
+                case DispatchType.Army:
+                    {
+                        lock (armyList) { armyList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.ArmyHeli:
-                        {
-                            armyHeliList.Add(en);
+                case DispatchType.ArmyHeli:
+                    {
+                        lock (armyHeliList) { armyHeliList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.ArmyRoadBlock:
-                        {
-                            armyRoadblockList.Add(en);
+                case DispatchType.ArmyRoadBlock:
+                    {
+                        lock (armyRoadblockList) { armyRoadblockList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Cop:
-                        {
-                            copList.Add(en);
+                case DispatchType.Cop:
+                    {
+                        lock (copList) { copList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.CopHeli:
-                        {
-                            copHeliList.Add(en);
+                case DispatchType.CopHeli:
+                    {
+                        lock (copHeliList) { copHeliList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.CopRoadBlock:
-                        {
-                            copRoadblockList.Add(en);
+                case DispatchType.CopRoadBlock:
+                    {
+                        lock (copRoadblockList) { copRoadblockList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Emergency:
-                        {
-                            emList.Add(en);
+                case DispatchType.Emergency:
+                    {
+                        lock (emList) { emList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Shield:
-                        {
-                            shieldList.Add(en);
+                case DispatchType.Shield:
+                    {
+                        lock (shieldList) { shieldList.Add(en); }
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Stinger:
-                        {
-                            stingerList.Add(en);
+                case DispatchType.Stinger:
+                    {
+                        lock (stingerList) { stingerList.Add(en); }
 
-                            break;
-                        }
-                }
-
-                Logger.Write("DispatchManager: Added new entity.", type.ToString());
+                        break;
+                    }
             }
+
+            Logger.Write("DispatchManager: Added new entity.", type.ToString());
         }
 
         public DispatchManager()
@@ -131,32 +126,39 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                lock (lockObject)
-                {
-                    CleanUp(armyList);
-                    CleanUp(armyHeliList);
-                    CleanUp(armyRoadblockList);
-                    CleanUp(copList);
-                    CleanUp(copHeliList);
-                    CleanUp(copRoadblockList);
-                    CleanUp(emList);
-                    CleanUp(shieldList);
-                    CleanUp(stingerList);
-                }
+                CleanUp(armyList);
+                CleanUp(armyHeliList);
+                CleanUp(armyRoadblockList);
+                CleanUp(copList);
+                CleanUp(copHeliList);
+                CleanUp(copRoadblockList);
+                CleanUp(emList);
+                CleanUp(shieldList);
+                CleanUp(stingerList);
 
                 timeChecker = 0;
             }
             else timeChecker++;
 
-            foreach (Shield s in shieldList) s.CheckShieldable();
-            foreach (Stinger s in stingerList) s.CheckStingable();
+            lock (shieldList)
+            {
+                foreach (Shield s in shieldList) s.CheckShieldable();
+            }
+            
+            lock (stingerList)
+            {
+                foreach (Stinger s in stingerList) s.CheckStingable();
+            }
         }
 
         private void CleanUp(List<AdvancedEntity> l)
         {
-            for (int i = l.Count - 1; i >= 0; i--)
+            lock (l)
             {
-                if (l[i].ShouldBeRemoved()) l.RemoveAt(i);
+                for (int i = l.Count - 1; i >= 0; i--)
+                {
+                    if (l[i].ShouldBeRemoved()) l.RemoveAt(i);
+                }
             }
         }
     }
