@@ -900,8 +900,6 @@ namespace YouAreNotAlone
 
                     case 1:
                         {
-                            if (racerCarNames.Count < 1) break;
-
                             AggressiveDriver ad = new AggressiveDriver(racerCarNames[Util.GetRandomIntBelow(racerCarNames.Count)]);
 
                             if (ad.IsCreatedIn(radius))
@@ -1040,18 +1038,8 @@ namespace YouAreNotAlone
 
                             Racers r = null;
 
-                            if (Util.GetRandomIntBelow(4) == 1)
-                            {
-                                if (racerBikeNames.Count < 1) break;
-
-                                r = new Racers(racerBikeNames, safePosition, goal);
-                            }
-                            else
-                            {
-                                if (racerCarNames.Count < 1) break;
-
-                                r = new Racers(racerCarNames, safePosition, goal);
-                            }
+                            if (Util.GetRandomIntBelow(4) == 1) r = new Racers(racerBikeNames, safePosition, goal);
+                            else r = new Racers(racerCarNames, safePosition, goal);
 
                             if (r.IsCreatedIn(radius))
                             {
@@ -1066,8 +1054,6 @@ namespace YouAreNotAlone
 
                     case 7:
                         {
-                            if (drivebyCarNames.Count < 1) break;
-
                             Driveby db = new Driveby(drivebyCarNames[Util.GetRandomIntBelow(drivebyCarNames.Count)]);
 
                             if (db.IsCreatedIn(radius, gangModels[Util.GetRandomIntBelow(gangModels.Count)]))
@@ -1083,8 +1069,6 @@ namespace YouAreNotAlone
 
                     case 8:
                         {
-                            if (terroristCarNames.Count < 1) break;
-
                             Terrorist tr = new Terrorist(terroristCarNames[Util.GetRandomIntBelow(terroristCarNames.Count)]);
 
                             if (tr.IsCreatedIn(radius))
