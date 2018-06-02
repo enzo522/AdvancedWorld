@@ -67,7 +67,7 @@ namespace YouAreNotAlone
 
             Logger.Write("Terrorist: Created vehicle and driver.", name);
             Script.Wait(50);
-            Util.Tune(spawnedVehicle, false, false);
+            Util.Tune(spawnedVehicle, false, false, false);
 
             if (name == "khanjali" && spawnedVehicle.GetMod(VehicleMod.Roof) != -1) spawnedVehicle.SetMod(VehicleMod.Roof, -1, false);
 

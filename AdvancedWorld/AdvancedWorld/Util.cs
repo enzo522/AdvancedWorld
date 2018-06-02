@@ -73,7 +73,7 @@ namespace YouAreNotAlone
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, en.Position, IntersectOptions.Map);
 
-                return !en.IsOnScreen || en.IsOccluded || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) < 50.0f);
+                return !en.IsOnScreen || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) < 50.0f);
             }
         }
 
@@ -84,7 +84,7 @@ namespace YouAreNotAlone
             {
                 RaycastResult r = World.Raycast(GameplayCamera.Position, position, IntersectOptions.Map);
 
-                return Vector3.Subtract(GameplayCamera.Position + GameplayCamera.Direction * 100.0f, position).Length() > 100.0f || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) < 50.0f);
+                return position.DistanceTo(GameplayCamera.Position + GameplayCamera.Direction * 100.0f) > 100.0f || (r.DitHitAnything && r.HitCoords.DistanceTo(GameplayCamera.Position) < 50.0f);
             }
         }
 
@@ -201,7 +201,7 @@ namespace YouAreNotAlone
             return null;
         }
 
-        public static void Tune(Vehicle v, bool withNeons, bool withWheels)
+        public static void Tune(Vehicle v, bool withNeons, bool withWheels, bool withTireSmoke)
         {
             if (ThereIs(v))
             {
@@ -209,7 +209,7 @@ namespace YouAreNotAlone
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
                 v.ToggleMod(VehicleToggleMod.XenonHeadlights, dice.Next(2) == 1);
 
-                if (dice.Next(2) == 1)
+                if (withTireSmoke)
                 {
                     v.ToggleMod(VehicleToggleMod.TireSmoke, true);
                     v.TireSmokeColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));

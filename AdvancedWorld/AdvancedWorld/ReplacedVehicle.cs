@@ -72,7 +72,7 @@ namespace YouAreNotAlone
                     {
                         blipName = "Tuned ";
                         blipColor = BlipColor.Blue;
-                        Util.Tune(spawnedVehicle, Util.GetRandomIntBelow(2) == 1, Util.GetRandomIntBelow(2) == 1);
+                        Util.Tune(spawnedVehicle, Util.GetRandomIntBelow(2) == 1, Util.GetRandomIntBelow(2) == 1, false);
                         Logger.Write("ReplacedVehicle: Tune replacing vehicle.", name);
                     }
                     else

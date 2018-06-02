@@ -60,7 +60,7 @@ namespace YouAreNotAlone
 
             Logger.Write("Driveby: Created vehicle successfully.", name);
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };
-            Util.Tune(spawnedVehicle, false, (Util.GetRandomIntBelow(3) == 1));
+            Util.Tune(spawnedVehicle, false, (Util.GetRandomIntBelow(3) == 1), false);
 
             for (int i = -1; i < spawnedVehicle.PassengerSeats; i++)
             {
