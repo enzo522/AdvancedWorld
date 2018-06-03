@@ -21,6 +21,7 @@ namespace YouAreNotAlone
             this.target = target;
             this.emergencyType = emergencyType;
             this.blipName = "";
+            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
 
             if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
             else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Cop);

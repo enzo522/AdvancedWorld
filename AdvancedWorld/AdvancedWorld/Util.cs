@@ -2,8 +2,8 @@
 using GTA.Math;
 using GTA.Native;
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace YouAreNotAlone
 {
@@ -186,12 +186,10 @@ namespace YouAreNotAlone
 
                 if (ThereIs(v))
                 {
-                    System.IO.File.WriteAllText(@"YANA_lastCreatedVehicle.log", "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + v.DisplayName);
-
                     if (withColors)
                     {
                         v.PrimaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
-                        v.SecondaryColor = (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
+                        v.SecondaryColor = dice.Next(2) == 1 ? v.PrimaryColor : (VehicleColor)vehicleColors.GetValue(dice.Next(vehicleColors.Length));
                     }
 
                     return v;
@@ -446,6 +444,26 @@ namespace YouAreNotAlone
 
                     if (SomethingIsBetweenPlayerPositionAnd(roadPos) && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
                         return new Road(roadPos, roadHeading.GetResult<float>());
+                }
+            }
+
+            return new Road(Vector3.Zero, 0.0f);
+        }
+
+        public static Road GetNextPositionOnStreetWithHeadingToChase(Vector3 position, Vector3 targetPosition)
+        {
+            OutputArgument outPos = new OutputArgument();
+            OutputArgument outHeading = new OutputArgument();
+
+            for (int i = 1; i < 20; i++)
+            {
+                if (Function.Call<bool>(Hash.GET_NTH_CLOSEST_VEHICLE_NODE_WITH_HEADING, position.X, position.Y, position.Z, i, outPos, outHeading, new OutputArgument(), 9, 3.0f, 2.5f))
+                {
+                    Vector3 roadPos = outPos.GetResult<Vector3>();
+                    float roadHeading = outHeading.GetResult<float>();
+
+                    if (SomethingIsBetweenPlayerPositionAnd(roadPos) && Math.Abs(roadHeading - (targetPosition - roadPos).ToHeading()) < 30 && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
+                        return new Road(roadPos, roadHeading);
                 }
             }
 
