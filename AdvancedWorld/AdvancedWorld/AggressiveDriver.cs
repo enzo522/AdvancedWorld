@@ -81,7 +81,7 @@ namespace YouAreNotAlone
 
             if (!Util.BlipIsOn(spawnedPed))
             {
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + VehicleName.GetName(spawnedVehicle.Model.Hash));
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
                 Logger.Write("AggressiveDriver: Created aggressive driver successfully.", name);
 
                 return true;

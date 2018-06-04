@@ -52,8 +52,8 @@ namespace YouAreNotAlone
             if (!spawnedVehicle.Model.IsCar && !spawnedPed.IsWearingHelmet) spawnedPed.GiveHelmet(false, HelmetType.RegularMotorcycleHelmet, 4096);
             if (!Util.BlipIsOn(spawnedPed))
             {
-                if (spawnedVehicle.Model.IsCar) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)17, "Racer " + VehicleName.GetName(spawnedVehicle.Model.Hash));
-                else Util.AddBlipOn(spawnedPed, 1.0f, BlipSprite.PersonalVehicleBike, (BlipColor)17, "Racer " + VehicleName.GetName(spawnedVehicle.Model.Hash));
+                if (spawnedVehicle.Model.IsCar) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)17, "Racer " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
+                else Util.AddBlipOn(spawnedPed, 1.0f, BlipSprite.PersonalVehicleBike, (BlipColor)17, "Racer " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
 
                 TaskSequence ts = new TaskSequence();
                 ts.AddTask.DriveTo(spawnedVehicle, goal, 10.0f, 100.0f, 262692); // 4 + 32 + 512 + 262144

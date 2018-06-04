@@ -152,7 +152,7 @@ namespace YouAreNotAlone
             {
                 if (Util.ThereIs(p) && !p.IsDead)
                 {
-                    if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + VehicleName.GetName(spawnedVehicle.Model.Hash));
+                    if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
                     else if (!p.CurrentBlip.Sprite.Equals(BlipSprite.GunCar)) p.CurrentBlip.Remove();
 
                     Logger.Write("Driveby: Found driver and added blip on it.", name);

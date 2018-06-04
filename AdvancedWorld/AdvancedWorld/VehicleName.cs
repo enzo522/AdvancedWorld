@@ -10,7 +10,7 @@ namespace YouAreNotAlone
         private static IntPtr address = FindPattern("0F B7 05 ?? ?? ?? ?? 45 33 C9 4C 8B DA 66 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 C0 33 D2 8B C1 41 F7 F0 48 8B 05 ?? ?? ?? ?? 4C 8B 14 D0 EB 09 41 3B 0A 74 54");
         private static GetModelInfoDelegate GetModelInfo { get { return Marshal.GetDelegateForFunctionPointer<GetModelInfoDelegate>(address); } }
 
-        public static string GetName(int hash)
+        public static string GetNameOf(int hash)
         {
             int index = -1;
             GCHandle handle = GCHandle.Alloc(index, GCHandleType.Pinned);
@@ -20,7 +20,7 @@ namespace YouAreNotAlone
             string displayName = Marshal.PtrToStringAnsi(modelInfo + 664);
 
             handle.Free();
-            return makeName == "" ? makeName : GTA.Game.GetGXTEntry(makeName) + " " + displayName == "" ? displayName : GTA.Game.GetGXTEntry(displayName);
+            return GTA.Game.GetGXTEntry(makeName) + " " + GTA.Game.GetGXTEntry(displayName);
         }
 
         private unsafe static bool Compare(IntPtr data, byte[] bytesArray)
