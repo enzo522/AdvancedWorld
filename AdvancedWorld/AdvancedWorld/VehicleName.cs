@@ -15,12 +15,17 @@ namespace YouAreNotAlone
             int index = -1;
             GCHandle handle = GCHandle.Alloc(index, GCHandleType.Pinned);
             IntPtr modelInfo = GetModelInfo(hash, handle.AddrOfPinnedObject());
-
-            string makeName = Marshal.PtrToStringAnsi(modelInfo + 676);
-            string displayName = Marshal.PtrToStringAnsi(modelInfo + 664);
-
+            
+            string displayName = GTA.Game.GetGXTEntry(Marshal.PtrToStringAnsi(modelInfo + 664));
+            string makeName = GTA.Game.GetGXTEntry(Marshal.PtrToStringAnsi(modelInfo + 676));
             handle.Free();
-            return GTA.Game.GetGXTEntry(makeName) + " " + GTA.Game.GetGXTEntry(displayName);
+
+            string vehicleName = "";
+
+            if (makeName != "NULL") vehicleName += makeName + " ";
+            if (displayName != "NULL") vehicleName += displayName;
+
+            return vehicleName;
         }
 
         private unsafe static bool Compare(IntPtr data, byte[] bytesArray)
