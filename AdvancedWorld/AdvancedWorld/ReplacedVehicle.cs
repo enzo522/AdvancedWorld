@@ -84,7 +84,7 @@ namespace YouAreNotAlone
                     
                     if (!Util.BlipIsOn(spawnedVehicle))
                     {
-                        Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, blipColor, blipName + Util.GetVehicleName(selectedVehicle));
+                        Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, blipColor, blipName + VehicleName.GetName(spawnedVehicle.Model.Hash));
                         Logger.Write("ReplacedVehicle: Create replacing vehicle successfully.", name);
 
                         return true;

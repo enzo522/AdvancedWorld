@@ -54,7 +54,7 @@ namespace YouAreNotAlone
             NoBlipOnDispatch = false;
             NoLog = true;
             Logger.Init();
-
+            
             addOnCarNames = new List<string>();
             racerCarNames = new List<string>
             {
