@@ -663,13 +663,15 @@ namespace YouAreNotAlone
             Logger.Write("Main: Completed setting.", "");
         }
 
-        public static void DispatchAgainst(Entity target, EventManager.EventType type)
+        public static bool DispatchAgainst(Entity target, EventManager.EventType type)
         {
-            if (NoDispatch) return;
+            if (NoDispatch) return true;
 
             Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 100.0f);
 
-            if (safePosition.Equals(Vector3.Zero)) return;
+            if (safePosition.Equals(Vector3.Zero)) return false;
+
+            int cnt = 0;
 
             switch (type)
             {
@@ -681,7 +683,11 @@ namespace YouAreNotAlone
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType]))
+                            {
+                                DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                                cnt++;
+                            }
                             else lspd.Restore(true);
                         }
 
@@ -689,7 +695,11 @@ namespace YouAreNotAlone
                         {
                             EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomIntBelow(copHeliNames.Count)], target, "LSPD");
 
-                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomIntBelow(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
+                            if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomIntBelow(copModels.Count)]))
+                            {
+                                DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
+                                cnt++;
+                            }
                             else lspdheli.Restore(true);
                         }
 
@@ -702,7 +712,11 @@ namespace YouAreNotAlone
                         EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                         if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
-                        else lspd.Restore(true);
+                        else
+                        {
+                            lspd.Restore(true);
+                            return false;
+                        }
 
                         break;
                     }
@@ -714,20 +728,32 @@ namespace YouAreNotAlone
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType]))
+                            {
+                                DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                                cnt++;
+                            }
                             else lspd.Restore(true);
                         }
 
                         EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
-                        if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                        if (swat.IsCreatedIn(safePosition, swatModels))
+                        {
+                            DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                            cnt++;
+                        }
                         else swat.Restore(true);
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
-                            if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
+                            if (swatheli.IsCreatedIn(safePosition, swatModels))
+                            {
+                                DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
+                                cnt++;
+                            }
                             else swatheli.Restore(true);
                         }
 
@@ -738,12 +764,20 @@ namespace YouAreNotAlone
                     {
                         Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomIntBelow(fireCarNames.Count)], target);
 
-                        if (ff.IsCreatedIn(safePosition, fireModels)) DispatchManager.Add(ff, DispatchManager.DispatchType.Emergency);
+                        if (ff.IsCreatedIn(safePosition, fireModels))
+                        {
+                            DispatchManager.Add(ff, DispatchManager.DispatchType.Emergency);
+                            cnt++;
+                        }
                         else ff.Restore(true);
 
                         Paramedic pm = new Paramedic(emCarNames[Util.GetRandomIntBelow(emCarNames.Count)], target);
 
-                        if (pm.IsCreatedIn(safePosition, emModels)) DispatchManager.Add(pm, DispatchManager.DispatchType.Emergency);
+                        if (pm.IsCreatedIn(safePosition, emModels))
+                        {
+                            DispatchManager.Add(pm, DispatchManager.DispatchType.Emergency);
+                            cnt++;
+                        }
                         else pm.Restore(true);
 
                         break;
@@ -756,7 +790,11 @@ namespace YouAreNotAlone
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType]))
+                            {
+                                DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                                cnt++;
+                            }
                             else lspd.Restore(true);
                         }
 
@@ -769,17 +807,29 @@ namespace YouAreNotAlone
                         {
                             EmergencyGround fib = new EmergencyGround(fibCarNames[Util.GetRandomIntBelow(fibCarNames.Count)], target, "FIB");
 
-                            if (fib.IsCreatedIn(safePosition, fibModels)) DispatchManager.Add(fib, DispatchManager.DispatchType.Cop);
+                            if (fib.IsCreatedIn(safePosition, fibModels))
+                            {
+                                DispatchManager.Add(fib, DispatchManager.DispatchType.Cop);
+                                cnt++;
+                            }
                             else fib.Restore(true);
 
                             EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
-                            if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                            if (swat.IsCreatedIn(safePosition, swatModels))
+                            {
+                                DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                                cnt++;
+                            }
                             else swat.Restore(true);
 
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
-                            if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
+                            if (swatheli.IsCreatedIn(safePosition, swatModels))
+                            {
+                                DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
+                                cnt++;
+                            }
                             else swatheli.Restore(true);
                         }
 
@@ -792,7 +842,11 @@ namespace YouAreNotAlone
                         {
                             EmergencyGround army = new EmergencyGround(armyCarNames[Util.GetRandomIntBelow(armyCarNames.Count)], target, "ARMY");
 
-                            if (army.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(army, DispatchManager.DispatchType.Army);
+                            if (army.IsCreatedIn(safePosition, armyModels))
+                            {
+                                DispatchManager.Add(army, DispatchManager.DispatchType.Army);
+                                cnt++;
+                            }
                             else army.Restore(true);
                         }
 
@@ -800,22 +854,34 @@ namespace YouAreNotAlone
                         {
                             EmergencyHeli armyheli = new EmergencyHeli(armyHeliNames[Util.GetRandomIntBelow(armyHeliNames.Count)], target, "ARMY");
 
-                            if (armyheli.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(armyheli, DispatchManager.DispatchType.ArmyHeli);
+                            if (armyheli.IsCreatedIn(safePosition, armyModels))
+                            {
+                                DispatchManager.Add(armyheli, DispatchManager.DispatchType.ArmyHeli);
+                                cnt++;
+                            }
                             else armyheli.Restore(true);
                         }
 
                         break;
                     }
             }
+
+            if (type != EventManager.EventType.Carjacker)
+            {
+                if ((type == EventManager.EventType.Massacre || type == EventManager.EventType.Terrorist) && cnt < 5) return false;
+                else if (cnt < 2) return false;
+            }
+
+            return true;
         }
 
-        public static void BlockRoadAgainst(Entity target, EventManager.EventType type)
+        public static bool BlockRoadAgainst(Entity target, EventManager.EventType type)
         {
-            if (NoDispatch) return;
+            if (NoDispatch) return true;
 
             Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 70.0f);
 
-            if (safePosition.Equals(Vector3.Zero)) return;
+            if (safePosition.Equals(Vector3.Zero)) return false;
 
             switch (type)
             {
@@ -825,7 +891,12 @@ namespace YouAreNotAlone
                         int selectedType = Util.GetRandomIntBelow(copCarNames.Count - 1);
                         EmergencyBlock lspdblock = new EmergencyBlock(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                        if (lspdblock.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspdblock, DispatchManager.DispatchType.CopRoadBlock);
+                        if (lspdblock.IsCreatedIn(safePosition, copModels[selectedType]))
+                        {
+                            DispatchManager.Add(lspdblock, DispatchManager.DispatchType.CopRoadBlock);
+
+                            return true;
+                        }
                         else lspdblock.Restore(true);
 
                         break;
@@ -835,7 +906,12 @@ namespace YouAreNotAlone
                     {
                         EmergencyBlock swatblock = new EmergencyBlock(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
-                        if (swatblock.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatblock, DispatchManager.DispatchType.CopRoadBlock);
+                        if (swatblock.IsCreatedIn(safePosition, swatModels))
+                        {
+                            DispatchManager.Add(swatblock, DispatchManager.DispatchType.CopRoadBlock);
+
+                            return true;
+                        }
                         else swatblock.Restore(true);
 
                         break;
@@ -845,12 +921,19 @@ namespace YouAreNotAlone
                     {
                         EmergencyBlock armyblock = new EmergencyBlock(armyCarNames[Util.GetRandomIntBelow(armyCarNames.Count)], target, "ARMY");
 
-                        if (armyblock.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(armyblock, DispatchManager.DispatchType.ArmyRoadBlock);
+                        if (armyblock.IsCreatedIn(safePosition, armyModels))
+                        {
+                            DispatchManager.Add(armyblock, DispatchManager.DispatchType.ArmyRoadBlock);
+
+                            return true;
+                        }
                         else armyblock.Restore(true);
 
                         break;
                     }
             }
+
+            return false;
         }
 
         public Main()

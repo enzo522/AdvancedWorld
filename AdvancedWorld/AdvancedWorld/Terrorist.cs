@@ -87,7 +87,7 @@ namespace YouAreNotAlone
             
             if (!Util.BlipIsOn(spawnedPed))
             {
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Red, "Terrorist " + spawnedVehicle.FriendlyName);
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Red, "Terrorist " + Util.GetVehicleName(spawnedVehicle));
                 Logger.Write("Terrorist: Created terrorist successfully.", name);
 
                 return true;
@@ -139,15 +139,10 @@ namespace YouAreNotAlone
         private new void CheckDispatch()
         {
             if (dispatchCooldown < 15) dispatchCooldown++;
-            else
+            else if (!Util.AnyEmergencyIsNear(spawnedPed.Position, DispatchManager.DispatchType.Army) && Main.DispatchAgainst(spawnedPed, type))
             {
+                Logger.Write("Dispatch against", type.ToString());
                 dispatchCooldown = 0;
-
-                if (!Util.AnyEmergencyIsNear(spawnedPed.Position, DispatchManager.DispatchType.Army))
-                {
-                    Logger.Write("Dispatch against", type.ToString());
-                    Main.DispatchAgainst(spawnedPed, type);
-                }
             }
         }
     }

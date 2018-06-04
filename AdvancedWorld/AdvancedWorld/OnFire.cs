@@ -118,12 +118,11 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (dispatchCooldown < 13) dispatchCooldown++;
-            else
+            if (dispatchCooldown < 15) dispatchCooldown++;
+            else if (Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire))
             {
-                dispatchCooldown = 0;
                 Logger.Write("OnFire: Dispatch against", "Fire");
-                Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire);
+                dispatchCooldown = 0;
             }
 
             return false;

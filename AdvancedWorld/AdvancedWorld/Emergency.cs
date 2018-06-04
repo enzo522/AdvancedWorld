@@ -189,15 +189,16 @@ namespace YouAreNotAlone
 
         protected void SetPedsOffDuty()
         {
-            if (offDuty)
+            if (!offDuty)
             {
-                if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                 if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) spawnedVehicle.CurrentBlip.Remove();
 
                 foreach (Ped p in members)
                 {
                     if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) p.CurrentBlip.Remove();
                 }
+
+                offDuty = true;
             }
             
             if (!Util.WeCanEnter(spawnedVehicle)) Restore(false);
@@ -207,6 +208,7 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(blipName + ": Time to be off duty.", name);
 
+                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
                     if (!Function.Call<bool>(Hash.GET_IS_TASK_ACTIVE, spawnedVehicle.Driver, 151))
                     {
                         foreach (Ped p in members)
@@ -315,7 +317,6 @@ namespace YouAreNotAlone
 
             if (!TargetIsFound())
             {
-                if (!offDuty) offDuty = true;
                 if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
                 {
                     Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);

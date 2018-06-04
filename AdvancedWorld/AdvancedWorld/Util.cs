@@ -3,7 +3,9 @@ using GTA.Math;
 using GTA.Native;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace YouAreNotAlone
 {
@@ -39,15 +41,13 @@ namespace YouAreNotAlone
             Function.Call<int>(Hash.GET_HASH_KEY, "GANG_10"),
             Function.Call<int>(Hash.GET_HASH_KEY, "DEALER"),
             Function.Call<int>(Hash.GET_HASH_KEY, "PRIVATE_SECURITY"),
-            Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"),
             Function.Call<int>(Hash.GET_HASH_KEY, "PRISONER"),
             Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"),
             Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC")
         };
         private static List<int> criminalRelationships = new List<int>();
-        private static List<int> copRelationships = new List<int>();
-        private static List<int> armyRelationships = new List<int>();
-        private static int copID = Function.Call<int>(Hash.GET_HASH_KEY, "COP");
+        private static List<int> copRelationships = new List<int> { Function.Call<int>(Hash.GET_HASH_KEY, "COP") };
+        private static List<int> armyRelationships = new List<int> { Function.Call<int>(Hash.GET_HASH_KEY, "ARMY") };
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
         private static int count = 0;
 
@@ -263,7 +263,6 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
 
                         break;
                     }
@@ -276,7 +275,6 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
 
                         if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
@@ -290,7 +288,6 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
 
                         if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
@@ -306,7 +303,6 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, copID);
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
 
                         if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
@@ -333,8 +329,6 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
 
                         armyRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, copID);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
@@ -353,8 +347,6 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
 
                         copRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, copID);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "ARMY"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"));
                         World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC"));
                         World.SetRelationshipBetweenGroups(Relationship.Like, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "SECURITY_GUARD"));
@@ -413,14 +405,14 @@ namespace YouAreNotAlone
                     {
                         case DispatchManager.DispatchType.Army:
                             {
-                                if (armyRelationships.Contains(p.RelationshipGroup)) return true;
+                                if (armyRelationships.Contains(p.RelationshipGroup) && Math.Abs(p.Position.Z - position.Z) < 5) return true;
 
                                 break;
                             }
 
                         case DispatchManager.DispatchType.Cop:
                             {
-                                if (copRelationships.Contains(p.RelationshipGroup)) return true;
+                                if (copRelationships.Contains(p.RelationshipGroup) && Math.Abs(p.Position.Z - position.Z) < 5) return true;
 
                                 break;
                             }
@@ -462,7 +454,7 @@ namespace YouAreNotAlone
                     Vector3 roadPos = outPos.GetResult<Vector3>();
                     float roadHeading = outHeading.GetResult<float>();
 
-                    if (SomethingIsBetweenPlayerPositionAnd(roadPos) && Math.Abs(roadHeading - (targetPosition - roadPos).ToHeading()) < 30 && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
+                    if (SomethingIsBetweenPlayerPositionAnd(roadPos) && Math.Abs(roadHeading - (targetPosition - roadPos).ToHeading()) < 60 && !Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, roadPos.X, roadPos.Y, roadPos.Z, 5.0f, 5.0f, 5.0f, 0))
                         return new Road(roadPos, roadHeading);
                 }
             }
@@ -479,6 +471,66 @@ namespace YouAreNotAlone
 
                 en.MarkAsNoLongerNeeded();
             }
+        }
+
+        private unsafe static bool Compare(IntPtr data, byte[] bytesPattern)
+        {
+            for (int i = 0; i < bytesPattern.Length; i++)
+            {
+                if (bytesPattern[i] != 0 && Marshal.ReadByte(data + i) != bytesPattern[i]) return false;
+            }
+
+            return true;
+        }
+
+        private unsafe static IntPtr FindPattern(string pattern)
+        {
+            ProcessModule module = Process.GetCurrentProcess().MainModule;
+            long address = module.BaseAddress.ToInt64();
+            long endAddress = address + module.ModuleMemorySize;
+
+            pattern = pattern.Replace(" ", "").Replace("??", "00");
+            byte[] bytesArray = new byte[pattern.Length / 2];
+
+            for (int i = 0; i < pattern.Length; i += 2)
+                bytesArray[i / 2] = byte.Parse(pattern.Substring(i, 2), System.Globalization.NumberStyles.HexNumber);
+
+            while (address < endAddress)
+            {
+                IntPtr data = new IntPtr(address);
+
+                if (Compare(data, bytesArray)) return data;
+
+                address += 1;
+            }
+
+            return IntPtr.Zero;
+        }
+
+        private delegate IntPtr GetModelInfoDelegate(int hash, IntPtr indexPtr);
+        private static GetModelInfoDelegate GetModelInfo
+        {
+            get
+            {
+                IntPtr address = FindPattern("0F B7 05 ?? ?? ?? ?? 45 33 C9 4C 8B DA 66 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 C0 33 D2 8B C1 41 F7 F0 48 8B 05 ?? ?? ?? ?? 4C 8B 14 D0 EB 09 41 3B 0A 74 54");
+
+                return Marshal.GetDelegateForFunctionPointer<GetModelInfoDelegate>(address);
+            }
+        }
+
+        public static string GetVehicleName(Vehicle v)
+        {
+            string name = "";
+            int index = -1;
+            GCHandle handle = GCHandle.Alloc(index, GCHandleType.Pinned);
+            IntPtr modelInfo = GetModelInfo(v.Model.Hash, handle.AddrOfPinnedObject());
+
+            if (modelInfo != IntPtr.Zero) name += Game.GetGXTEntry(Marshal.PtrToStringAnsi(modelInfo + 676)) + " ";
+
+            handle.Free();
+            name += v.FriendlyName == "NULL" ? v.DisplayName.ToUpper() : v.FriendlyName;
+
+            return name;
         }
     }
 }
