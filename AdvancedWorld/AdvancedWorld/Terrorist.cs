@@ -12,6 +12,7 @@ namespace YouAreNotAlone
         {
             this.name = name;
             Logger.Write("Terrorist event selected.", name);
+            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
         }
 
         public bool IsCreatedIn(float radius)
