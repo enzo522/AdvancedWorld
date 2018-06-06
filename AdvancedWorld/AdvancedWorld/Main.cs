@@ -534,7 +534,6 @@ namespace YouAreNotAlone
                 copCarNames[2].Add("police14");
                 copCarNames[0].Add("police15");
                 copCarNames[0].Add("police16");
-                copCarNames[0].Add("police17");
                 copCarNames[2].Add("police20");
                 copCarNames[2].Add("police21");
                 copCarNames[2].Add("police22");

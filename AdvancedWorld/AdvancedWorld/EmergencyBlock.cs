@@ -159,5 +159,7 @@ namespace YouAreNotAlone
 
             return true;
         }
+
+        protected override BlipSprite Sprite { get { return BlipSprite.PoliceOfficer; } }
     }
 }
