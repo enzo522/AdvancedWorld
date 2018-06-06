@@ -304,6 +304,9 @@ namespace YouAreNotAlone
             if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 8) > 0 && Util.GetRandomIntBelow(2) == 1)
                 Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 8)), 0, 0);
 
+            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 9) > 0 && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 9, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 9)), 0, 0);
+
             if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_DRAWABLE_VARIATIONS, p, 0) > 0 && Util.GetRandomIntBelow(2) == 1)
                 Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
 
