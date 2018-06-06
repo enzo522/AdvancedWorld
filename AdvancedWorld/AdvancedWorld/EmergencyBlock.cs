@@ -94,8 +94,12 @@ namespace YouAreNotAlone
 
                     return false;
                 }
-                
-                if (p.IsInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, LeaveVehicleFlags.WarpOut);
+
+                if (p.IsInVehicle(spawnedVehicle))
+                {
+                    p.Task.LeaveVehicle(spawnedVehicle, LeaveVehicleFlags.WarpOut);
+                    Script.Wait(50);
+                }
 
                 switch (emergencyType)
                 {

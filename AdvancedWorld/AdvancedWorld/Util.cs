@@ -405,14 +405,14 @@ namespace YouAreNotAlone
                     {
                         case DispatchManager.DispatchType.Army:
                             {
-                                if (armyRelationships.Contains(p.RelationshipGroup) && Math.Abs(p.Position.Z - position.Z) < 5) return true;
+                                if (armyRelationships.Contains(p.RelationshipGroup) && p.IsPersistent) return true;
 
                                 break;
                             }
 
                         case DispatchManager.DispatchType.Cop:
                             {
-                                if (copRelationships.Contains(p.RelationshipGroup) && Math.Abs(p.Position.Z - position.Z) < 5) return true;
+                                if (copRelationships.Contains(p.RelationshipGroup) && p.IsPersistent) return true;
 
                                 break;
                             }

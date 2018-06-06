@@ -40,7 +40,8 @@ namespace YouAreNotAlone
 
                     return false;
                 }
-            } while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
+            }
+            while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
             || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic")
             || !Function.Call<bool>(Hash.HAS_CLIP_SET_LOADED, "move_ballistic_minigun"));
 
@@ -178,6 +179,10 @@ namespace YouAreNotAlone
 
             if (relationship != 0) Util.CleanUp(relationship);
 
+            Function.Call(Hash.REMOVE_ANIM_SET, "anim_group_move_ballistic");
+            Function.Call(Hash.REMOVE_ANIM_SET, "move_strafe_ballistic");
+            Function.Call(Hash.REMOVE_CLIP_SET, "move_ballistic_minigun");
+
             members.Clear();
         }
 
@@ -208,8 +213,7 @@ namespace YouAreNotAlone
             if (members.Count < 1)
             {
                 Logger.Write("Massacre: Everyone is gone. Time to be disposed.", "");
-
-                if (relationship != 0) Util.CleanUp(relationship);
+                Restore(false);
 
                 return true;
             }

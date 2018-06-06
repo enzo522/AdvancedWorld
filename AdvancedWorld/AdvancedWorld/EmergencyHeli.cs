@@ -229,6 +229,66 @@ namespace YouAreNotAlone
             }
         }
 
+        private new void SetPedsOffDuty()
+        {
+            if (!offDuty)
+            {
+                if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(BlipSprite.PoliceHelicopterAnimated)) spawnedVehicle.CurrentBlip.Remove();
+
+                foreach (Ped p in members)
+                {
+                    if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(BlipSprite.PoliceOfficer)) p.CurrentBlip.Remove();
+                }
+
+                offDuty = true;
+            }
+
+            if (!Util.WeCanEnter(spawnedVehicle))
+            {
+                foreach (Ped p in members)
+                {
+                    if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)) p.Task.WanderAround();
+                }
+            }
+            else if (ReadyToGoWith(members))
+            {
+                if (Util.ThereIs(spawnedVehicle.Driver))
+                {
+                    Logger.Write(blipName + ": Time to be off duty.", name);
+
+                    foreach (Ped p in members)
+                    {
+                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
+                        {
+                            if (!p.Equals(spawnedVehicle.Driver)) p.Task.Wait(1000);
+                        }
+                    }
+                }
+                else if (spawnedVehicle.IsOnAllWheels)
+                {
+                    Logger.Write(blipName + ": There is no driver when off duty. Re-enter everyone.", name);
+
+                    foreach (Ped p in members)
+                    {
+                        if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
+                }
+            }
+            else if (spawnedVehicle.IsOnAllWheels)
+            {
+                if (!VehicleSeatsCanBeSeatedBy(members))
+                {
+                    Logger.Write(blipName + ": Something wrong with assigning seats when off duty. Re-enter everyone.", name);
+
+                    foreach (Ped p in members)
+                    {
+                        if (Util.WeCanGiveTaskTo(p)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                    }
+                }
+                else Logger.Write(blipName + ": Assigned seats successfully when off duty.", name);
+            }
+        }
+
         public override bool ShouldBeRemoved()
         {
             int alive = 0;
@@ -250,17 +310,44 @@ namespace YouAreNotAlone
 
             Logger.Write(blipName + ": Alive members without driver - " + alive.ToString(), name);
 
-            if (!Util.ThereIs(spawnedVehicle) || !TargetIsFound() || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
                 Logger.Write(blipName + ": Emergency helicopter need to be restored.", name);
                 Restore(false);
 
                 return true;
             }
+
+            if (!TargetIsFound())
+            {
+                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+                {
+                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
+                    Restore(false);
+
+                    return true;
+                }
+                else
+                {
+                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
+                    SetPedsOffDuty();
+                }
+            }
             else
             {
-                Logger.Write(blipName + ": Found target. Time to be on duty.", name);
-                SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsOnAllWheels);
+                if (offDuty) offDuty = false;
+                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                {
+                    Logger.Write(blipName + ": Target found but too far from player. Time to be restored.", name);
+                    Restore(false);
+
+                    return true;
+                }
+                else
+                {
+                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsOnAllWheels);
+                }
             }
 
             return false;

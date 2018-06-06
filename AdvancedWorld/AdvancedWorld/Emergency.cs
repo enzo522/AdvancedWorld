@@ -201,7 +201,13 @@ namespace YouAreNotAlone
                 offDuty = true;
             }
             
-            if (!Util.WeCanEnter(spawnedVehicle)) Restore(false);
+            if (!Util.WeCanEnter(spawnedVehicle))
+            {
+                foreach (Ped p in members)
+                {
+                    if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)) p.Task.WanderAround();
+                }
+            }
             else if (ReadyToGoWith(members))
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
@@ -213,13 +219,10 @@ namespace YouAreNotAlone
                     {
                         foreach (Ped p in members)
                         {
-                            if (Util.ThereIs(p))
+                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                             {
-                                if (Util.WeCanGiveTaskTo(p))
-                                {
-                                    if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
-                                    else p.Task.Wait(1000);
-                                }
+                                if (p.Equals(spawnedVehicle.Driver)) p.Task.CruiseWithVehicle(spawnedVehicle, 20.0f, (int)DrivingStyle.Normal);
+                                else p.Task.Wait(1000);
                             }
                         }
                     }
