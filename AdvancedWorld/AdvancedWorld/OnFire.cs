@@ -35,29 +35,29 @@ namespace YouAreNotAlone
                 {
                     Logger.Write("OnFire: Found a proper vehicle.", "");
                     OnFireVehicle = selectedVehicle;
-
-                    if (Util.BlipIsOn(OnFireVehicle))
-                    {
-                        Logger.Write("OnFire: Already got a blip. Remove it.", "");
-                        OnFireVehicle.CurrentBlip.Remove();
-                        Script.Wait(100);
-                    }
-
                     OnFireVehicle.IsPersistent = true;
 
                     if (instantly)
                     {
                         Logger.Write("OnFire: Time to explode selected vehicle.", "");
-                        Util.AddBlipOn(OnFireVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
                         OnFireVehicle.Explode();
                     }
                     else
                     {
                         Logger.Write("OnFire: Time to set selected vehicle on fire.", "");
-                        Util.AddBlipOn(OnFireVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
                         OnFireVehicle.EngineHealth = -900.0f;
                         OnFireVehicle.IsDriveable = false;
                     }
+
+                    if (Util.BlipIsOn(OnFireVehicle))
+                    {
+                        Script.Wait(100);
+                        Logger.Write("OnFire: Already got a blip. Remove it.", "");
+                        OnFireVehicle.CurrentBlip.Remove();
+                    }
+
+                    if (instantly) Util.AddBlipOn(OnFireVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
+                    else Util.AddBlipOn(OnFireVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
 
                     break;
                 }
