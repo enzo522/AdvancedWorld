@@ -46,8 +46,8 @@ namespace YouAreNotAlone
             if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 20.0f && spawnedVehicle.Acceleration > 0
                 && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 10.0f))
             {
-                spawnedVehicle.EnginePowerMultiplier = 7.0f;
-                spawnedVehicle.EngineTorqueMultiplier = 7.0f;
+                spawnedVehicle.EnginePowerMultiplier = 10.0f;
+                spawnedVehicle.EngineTorqueMultiplier = 10.0f;
 
                 float pitch = Function.Call<float>(Hash.GET_ENTITY_PITCH, spawnedVehicle);
 

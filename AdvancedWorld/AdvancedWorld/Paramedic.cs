@@ -19,7 +19,7 @@ namespace YouAreNotAlone
                 "CODE_HUMAN_MEDIC_TEND_TO_DEAD",
                 "CODE_HUMAN_MEDIC_TIME_OF_DEATH"
             };
-            Logger.Write(blipName + ": Time to investigate dead bodies.", name);
+            Logger.ForceWrite(blipName + ": Time to investigate dead bodies.", this.name);
         }
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)

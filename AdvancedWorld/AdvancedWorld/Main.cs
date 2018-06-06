@@ -232,8 +232,6 @@ namespace YouAreNotAlone
             };
 
             Logger.Write("Main: Added default models.", "");
-            System.IO.File.WriteAllText(@"YANA_lastCreatedVehicle.log", "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + "Stared.\n");
-
             CheckDLCs();
             SetUp();
         }

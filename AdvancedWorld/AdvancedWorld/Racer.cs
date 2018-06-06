@@ -13,7 +13,7 @@ namespace YouAreNotAlone
         {
             this.name = name;
             this.goal = goal;
-            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
+            Logger.ForceWrite("Racer: Creating racer.", this.name);
         }
 
         public bool IsCreatedIn(float radius, Road road)

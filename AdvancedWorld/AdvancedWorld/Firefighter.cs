@@ -6,7 +6,7 @@ namespace YouAreNotAlone
 {
     public class Firefighter : EmergencyFire
     {
-        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { Logger.Write(blipName + ": Time to put off fires.", name); }
+        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { Logger.ForceWrite(blipName + ": Time to put off fires.", this.name); }
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)
         {

@@ -13,7 +13,7 @@ namespace YouAreNotAlone
         public OnFire()
         {
             this.dispatchCooldown = 7;
-            Logger.Write("OnFire event selected.", "");
+            Logger.ForceWrite("OnFire event selected.", "");
         }
 
         public bool IsCreatedIn(float radius, bool instantly)

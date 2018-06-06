@@ -138,7 +138,7 @@ namespace YouAreNotAlone
             members.Clear();
         }
 
-        protected override BlipSprite Sprite { get { return BlipSprite.Hospital; } }
+        protected override BlipSprite CurrentBlipSprite { get { return BlipSprite.Hospital; } }
 
         protected new abstract void SetPedsOnDuty(bool onVehicleDuty);
         protected abstract new bool TargetIsFound();

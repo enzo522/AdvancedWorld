@@ -11,8 +11,7 @@ namespace YouAreNotAlone
         public Terrorist(string name) : base(EventManager.EventType.Terrorist)
         {
             this.name = name;
-            Logger.Write("Terrorist event selected.", name);
-            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
+            Logger.ForceWrite("Terrorist event selected.", this.name);
         }
 
         public bool IsCreatedIn(float radius)

@@ -145,7 +145,7 @@ namespace YouAreNotAlone
             timeChecker = 0;
             Tick += OnTick;
 
-            Logger.Write("EventManager started.", "");
+            Logger.ForceWrite("EventManager started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)

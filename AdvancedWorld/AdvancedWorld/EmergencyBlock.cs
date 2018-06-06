@@ -10,7 +10,7 @@ namespace YouAreNotAlone
         public EmergencyBlock(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             this.blipName += emergencyType + " Road Block";
-            Logger.Write(blipName + ": Time to block road.", name);
+            Logger.ForceWrite(blipName + ": Time to block road.", this.name);
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
@@ -160,6 +160,6 @@ namespace YouAreNotAlone
             return true;
         }
 
-        protected override BlipSprite Sprite { get { return BlipSprite.PoliceOfficer; } }
+        protected override BlipSprite CurrentBlipSprite { get { return BlipSprite.PoliceOfficer; } }
     }
 }

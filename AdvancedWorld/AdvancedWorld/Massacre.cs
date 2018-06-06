@@ -12,7 +12,7 @@ namespace YouAreNotAlone
         public Massacre() : base(EventManager.EventType.Massacre)
         {
             this.members = new List<Ped>();
-            Logger.Write("Massacre event selected.", "");
+            Logger.ForceWrite("Massacre event selected.", "");
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)

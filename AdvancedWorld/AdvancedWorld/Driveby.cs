@@ -14,8 +14,7 @@ namespace YouAreNotAlone
         {
             this.members = new List<Ped>();
             this.name = name;
-            Logger.Write("Driveby event selected.", name);
-            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
+            Logger.ForceWrite("Driveby event selected.", this.name);
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)

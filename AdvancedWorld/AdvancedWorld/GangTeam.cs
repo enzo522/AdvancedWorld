@@ -23,7 +23,7 @@ namespace YouAreNotAlone
             ts.AddTask.FightAgainstHatedTargets(200.0f);
             ts.AddTask.WanderAround();
             ts.Close();
-            Logger.Write("GangTeam event selected.", "");
+            Logger.ForceWrite("GangTeam event selected.", "");
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)

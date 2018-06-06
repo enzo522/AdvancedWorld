@@ -11,8 +11,7 @@ namespace YouAreNotAlone
         public AggressiveDriver(string name) : base(EventManager.EventType.AggressiveDriver)
         {
             this.name = name;
-            Logger.Write("AggressiveDriver event selected.", name);
-            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
+            Logger.ForceWrite("AggressiveDriver event selected.", this.name);
         }
 
         public bool IsCreatedIn(float radius)

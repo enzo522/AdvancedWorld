@@ -23,7 +23,6 @@ namespace YouAreNotAlone
             this.emergencyType = emergencyType;
             this.blipName = "";
             this.offDuty = false;
-            System.IO.File.AppendAllText(@"YANA_lastCreatedVehicle.log", "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + name + "\n");
 
             if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
             else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Cop);
@@ -75,7 +74,7 @@ namespace YouAreNotAlone
             members.Clear();
         }
 
-        protected abstract BlipSprite Sprite { get; }
+        protected abstract BlipSprite CurrentBlipSprite { get; }
         protected void AddEmergencyBlip(bool onVehicle)
         {
             if (onVehicle)
@@ -86,22 +85,22 @@ namespace YouAreNotAlone
                 {
                     if (!Util.BlipIsOn(spawnedVehicle))
                     {
-                        if (Sprite.Equals(BlipSprite.PoliceOfficer)) Util.AddEmergencyBlipOn(spawnedVehicle, 0.5f, Sprite, blipName);
-                        else Util.AddEmergencyBlipOn(spawnedVehicle, 0.7f, Sprite, blipName);
+                        if (CurrentBlipSprite.Equals(BlipSprite.PoliceOfficer)) Util.AddEmergencyBlipOn(spawnedVehicle, 0.5f, CurrentBlipSprite, blipName);
+                        else Util.AddEmergencyBlipOn(spawnedVehicle, 0.7f, CurrentBlipSprite, blipName);
                     }
                 }
-                else if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(Sprite)) spawnedVehicle.CurrentBlip.Remove();
+                else if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(CurrentBlipSprite)) spawnedVehicle.CurrentBlip.Remove();
 
                 foreach (Ped p in members)
                 {
-                    if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(Sprite)) p.CurrentBlip.Remove();
+                    if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(CurrentBlipSprite)) p.CurrentBlip.Remove();
                 }
             }
             else
             {
                 Logger.Write(blipName + ": Members are on foot. Add blips on members.", name);
 
-                if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(Sprite)) spawnedVehicle.CurrentBlip.Remove();
+                if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(CurrentBlipSprite)) spawnedVehicle.CurrentBlip.Remove();
 
                 foreach (Ped p in members)
                 {
@@ -109,11 +108,11 @@ namespace YouAreNotAlone
                     {
                         if (!Util.BlipIsOn(p))
                         {
-                            if (Sprite.Equals(BlipSprite.PoliceOfficer)) Util.AddEmergencyBlipOn(p, 0.4f, Sprite, blipName);
-                            else Util.AddEmergencyBlipOn(p, 0.5f, Sprite, blipName);
+                            if (CurrentBlipSprite.Equals(BlipSprite.PoliceOfficer)) Util.AddEmergencyBlipOn(p, 0.4f, CurrentBlipSprite, blipName);
+                            else Util.AddEmergencyBlipOn(p, 0.5f, CurrentBlipSprite, blipName);
                         }
                     }
-                    else if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(Sprite)) p.CurrentBlip.Remove();
+                    else if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(CurrentBlipSprite)) p.CurrentBlip.Remove();
                 }
             }
         }
@@ -208,11 +207,11 @@ namespace YouAreNotAlone
         {
             if (!offDuty)
             {
-                if (Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
+                if (Util.BlipIsOn(spawnedVehicle) && spawnedVehicle.CurrentBlip.Sprite.Equals(CurrentBlipSprite)) spawnedVehicle.CurrentBlip.Remove();
 
                 foreach (Ped p in members)
                 {
-                    if (Util.BlipIsOn(p)) p.CurrentBlip.Remove();
+                    if (Util.BlipIsOn(p) && p.CurrentBlip.Sprite.Equals(CurrentBlipSprite)) p.CurrentBlip.Remove();
                 }
 
                 if (!Util.WeCanEnter(spawnedVehicle))
