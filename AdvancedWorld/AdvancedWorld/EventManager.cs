@@ -19,6 +19,7 @@ namespace YouAreNotAlone
 
         public enum EventType
         {
+            None,
             AggressiveDriver,
             Carjacker,
             Driveby,
@@ -43,31 +44,7 @@ namespace YouAreNotAlone
             terroristList = new List<AdvancedEntity>();
         }
 
-        public static bool ReplaceSlotIsAvailable()
-        {
-            if (replacedList.Count < 5) return true;
-            else
-            {
-                Logger.Write("EventManager: Replace slot is full. Search for removable one.", "");
-
-                lock (replacedList)
-                {
-                    foreach (ReplacedVehicle rv in replacedList)
-                    {
-                        if (rv.CanBeNaturallyRemoved())
-                        {
-                            Logger.Write("EventManager: Found removable one.", "");
-                            rv.Restore(true);
-                            replacedList.Remove(rv);
-
-                            break;
-                        }
-                    }
-                }
-
-                return replacedList.Count < 5;
-            }
-        }
+        public static bool ReplaceSlotIsAvailable() { return replacedList.Count < 5; }
         
         public static void Add(AdvancedEntity en, EventType type)
         {

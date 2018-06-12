@@ -27,7 +27,9 @@ namespace YouAreNotAlone
                 return false;
             }
 
-            do
+            while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
+            || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic")
+            || !Function.Call<bool>(Hash.HAS_CLIP_SET_LOADED, "move_ballistic_minigun"))
             {
                 Function.Call(Hash.REQUEST_ANIM_SET, "anim_group_move_ballistic");
                 Function.Call(Hash.REQUEST_ANIM_SET, "move_strafe_ballistic");
@@ -37,16 +39,14 @@ namespace YouAreNotAlone
                 if (++trycount > 5)
                 {
                     Logger.Error("Massacre: Couldn't load anim/clip sets. Abort.", "");
+                    Restore(true);
 
                     return false;
                 }
             }
-            while (!Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")
-            || !Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic")
-            || !Function.Call<bool>(Hash.HAS_CLIP_SET_LOADED, "move_ballistic_minigun"));
 
             Logger.Write("Massacre: Anim/clip sets are loaded. Creating members.", "");
-
+            
             for (int i = 0; i < 4; i++)
             {
                 Ped p = Util.Create("hc_gunman", position);
@@ -195,6 +195,7 @@ namespace YouAreNotAlone
                 if (!Util.ThereIs(members[i]))
                 {
                     members.RemoveAt(i);
+
                     continue;
                 }
 

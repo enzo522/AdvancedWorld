@@ -124,8 +124,7 @@ namespace YouAreNotAlone
 
             spawnedVehicle.EngineRunning = true;
             spawnedVehicle.Livery = 0;
-            spawnedVehicle.PrimaryColor = VehicleColor.MetallicBlack;
-            spawnedVehicle.SecondaryColor = VehicleColor.MetallicBlack;
+            spawnedVehicle.PrimaryColor = spawnedVehicle.SecondaryColor = VehicleColor.MetallicBlack;
             Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
             SetPedsOnDuty(true);
             Logger.Write(blipName + ": Ready to dispatch.", name);
@@ -142,6 +141,7 @@ namespace YouAreNotAlone
                 if (!Util.ThereIs(members[i]))
                 {
                     members.RemoveAt(i);
+
                     continue;
                 }
 
@@ -190,13 +190,13 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(blipName + ": Target found. Time to be on duty.", name);
-                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsOnAllWheels);
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || spawnedVehicle.IsInAir);
                 }
             }
 
             return false;
         }
 
-        protected override BlipSprite CurrentBlipSprite { get { return (Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsOnAllWheels) ? BlipSprite.PoliceHelicopterAnimated : BlipSprite.PoliceOfficer; } }
+        protected override BlipSprite CurrentBlipSprite { get { return (Util.WeCanEnter(spawnedVehicle) || spawnedVehicle.IsInAir) ? BlipSprite.PoliceHelicopterAnimated : BlipSprite.PoliceOfficer; } }
     }
 }

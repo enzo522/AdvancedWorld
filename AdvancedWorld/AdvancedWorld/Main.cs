@@ -371,6 +371,9 @@ namespace YouAreNotAlone
                 drivebyCarNames.Add("buccaneer2");
                 drivebyCarNames.Add("chino2");
                 drivebyCarNames.Add("voodoo");
+                gangModels[2].Add("csb_vagspeak");
+                gangModels[2].Add("ig_vagspeak");
+                gangModels[2].Add("mp_m_g_vagfun_01");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplowrider2")))
@@ -481,7 +484,6 @@ namespace YouAreNotAlone
                 racerCarNames.Add("es550");
                 racerCarNames.Add("futo3");
                 racerCarNames.Add("gauntlet3");
-                racerCarNames.Add("gauntlet4");
                 racerCarNames.Add("gauntlet5");
                 racerCarNames.Add("hellhound");
                 racerCarNames.Add("rapidgt4");

@@ -41,6 +41,7 @@ namespace YouAreNotAlone
             Script.Wait(50);
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
+            SetExhausts();
             Util.Tune(spawnedVehicle, true, true, true);
             Logger.Write("Racer: Tuned racer vehicle.", name);
 

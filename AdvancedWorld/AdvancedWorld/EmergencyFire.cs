@@ -232,7 +232,7 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(blipName + ": Target found. Time to be on duty.", name);
-                    SetPedsOnDuty(!spawnedVehicle.IsInRangeOf(targetPosition, 30.0f));
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && !spawnedVehicle.IsInRangeOf(targetPosition, 30.0f));
                 }
             }
 

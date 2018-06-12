@@ -3,9 +3,7 @@ using GTA.Math;
 using GTA.Native;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 
 namespace YouAreNotAlone
 {
@@ -90,14 +88,13 @@ namespace YouAreNotAlone
 
         public static Vector3 GetSafePositionIn(float radius)
         {
-            Entity[] nearbyEntities = World.GetNearbyEntities(Game.Player.Character.Position, radius);
+            List<Entity> nearbyEntities = new List<Entity>(World.GetNearbyEntities(Game.Player.Character.Position, radius));
 
-            if (nearbyEntities.Length > 0)
+            if (nearbyEntities.Count > 0)
             {
-                foreach (Entity en in nearbyEntities)
-                {
-                    if (ThereIs(en) && SomethingIsBetweenPlayerAnd(en)) return en.Position;
-                }
+                Entity en = nearbyEntities.Find(e => ThereIs(e) && SomethingIsBetweenPlayerAnd(e));
+
+                if (ThereIs(en)) return en.Position;
             }
 
             return Vector3.Zero;
@@ -105,14 +102,13 @@ namespace YouAreNotAlone
 
         public static Vector3 GetSafePositionNear(Vector3 position)
         {
-            Entity[] nearbyEntities = World.GetNearbyEntities(position, 100.0f);
+            List<Entity> nearbyEntities = new List<Entity>(World.GetNearbyEntities(position, 100.0f));
 
-            if (nearbyEntities.Length > 0)
+            if (nearbyEntities.Count > 0)
             {
-                foreach (Entity en in nearbyEntities)
-                {
-                    if (ThereIs(en) && SomethingIsBetweenPlayerAnd(en)) return en.Position;
-                }
+                Entity en = nearbyEntities.Find(e => ThereIs(e) && SomethingIsBetweenPlayerAnd(e));
+
+                if (ThereIs(en)) return en.Position;
             }
 
             return Vector3.Zero;
@@ -207,12 +203,6 @@ namespace YouAreNotAlone
                 v.ToggleMod(VehicleToggleMod.Turbo, true);
                 v.ToggleMod(VehicleToggleMod.XenonHeadlights, dice.Next(2) == 1);
 
-                if (withTireSmoke)
-                {
-                    v.ToggleMod(VehicleToggleMod.TireSmoke, true);
-                    v.TireSmokeColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
-                }
-
                 v.CanTiresBurst = dice.Next(2) == 1;
                 v.WindowTint = (VehicleWindowTint)tints.GetValue(dice.Next(tints.Length));
 
@@ -245,6 +235,12 @@ namespace YouAreNotAlone
                     }
 
                     v.RimColor = (VehicleColor)wheelColors[dice.Next(wheelColors.Length)];
+                }
+
+                if (withTireSmoke)
+                {
+                    v.ToggleMod(VehicleToggleMod.TireSmoke, true);
+                    v.TireSmokeColor = Color.FromKnownColor((KnownColor)neonColors.GetValue(dice.Next(neonColors.Length)));
                 }
             }
         }
@@ -378,6 +374,7 @@ namespace YouAreNotAlone
                 case DispatchManager.DispatchType.ArmyRoadBlock:
                     {
                         if (armyRelationships.Contains(relationship)) armyRelationships.Remove(relationship);
+
                         break;
                     }
 
@@ -386,41 +383,49 @@ namespace YouAreNotAlone
                 case DispatchManager.DispatchType.CopRoadBlock:
                     {
                         if (copRelationships.Contains(relationship)) copRelationships.Remove(relationship);
+
                         break;
                     }
             }
         }
 
-        public static bool AnyEmergencyIsNear(Vector3 position, DispatchManager.DispatchType type)
+        public static bool AnyEmergencyIsNear(Vector3 position, DispatchManager.DispatchType dispatchType, EventManager.EventType eventType)
         {
-            Ped[] nearbyPeds = World.GetNearbyPeds(position, 100.0f);
+            List<Ped> nearbyPeds = new List<Ped>(World.GetNearbyPeds(position, 100.0f));
 
-            if (nearbyPeds.Length < 1) return false;
+            if (nearbyPeds.Count < 1) return false;
 
-            foreach (Ped p in nearbyPeds)
+            List<int> relationships = dispatchType.Equals(DispatchManager.DispatchType.Army) ? armyRelationships : copRelationships;
+            int max = 0;
+
+            switch (eventType)
             {
-                if (!p.Equals(Game.Player.Character) && !p.IsDead)
-                {
-                    switch (type)
-                    {
-                        case DispatchManager.DispatchType.Army:
-                            {
-                                if (armyRelationships.Contains(p.RelationshipGroup) && p.IsPersistent) return true;
+                case EventManager.EventType.AggressiveDriver:
+                case EventManager.EventType.GangTeam:
+                    max = 2;
 
-                                break;
-                            }
+                    break;
 
-                        case DispatchManager.DispatchType.Cop:
-                            {
-                                if (copRelationships.Contains(p.RelationshipGroup) && p.IsPersistent) return true;
+                case EventManager.EventType.Carjacker:
+                case EventManager.EventType.None:
+                    max = 0;
 
-                                break;
-                            }
-                    }
-                }
+                    break;
+
+                case EventManager.EventType.Massacre:
+                case EventManager.EventType.Driveby:
+                case EventManager.EventType.Racer:
+                    max = 4;
+
+                    break;
+
+                case EventManager.EventType.Terrorist:
+                    max = 6;
+
+                    break;
             }
 
-            return false;
+            return (nearbyPeds.FindAll(p => !p.Equals(Game.Player.Character) && WeCanGiveTaskTo(p) && relationships.Contains(p.RelationshipGroup))).Count > max;
         }
 
         public static Road GetNextPositionOnStreetWithHeading(Vector3 position)
