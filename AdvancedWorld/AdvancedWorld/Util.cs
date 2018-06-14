@@ -88,13 +88,11 @@ namespace YouAreNotAlone
 
         public static Vector3 GetSafePositionIn(float radius)
         {
-            List<Entity> nearbyEntities = new List<Entity>(World.GetNearbyEntities(Game.Player.Character.Position, radius));
-
-            if (nearbyEntities.Count > 0)
+            for (int i = 0; i < 20; i++)
             {
-                Entity en = nearbyEntities.Find(e => ThereIs(e) && SomethingIsBetweenPlayerAnd(e));
+                Vector3 v3 = Game.Player.Character.Position.Around(radius);
 
-                if (ThereIs(en)) return en.Position;
+                if (SomethingIsBetweenPlayerPositionAnd(v3)) return v3;
             }
 
             return Vector3.Zero;
@@ -102,13 +100,11 @@ namespace YouAreNotAlone
 
         public static Vector3 GetSafePositionNear(Vector3 position)
         {
-            List<Entity> nearbyEntities = new List<Entity>(World.GetNearbyEntities(position, 100.0f));
-
-            if (nearbyEntities.Count > 0)
+            for (int i = 0; i < 20; i++)
             {
-                Entity en = nearbyEntities.Find(e => ThereIs(e) && SomethingIsBetweenPlayerAnd(e));
+                Vector3 v3 = position.Around(100.0f);
 
-                if (ThereIs(en)) return en.Position;
+                if (SomethingIsBetweenPlayerPositionAnd(v3)) return v3;
             }
 
             return Vector3.Zero;
