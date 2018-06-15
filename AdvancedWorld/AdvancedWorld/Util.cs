@@ -477,7 +477,7 @@ namespace YouAreNotAlone
             }
         }
 
-        public static void AddCriminal(int relationship, DispatchManager.DispatchType type)
+        public static void AddCriminalsWhoHave(int relationship, DispatchManager.DispatchType type)
         {
             switch (type)
             {

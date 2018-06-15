@@ -162,35 +162,35 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (!TargetIsFound())
-            {
-                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
-                {
-                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
-                    Restore(false);
-
-                    return true;
-                }
-                else
-                {
-                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
-                    SetPedsOffDuty();
-                }
-            }
-            else
+            if (TargetIsFound())
             {
                 if (offDuty) offDuty = false;
-                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                {
+                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || spawnedVehicle.IsInAir);
+                }
+                else
                 {
                     Logger.Write(blipName + ": Target found but too far from player. Time to be restored.", name);
                     Restore(false);
 
                     return true;
                 }
+            }
+            else
+            {
+                if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+                {
+                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
+                    SetPedsOffDuty();
+                }
                 else
                 {
-                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
-                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || spawnedVehicle.IsInAir);
+                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
+                    Restore(false);
+
+                    return true;
                 }
             }
 

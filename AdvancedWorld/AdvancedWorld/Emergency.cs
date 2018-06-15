@@ -176,7 +176,8 @@ namespace YouAreNotAlone
                 }
                 else if (!this.GetType().Equals(typeof(EmergencyHeli)) || !spawnedVehicle.IsInAir)
                 {
-                    if (!VehicleSeatsCanBeSeatedBy(members))
+                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
+                    else
                     {
                         Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
@@ -185,7 +186,6 @@ namespace YouAreNotAlone
                             if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
-                    else Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
                 }
             }
             else
@@ -227,7 +227,7 @@ namespace YouAreNotAlone
                     }
                     else
                     {
-                        Logger.Write(blipName + ": Near the criminals. Time to get out of vehicle.", name);
+                        Logger.Write(blipName + ": Near the criminals. Time to brake.", name);
 
                         foreach (Ped p in members)
                         {
@@ -299,7 +299,8 @@ namespace YouAreNotAlone
                 }
                 else if (!this.GetType().Equals(typeof(EmergencyHeli)) || !spawnedVehicle.IsInAir)
                 {
-                    if (!VehicleSeatsCanBeSeatedBy(members))
+                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(blipName + ": Assigned seats successfully when off duty.", name);
+                    else
                     {
                         Logger.Write(blipName + ": Something wrong with assigning seats when off duty. Re-enter everyone.", name);
 
@@ -308,14 +309,13 @@ namespace YouAreNotAlone
                             if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
-                    else Logger.Write(blipName + ": Assigned seats successfully when off duty.", name);
                 }
             }
         }
 
         protected bool TargetIsFound()
         {
-            if (Util.ThereIs(target) && Util.WeCanGiveTaskTo((Ped)target) && spawnedVehicle.IsInRangeOf(target.Position, 150.0f)) return true;
+            if (Util.ThereIs(target) && target.Model.IsPed && Util.WeCanGiveTaskTo((Ped)target) && spawnedVehicle.IsInRangeOf(target.Position, 150.0f)) return true;
 
             target = null;
             List<Ped> nearbyPeds = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f));
@@ -327,7 +327,7 @@ namespace YouAreNotAlone
                 if (Util.ThereIs(selectedPed))
                 {
                     Logger.Write(blipName + ": Found target.", name);
-                    Util.AddCriminal(selectedPed.RelationshipGroup, emergencyType == "ARMY" ? DispatchManager.DispatchType.Army : DispatchManager.DispatchType.Cop);
+                    Util.AddCriminalsWhoHave(selectedPed.RelationshipGroup, emergencyType == "ARMY" ? DispatchManager.DispatchType.Army : DispatchManager.DispatchType.Cop);
                     target = selectedPed;
 
                     return true;
@@ -381,35 +381,35 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (!TargetIsFound())
-            {
-                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
-                {
-                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
-                    Restore(false);
-
-                    return true;
-                }
-                else
-                {
-                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
-                    SetPedsOffDuty();
-                }
-            }
-            else
+            if (TargetIsFound())
             {
                 if (offDuty) offDuty = false;
-                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                {
+                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && (!spawnedVehicle.IsInRangeOf(target.Position, 30.0f) || (target.Model.IsPed && ((Ped)target).IsInVehicle() && ((Ped)target).CurrentVehicle.Speed > 10.0f)));
+                }
+                else
                 {
                     Logger.Write(blipName + ": Target found but too far from player. Time to be restored.", name);
                     Restore(false);
 
                     return true;
                 }
+            }
+            else
+            {
+                if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+                {
+                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
+                    SetPedsOffDuty();
+                }
                 else
                 {
-                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
-                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && (!spawnedVehicle.IsInRangeOf(target.Position, 30.0f) || (target.Model.IsPed && ((Ped)target).IsInVehicle() && ((Ped)target).CurrentVehicle.Speed > 10.0f)));
+                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
+                    Restore(false);
+
+                    return true;
                 }
             }
 

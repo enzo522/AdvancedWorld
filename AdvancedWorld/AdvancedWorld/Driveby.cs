@@ -243,7 +243,8 @@ namespace YouAreNotAlone
             }
             else
             {
-                if (!VehicleSeatsCanBeSeatedBy(members))
+                if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write("Driveby: Assigned seats successfully.", name);
+                else
                 {
                     Logger.Write("Driveby: Something wrong with assigning seats. Re-enter everyone.", name);
 
@@ -252,7 +253,6 @@ namespace YouAreNotAlone
                         if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
                     }
                 }
-                else Logger.Write("Driveby: Assigned seats successfully.", name);
             }
 
             return false;

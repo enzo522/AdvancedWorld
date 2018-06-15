@@ -71,19 +71,21 @@ namespace YouAreNotAlone
 
                     return false;
                 }
+                
+                AddVarietyTo(p);
+                p.Weapons.RemoveAll();
+                p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
+                p.AlwaysKeepTask = true;
+                p.BlockPermanentEvents = true;
 
                 if (emergencyType == "FIREMAN")
                 {
-                    p.Weapons.Give(WeaponHash.FireExtinguisher, 100, true, true);
+                    p.Weapons.Give(WeaponHash.FireExtinguisher, 100, false, true);
                     p.Weapons.Current.InfiniteAmmo = true;
                     p.CanSwitchWeapons = true;
                     p.IsFireProof = true;
                 }
 
-                AddVarietyTo(p);
-                p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
-                p.AlwaysKeepTask = true;
-                p.BlockPermanentEvents = true;
                 Logger.Write(blipName + ": Characteristics are set.", name);
             }
 
@@ -204,35 +206,35 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (!TargetIsFound())
-            {
-                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
-                {
-                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
-                    Restore(false);
-
-                    return true;
-                }
-                else
-                {
-                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
-                    SetPedsOffDuty();
-                }
-            }
-            else
+            if (TargetIsFound())
             {
                 if (offDuty) offDuty = false;
-                if (!spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+                {
+                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
+                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && !spawnedVehicle.IsInRangeOf(targetPosition, 30.0f));
+                }
+                else
                 {
                     Logger.Write(blipName + ": Target found but too far from player. Time to be restored.", name);
                     Restore(false);
 
                     return true;
                 }
+            }
+            else
+            {
+                if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
+                {
+                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
+                    SetPedsOffDuty();
+                }
                 else
                 {
-                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
-                    SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && !spawnedVehicle.IsInRangeOf(targetPosition, 30.0f));
+                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
+                    Restore(false);
+
+                    return true;
                 }
             }
 

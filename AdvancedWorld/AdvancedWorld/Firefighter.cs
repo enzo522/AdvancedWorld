@@ -36,7 +36,8 @@ namespace YouAreNotAlone
                 }
                 else
                 {
-                    if (!VehicleSeatsCanBeSeatedBy(members))
+                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
+                    else
                     {
                         Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
@@ -45,7 +46,6 @@ namespace YouAreNotAlone
                             if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
                         }
                     }
-                    else Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
                 }
             }
             else
@@ -54,7 +54,7 @@ namespace YouAreNotAlone
                 {
                     foreach (Ped p in members)
                     {
-                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && !p.IsInVehicle(spawnedVehicle)) p.Task.ClearAllImmediately();
+                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsOnFoot) p.Task.ClearAllImmediately();
                     }
 
                     target = null;
@@ -67,15 +67,19 @@ namespace YouAreNotAlone
 
                     foreach (Ped p in members)
                     {
-                        if (p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))
+                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                         {
-                            TaskSequence ts = new TaskSequence();
-                            ts.AddTask.RunTo(targetPosition.Around(3.0f));
-                            ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
-                            ts.Close();
+                            if (p.TaskSequenceProgress < 0)
+                            {
+                                TaskSequence ts = new TaskSequence();
+                                ts.AddTask.RunTo(targetPosition.Around(3.0f));
+                                ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
+                                ts.Close();
 
-                            p.Task.PerformSequence(ts);
-                            ts.Dispose();
+                                p.Task.PerformSequence(ts);
+                                ts.Dispose();
+                            }
+                            else if (!p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher)) p.Weapons.Select(WeaponHash.FireExtinguisher, true);
                         }
                     }
                 }
