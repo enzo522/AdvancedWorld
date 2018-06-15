@@ -50,20 +50,33 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write(blipName + ": Time to put off fires.", name);
-                AddEmergencyBlip(false);
-
-                foreach (Ped p in members)
+                if (Util.ThereIs(target) && !target.Position.Equals(targetPosition))
                 {
-                    if (p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))
+                    foreach (Ped p in members)
                     {
-                        TaskSequence ts = new TaskSequence();
-                        ts.AddTask.RunTo(targetPosition.Around(3.0f));
-                        ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
-                        ts.Close();
+                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && !p.IsInVehicle(spawnedVehicle)) p.Task.ClearAllImmediately();
+                    }
 
-                        p.Task.PerformSequence(ts);
-                        ts.Dispose();
+                    target = null;
+                    targetPosition = Vector3.Zero;
+                }
+                else
+                {
+                    Logger.Write(blipName + ": Time to put off fires.", name);
+                    AddEmergencyBlip(false);
+
+                    foreach (Ped p in members)
+                    {
+                        if (p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))
+                        {
+                            TaskSequence ts = new TaskSequence();
+                            ts.AddTask.RunTo(targetPosition.Around(3.0f));
+                            ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
+                            ts.Close();
+
+                            p.Task.PerformSequence(ts);
+                            ts.Dispose();
+                        }
                     }
                 }
             }

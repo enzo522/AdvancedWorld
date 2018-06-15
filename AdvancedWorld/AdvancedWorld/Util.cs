@@ -255,7 +255,7 @@ namespace YouAreNotAlone
                         foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
                         criminalRelationships.Add(newRel);
-
+                        
                         break;
                     }
 
@@ -363,6 +363,8 @@ namespace YouAreNotAlone
 
         public static void CleanUp(int relationship, DispatchManager.DispatchType type)
         {
+            World.RemoveRelationshipGroup(relationship);
+
             switch (type)
             {
                 case DispatchManager.DispatchType.Army:
@@ -390,8 +392,7 @@ namespace YouAreNotAlone
             List<Ped> nearbyPeds = new List<Ped>(World.GetNearbyPeds(position, 100.0f));
 
             if (nearbyPeds.Count < 1) return false;
-
-            List<int> relationships = dispatchType.Equals(DispatchManager.DispatchType.Army) ? armyRelationships : copRelationships;
+            
             int max = 0;
 
             switch (eventType)
@@ -421,7 +422,9 @@ namespace YouAreNotAlone
                     break;
             }
 
-            return (nearbyPeds.FindAll(p => !p.Equals(Game.Player.Character) && WeCanGiveTaskTo(p) && relationships.Contains(p.RelationshipGroup))).Count > max;
+            return dispatchType.Equals(DispatchManager.DispatchType.Army) ?
+                (nearbyPeds.FindAll(p => ThereIs(p) && WeCanGiveTaskTo(p) && armyRelationships.Contains(p.RelationshipGroup))).Count > max :
+                (nearbyPeds.FindAll(p => ThereIs(p) && WeCanGiveTaskTo(p) && copRelationships.Contains(p.RelationshipGroup))).Count > max;
         }
 
         public static Road GetNextPositionOnStreetWithHeading(Vector3 position)
@@ -471,6 +474,33 @@ namespace YouAreNotAlone
                 if (BlipIsOn(en)) en.CurrentBlip.Remove();
 
                 en.MarkAsNoLongerNeeded();
+            }
+        }
+
+        public static void AddCriminal(int relationship, DispatchManager.DispatchType type)
+        {
+            switch (type)
+            {
+                case DispatchManager.DispatchType.Army:
+                    foreach (int i in armyRelationships)
+                    {
+                        if (!World.GetRelationshipBetweenGroups(relationship, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, relationship, i);
+                    }
+
+                    foreach (int i in copRelationships)
+                    {
+                        if (!World.GetRelationshipBetweenGroups(relationship, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, relationship, i);
+                    }
+
+                    break;
+
+                case DispatchManager.DispatchType.Cop:
+                    foreach (int i in copRelationships)
+                    {
+                        if (!World.GetRelationshipBetweenGroups(relationship, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, relationship, i);
+                    }
+
+                    break;
             }
         }
     }

@@ -205,7 +205,7 @@ namespace YouAreNotAlone
                 }
                 else
                 {
-                    if (spawnedVehicle.IsStopped)
+                    if (spawnedVehicle.Speed < 1)
                     {
                         Logger.Write(blipName + ": Time to fight on foot.", name);
                         AddEmergencyBlip(false);
@@ -327,6 +327,7 @@ namespace YouAreNotAlone
                 if (Util.ThereIs(selectedPed))
                 {
                     Logger.Write(blipName + ": Found target.", name);
+                    Util.AddCriminal(selectedPed.RelationshipGroup, emergencyType == "ARMY" ? DispatchManager.DispatchType.Army : DispatchManager.DispatchType.Cop);
                     target = selectedPed;
 
                     return true;

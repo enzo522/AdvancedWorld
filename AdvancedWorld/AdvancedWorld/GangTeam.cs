@@ -151,7 +151,8 @@ namespace YouAreNotAlone
                     continue;
                 }
 
-                if (!members[i].IsInCombat && Util.AnyEmergencyIsNear(members[i].Position, DispatchManager.DispatchType.Cop, EventManager.EventType.None) && Util.WeCanGiveTaskTo(members[i])) members[i].Task.PerformSequence(ts);
+                if (!members[i].IsInCombat && Util.ThereIs(new List<Ped>(World.GetNearbyPeds(members[i], 100.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup).Equals(Relationship.Hate))))
+                    members[i].Task.PerformSequence(ts);
 
                 spawnedPed = members[i];
             }
@@ -159,9 +160,7 @@ namespace YouAreNotAlone
             if (members.Count < 1)
             {
                 Logger.Write("GangTeam: Everyone is gone. Time to be disposed.", "");
-
-                if (relationship != 0) Util.CleanUp(relationship);
-                if (ts != null) ts.Dispose();
+                Restore(false);
 
                 return true;
             }
