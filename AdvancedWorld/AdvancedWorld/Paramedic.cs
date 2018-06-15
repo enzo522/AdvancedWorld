@@ -65,15 +65,23 @@ namespace YouAreNotAlone
             {
                 if (!targetPosition.Equals(Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f)))
                 {
-                    foreach (Ped p in members)
+                    if (!Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress == 3)) && checkedPeds.Contains(target.Handle))
                     {
-                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && !p.IsInVehicle(spawnedVehicle)) p.Task.ClearAllImmediately();
-                    }
+                        checkedPeds.Remove(target.Handle);
 
-                    if (!Util.ThereIs(members.Find(p => p.TaskSequenceProgress == 3)) && checkedPeds.Contains(target.Handle)) checkedPeds.Remove(target.Handle);
-                    
-                    target = null;
-                    targetPosition = Vector3.Zero;
+                        foreach (Ped p in members)
+                        {
+                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && !p.IsInVehicle(spawnedVehicle)) p.Task.ClearAllImmediately();
+                        }
+                        
+                        target = null;
+                        targetPosition = Vector3.Zero;
+                    }
+                }
+                else if ((!Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress < 2)) || Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress == 3))) && !checkedPeds.Contains(target.Handle))
+                {
+                    Logger.Write(blipName + ": A dead body is checked.", name);
+                    checkedPeds.Add(target.Handle);
                 }
                 else
                 {
@@ -95,12 +103,6 @@ namespace YouAreNotAlone
                             p.Task.PerformSequence(ts);
                             ts.Dispose();
                         }
-                    }
-
-                    if ((!Util.ThereIs(members.Find(p => p.TaskSequenceProgress < 2)) || Util.ThereIs(members.Find(p => p.TaskSequenceProgress == 3))) && !checkedPeds.Contains(target.Handle))
-                    {
-                        Logger.Write(blipName + ": A dead body is checked.", name);
-                        checkedPeds.Add(target.Handle);
                     }
                 }
             }
