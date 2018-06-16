@@ -55,10 +55,8 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsOnFoot && !p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher))))
                     {
-                        foreach (Ped p in members)
-                        {
-                            if (!p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher)) p.Weapons.Select(WeaponHash.FireExtinguisher, true);
-                        }
+                        foreach (Ped ped in members.FindAll(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsOnFoot && !p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher)))
+                            ped.Weapons.Select(WeaponHash.FireExtinguisher, true);
                     }
                     else
                     {
