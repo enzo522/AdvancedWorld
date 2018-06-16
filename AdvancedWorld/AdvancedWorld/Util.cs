@@ -47,6 +47,7 @@ namespace YouAreNotAlone
         private static List<int> copRelationships = new List<int> { Function.Call<int>(Hash.GET_HASH_KEY, "COP") };
         private static List<int> armyRelationships = new List<int> { Function.Call<int>(Hash.GET_HASH_KEY, "ARMY") };
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
+        private static int pedCriminal = World.AddRelationshipGroup("PEDCRIMINAL");
         private static int count = 0;
 
         public static int GetRandomIntBelow(int maxValue)
@@ -477,31 +478,14 @@ namespace YouAreNotAlone
             }
         }
 
-        public static void AddCriminalsWhoHave(int relationship, DispatchManager.DispatchType type)
+        public static void SetAsCriminalWhoIs(Ped p)
         {
-            switch (type)
+            foreach (int i in copRelationships)
             {
-                case DispatchManager.DispatchType.Army:
-                    foreach (int i in armyRelationships)
-                    {
-                        if (!World.GetRelationshipBetweenGroups(relationship, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, relationship, i);
-                    }
-
-                    foreach (int i in copRelationships)
-                    {
-                        if (!World.GetRelationshipBetweenGroups(relationship, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, relationship, i);
-                    }
-
-                    break;
-
-                case DispatchManager.DispatchType.Cop:
-                    foreach (int i in copRelationships)
-                    {
-                        if (!World.GetRelationshipBetweenGroups(relationship, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, relationship, i);
-                    }
-
-                    break;
+                if (!World.GetRelationshipBetweenGroups(pedCriminal, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, pedCriminal, i);
             }
+
+            p.RelationshipGroup = pedCriminal;
         }
     }
 }

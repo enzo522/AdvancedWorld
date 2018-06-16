@@ -24,6 +24,14 @@ namespace YouAreNotAlone
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)
         {
+            if (!Util.ThereIs(target) || !target.Model.IsPed)
+            {
+                target = null;
+                targetPosition = Vector3.Zero;
+
+                return;
+            }
+
             if (onVehicleDuty)
             {
                 if (ReadyToGoWith(members))
@@ -63,21 +71,9 @@ namespace YouAreNotAlone
             }
             else
             {
-                if (Util.ThereIs(target) && target.Model.IsPed)
+                if (spawnedVehicle.Speed < 1)
                 {
-                    if (!targetPosition.Equals(Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f)))
-                    {
-                        if (!Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress == 3)) && checkedPeds.Contains(target.Handle)) checkedPeds.Remove(target.Handle);
-
-                        foreach (Ped p in members)
-                        {
-                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsOnFoot) p.Task.ClearAllImmediately();
-                        }
-
-                        target = null;
-                        targetPosition = Vector3.Zero;
-                    }
-                    else if ((!Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress < 2)) || Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress == 3))) && !checkedPeds.Contains(target.Handle))
+                    if ((!Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress < 2)) || Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress == 3))) && !checkedPeds.Contains(target.Handle))
                     {
                         Logger.Write(blipName + ": A dead body is checked.", name);
                         checkedPeds.Add(target.Handle);
@@ -85,30 +81,36 @@ namespace YouAreNotAlone
                     else
                     {
                         Logger.Write(blipName + ": Time to investigate dead bodies.", name);
-                        AddEmergencyBlip(false);
 
                         foreach (Ped p in members)
                         {
-                            if (Util.ThereIs(p) && p.TaskSequenceProgress < 0 && Util.WeCanGiveTaskTo(p))
+                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                             {
-                                Vector3 dest = targetPosition.Around(1.0f);
-                                TaskSequence ts = new TaskSequence();
-                                ts.AddTask.RunTo(dest);
-                                ts.AddTask.AchieveHeading((targetPosition - dest).ToHeading());
-                                Function.Call(Hash.TASK_START_SCENARIO_IN_PLACE, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], 0, 1);
-                                ts.AddTask.Wait(1000);
-                                ts.Close();
+                                if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                                else if (p.TaskSequenceProgress < 0)
+                                {
+                                    AddEmergencyBlip(false);
+                                    Vector3 dest = targetPosition.Around(1.0f);
 
-                                p.Task.PerformSequence(ts);
-                                ts.Dispose();
+                                    TaskSequence ts = new TaskSequence();
+                                    ts.AddTask.RunTo(dest);
+                                    ts.AddTask.AchieveHeading((targetPosition - dest).ToHeading());
+                                    Function.Call(Hash.TASK_START_SCENARIO_IN_PLACE, 0, scenarios[Util.GetRandomIntBelow(scenarios.Count)], 0, 1);
+                                    ts.AddTask.Wait(1000);
+                                    ts.Close();
+
+                                    p.Task.PerformSequence(ts);
+                                    ts.Dispose();
+                                }
                             }
                         }
                     }
                 }
                 else
                 {
-                    target = null;
-                    targetPosition = Vector3.Zero;
+                    Logger.Write(blipName + ": Near dead bodies. Time to brake.", name);
+
+                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
                 }
             }
         }
@@ -119,20 +121,15 @@ namespace YouAreNotAlone
 
             target = null;
             targetPosition = Vector3.Zero;
-            List<Ped> nearbyPeds = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 200.0f));
+            Ped selectedPed = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 200.0f)).Find(p => Util.ThereIs(p) && p.IsDead && !checkedPeds.Contains(p.Handle));
 
-            if (nearbyPeds.Count > 0)
+            if (Util.ThereIs(selectedPed))
             {
-                Ped selectedPed = nearbyPeds.Find(p => Util.ThereIs(p) && p.IsDead && !checkedPeds.Contains(p.Handle));
+                Logger.Write(blipName + ": Found a dead body.", name);
+                target = selectedPed;
+                targetPosition = Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f);
 
-                if (Util.ThereIs(selectedPed))
-                {
-                    Logger.Write(blipName + ": Found a dead body.", name);
-                    target = selectedPed;
-                    targetPosition = Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f);
-
-                    return true;
-                }
+                return true;
             }
 
             Logger.Write(blipName + ": There is no dead body.", name);

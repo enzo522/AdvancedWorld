@@ -135,7 +135,14 @@ namespace YouAreNotAlone
                 ts.AddTask.FightAgainstHatedTargets(400.0f);
                 ts.Close();
             }
-            
+
+            if (!Util.ThereIs(target) || !target.Model.IsPed)
+            {
+                target = null;
+
+                return;
+            }
+
             if (onVehicleDuty)
             {
                 if (ReadyToGoWith(members))
@@ -156,7 +163,7 @@ namespace YouAreNotAlone
                                     if (this.GetType().Equals(typeof(EmergencyHeli))) Function.Call(Hash.TASK_VEHICLE_HELI_PROTECT, p, spawnedVehicle, target, 50.0f, 32, 25.0f, 35, 1);
                                     else
                                     {
-                                        if (target.Model.IsPed && ((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
+                                        if (((Ped)target).IsInVehicle()) p.Task.VehicleChase((Ped)target);
                                         else p.Task.DriveTo(spawnedVehicle, target.Position, 10.0f, 100.0f, 262708); // 4 + 16 + 32 + 512 + 262144
                                     }
                                 }
@@ -315,20 +322,28 @@ namespace YouAreNotAlone
 
         protected bool TargetIsFound()
         {
-            if (Util.ThereIs(target) && target.Model.IsPed && Util.WeCanGiveTaskTo((Ped)target) && spawnedVehicle.IsInRangeOf(target.Position, 150.0f)) return true;
+            if (Util.ThereIs(target) && target.Model.IsPed && Util.WeCanGiveTaskTo((Ped)target) && spawnedVehicle.IsInRangeOf(target.Position, 150.0f) && World.GetRelationshipBetweenGroups(relationship, ((Ped)target).RelationshipGroup).Equals(Relationship.Hate)) return true;
 
             target = null;
-            List<Ped> nearbyPeds = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f));
+            Ped criminal = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup).Equals(Relationship.Hate));
 
-            if (nearbyPeds.Count > 0)
+            if (Util.ThereIs(criminal))
             {
-                Ped selectedPed = nearbyPeds.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup).Equals(Relationship.Hate));
+                Logger.Write(blipName + ": Found target.", name);
+                target = criminal;
 
-                if (Util.ThereIs(selectedPed))
+                return true;
+            }
+
+            if (emergencyType != "ARMY")
+            {
+                Ped combatingPed = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsInCombat && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup) > Relationship.Like);
+
+                if (Util.ThereIs(combatingPed))
                 {
-                    Logger.Write(blipName + ": Found target.", name);
-                    Util.AddCriminalsWhoHave(selectedPed.RelationshipGroup, emergencyType == "ARMY" ? DispatchManager.DispatchType.Army : DispatchManager.DispatchType.Cop);
-                    target = selectedPed;
+                    Logger.Write(blipName + ": Found new target.", name);
+                    Util.SetAsCriminalWhoIs(combatingPed);
+                    target = combatingPed;
 
                     return true;
                 }

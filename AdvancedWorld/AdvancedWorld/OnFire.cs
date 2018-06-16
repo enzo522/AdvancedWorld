@@ -76,10 +76,8 @@ namespace YouAreNotAlone
                     return true;
                 }
             }
-
-            List<Entity> nearbyEntities = new List<Entity>(World.GetNearbyEntities(OnFireVehicle.Position, 200.0f));
-
-            if (nearbyEntities.Count > 0 && Util.ThereIs(nearbyEntities.Find(e => Util.ThereIs(e) && e.IsOnFire)))
+            
+            if (Util.ThereIs(new List<Entity>(World.GetNearbyEntities(OnFireVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire)))
             {
                 Logger.Write("OnFire: Found entity on fire.", "");
 

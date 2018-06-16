@@ -104,7 +104,6 @@ namespace YouAreNotAlone
             spawnedVehicle.IsPersistent = true;
 
             TaskSequence ts = new TaskSequence();
-            ts.AddTask.ClearAll();
             ts.AddTask.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
             ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, 262692); // 4 + 32 + 512 + 262144
             ts.Close();
@@ -143,7 +142,7 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 100.0f) || !Util.WeCanEnter(spawnedVehicle) || Util.ThereIs(spawnedPed.GetJacker())) FindNewVehicle();
+            if (!Util.ThereIs(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(spawnedPed.Position, 50.0f) || !Util.WeCanEnter(spawnedVehicle) || spawnedPed.IsBeingJacked) FindNewVehicle();
             if (Util.ThereIs(spawnedVehicle) && spawnedPed.IsInVehicle(spawnedVehicle) && spawnedPed.RelationshipGroup != relationship) spawnedPed.RelationshipGroup = relationship;
 
             CheckDispatch();

@@ -11,6 +11,7 @@ namespace YouAreNotAlone
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)
         {
+            if (targetPosition.Equals(Vector3.Zero)) return;
             if (onVehicleDuty)
             {
                 if (ReadyToGoWith(members))
@@ -50,38 +51,50 @@ namespace YouAreNotAlone
             }
             else
             {
-                if (Util.ThereIs(target) && !target.Position.Equals(targetPosition))
+                if (spawnedVehicle.Speed < 1)
                 {
-                    foreach (Ped p in members)
+                    if (Util.ThereIs(members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsOnFoot && !p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher))))
                     {
-                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsOnFoot) p.Task.ClearAllImmediately();
+                        foreach (Ped p in members)
+                        {
+                            if (!p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher)) p.Weapons.Select(WeaponHash.FireExtinguisher, true);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Write(blipName + ": Time to put off fires.", name);
+
+                        foreach (Ped p in members)
+                        {
+                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
+                            {
+                                if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                                else if (p.TaskSequenceProgress < 0)
+                                {
+                                    AddEmergencyBlip(false);
+
+                                    TaskSequence ts = new TaskSequence();
+                                    ts.AddTask.RunTo(targetPosition.Around(3.0f));
+                                    ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
+                                    ts.Close();
+
+                                    p.Task.PerformSequence(ts);
+                                    ts.Dispose();
+                                }
+                            }
+                        }
                     }
 
-                    target = null;
-                    targetPosition = Vector3.Zero;
+                    if (Util.ThereIs(members.Find(p => Util.ThereIs(p) && p.TaskSequenceProgress == 1)))
+                    {
+                        Function.Call(Hash.STOP_FIRE_IN_RANGE, targetPosition.X, targetPosition.Y, targetPosition.Z, 3.0f);
+                    }
                 }
                 else
                 {
-                    Logger.Write(blipName + ": Time to put off fires.", name);
-                    AddEmergencyBlip(false);
+                    Logger.Write(blipName + ": Near fires. Time to brake.", name);
 
-                    foreach (Ped p in members)
-                    {
-                        if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
-                        {
-                            if (p.TaskSequenceProgress < 0)
-                            {
-                                TaskSequence ts = new TaskSequence();
-                                ts.AddTask.RunTo(targetPosition.Around(3.0f));
-                                ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
-                                ts.Close();
-
-                                p.Task.PerformSequence(ts);
-                                ts.Dispose();
-                            }
-                            else if (!p.Weapons.Current.Hash.Equals(WeaponHash.FireExtinguisher)) p.Weapons.Select(WeaponHash.FireExtinguisher, true);
-                        }
-                    }
+                    if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
                 }
             }
         }
@@ -92,6 +105,18 @@ namespace YouAreNotAlone
 
             target = null;
             targetPosition = Vector3.Zero;
+            Entity en = new List<Entity>(World.GetNearbyEntities(spawnedVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire);
+
+            if (Util.ThereIs(en))
+            {
+                Logger.Write(blipName + ": Found entity on fire.", name);
+                target = en;
+                targetPosition = target.Position;
+
+                return true;
+            }
+
+            Logger.Write(blipName + ": Couldn't find entity on fire. Try to find fire position.", name);
             OutputArgument outPos = new OutputArgument();
 
             if (Function.Call<bool>(Hash.GET_CLOSEST_FIRE_POS, outPos, spawnedVehicle.Position.X, spawnedVehicle.Position.Y, spawnedVehicle.Position.Z))
@@ -102,23 +127,6 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(blipName + ": Found fire position.", name);
                     targetPosition = position;
-
-                    return true;
-                }
-            }
-
-            Logger.Write(blipName + ": Couldn't find fire position. Try to find entity on fire.", name);
-            List<Entity> nearbyEntities = new List<Entity>(World.GetNearbyEntities(spawnedVehicle.Position, 200.0f));
-
-            if (nearbyEntities.Count > 0)
-            {
-                Entity en = nearbyEntities.Find(e => Util.ThereIs(e) && e.IsOnFire);
-
-                if (Util.ThereIs(en))
-                {
-                    Logger.Write(blipName + ": Found entity on fire.", name);
-                    target = en;
-                    targetPosition = target.Position;
 
                     return true;
                 }
