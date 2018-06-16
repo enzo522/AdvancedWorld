@@ -80,7 +80,7 @@ namespace YouAreNotAlone
 
                 if (emergencyType == "FIREMAN")
                 {
-                    p.Weapons.Give(WeaponHash.FireExtinguisher, 100, false, true);
+                    p.Weapons.Give(WeaponHash.FireExtinguisher, 100, true, true);
                     p.Weapons.Current.InfiniteAmmo = true;
                     p.CanSwitchWeapons = true;
                     p.IsFireProof = true;
