@@ -7,7 +7,7 @@ namespace YouAreNotAlone
 {
     public class Firefighter : EmergencyFire
     {
-        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { Logger.ForceWrite(blipName + ": Time to put off fires.", this.name); }
+        public Firefighter(string name, Entity target) : base(name, target, "FIREMAN") { Logger.Write(true, blipName + ": Time to put off fires.", this.name); }
 
         protected override void SetPedsOnDuty(bool onVehicleDuty)
         {
@@ -18,7 +18,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
                     {
-                        Logger.Write(blipName + ": Time to go with vehicle.", name);
+                        Logger.Write(false, blipName + ": Time to go with vehicle.", name);
 
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
 
@@ -27,7 +27,7 @@ namespace YouAreNotAlone
                     }
                     else
                     {
-                        Logger.Write(blipName + ": There is no driver when on duty. Re-enter everyone.", name);
+                        Logger.Write(false, blipName + ": There is no driver when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -37,10 +37,10 @@ namespace YouAreNotAlone
                 }
                 else
                 {
-                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
+                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(false, blipName + ": Assigned seats successfully when on duty.", name);
                     else
                     {
-                        Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
+                        Logger.Write(false, blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -62,7 +62,7 @@ namespace YouAreNotAlone
                     }
                     else
                     {
-                        Logger.Write(blipName + ": Time to put off fires.", name);
+                        Logger.Write(false, blipName + ": Time to put off fires.", name);
 
                         foreach (Ped p in members)
                         {
@@ -92,7 +92,7 @@ namespace YouAreNotAlone
                 }
                 else
                 {
-                    Logger.Write(blipName + ": Near fires. Time to brake.", name);
+                    Logger.Write(false, blipName + ": Near fires. Time to brake.", name);
 
                     if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver)) Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
                 }
@@ -109,14 +109,14 @@ namespace YouAreNotAlone
 
             if (Util.ThereIs(en))
             {
-                Logger.Write(blipName + ": Found entity on fire.", name);
+                Logger.Write(false, blipName + ": Found entity on fire.", name);
                 target = en;
                 targetPosition = target.Position;
 
                 return true;
             }
 
-            Logger.Write(blipName + ": Couldn't find entity on fire. Try to find fire position.", name);
+            Logger.Write(false, blipName + ": Couldn't find entity on fire. Try to find fire position.", name);
             OutputArgument outPos = new OutputArgument();
 
             if (Function.Call<bool>(Hash.GET_CLOSEST_FIRE_POS, outPos, spawnedVehicle.Position.X, spawnedVehicle.Position.Y, spawnedVehicle.Position.Z))
@@ -125,14 +125,14 @@ namespace YouAreNotAlone
 
                 if (!position.Equals(Vector3.Zero) && spawnedVehicle.IsInRangeOf(position, 200.0f))
                 {
-                    Logger.Write(blipName + ": Found fire position.", name);
+                    Logger.Write(false, blipName + ": Found fire position.", name);
                     targetPosition = position;
 
                     return true;
                 }
             }
 
-            Logger.Write(blipName + ": There is no fire near.", name);
+            Logger.Write(false, blipName + ": There is no fire near.", name);
 
             return false;
         }

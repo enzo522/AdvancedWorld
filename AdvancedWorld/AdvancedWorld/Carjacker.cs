@@ -11,7 +11,7 @@ namespace YouAreNotAlone
         {
             this.radius = 0.0f;
             this.trycount = 0;
-            Logger.ForceWrite("Carjacker event selected.", "");
+            Logger.Write(true, "Carjacker event selected.", "");
         }
 
         public bool IsCreatedIn(float radius)
@@ -33,24 +33,24 @@ namespace YouAreNotAlone
 
                 if (!Util.ThereIs(selectedPed) || selectedPed.IsPersistent || selectedPed.Equals(Game.Player.Character) || !selectedPed.IsHuman || selectedPed.IsDead)
                 {
-                    Logger.Write("Carjacker: Couldn't use selected ped.", "");
+                    Logger.Write(false, "Carjacker: Couldn't use selected ped.", "");
 
                     continue;
                 }
 
-                Logger.Write("Carjacker: Found proper ped.", "");
+                Logger.Write(false, "Carjacker: Found proper ped.", "");
                 spawnedPed = selectedPed;
                 spawnedPed.IsPersistent = true;
                 spawnedPed.IsPriorityTargetForEnemies = true;
 
                 spawnedPed.AlwaysKeepTask = true;
                 spawnedPed.BlockPermanentEvents = true;
-                Logger.Write("Carjacker: Characteristics are set.", "");
+                Logger.Write(false, "Carjacker: Characteristics are set.", "");
 
                 if (!Util.BlipIsOn(spawnedPed))
                 {
                     Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
-                    Logger.Write("Carjacker: Selected carjacker successfully.", "");
+                    Logger.Write(false, "Carjacker: Selected carjacker successfully.", "");
                     FindNewVehicle();
 
                     return true;
@@ -65,12 +65,12 @@ namespace YouAreNotAlone
 
         private void FindNewVehicle()
         {
-            Logger.Write("Carjacker: Finding new vehicle to jack.", "");
+            Logger.Write(false, "Carjacker: Finding new vehicle to jack.", "");
             trycount++;
 
             Util.NaturallyRemove(spawnedVehicle);
             spawnedVehicle = null;
-            Logger.Write("Carjacker: Unset previous vehicle.", "");
+            Logger.Write(false, "Carjacker: Unset previous vehicle.", "");
 
             Vehicle[] nearbyVehicles = World.GetNearbyVehicles(spawnedPed.Position, radius / 2);
 
@@ -87,7 +87,7 @@ namespace YouAreNotAlone
 
                 if (Util.ThereIs(v) && Util.WeCanEnter(v) && !Game.Player.Character.IsInVehicle(v) && !spawnedPed.IsInVehicle(v))
                 {
-                    Logger.Write("Carjacker: Found proper vehicle.", "");
+                    Logger.Write(false, "Carjacker: Found proper vehicle.", "");
                     spawnedVehicle = v;
 
                     break;
@@ -110,21 +110,21 @@ namespace YouAreNotAlone
 
             spawnedPed.Task.PerformSequence(ts);
             ts.Dispose();
-            Logger.Write("Carjacker: Jack new vehicle.", "");
+            Logger.Write(false, "Carjacker: Jack new vehicle.", "");
         }
 
         public override void Restore(bool instantly)
         {
             if (instantly)
             {
-                Logger.Write("Carjacker: Restore instantly.", "");
+                Logger.Write(false, "Carjacker: Restore instantly.", "");
 
                 if (Util.ThereIs(spawnedPed)) spawnedPed.Delete();
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
             }
             else
             {
-                Logger.Write("Carjacker: Restore naturally.", "");
+                Logger.Write(false, "Carjacker: Restore naturally.", "");
                 Util.NaturallyRemove(spawnedPed);
                 Util.NaturallyRemove(spawnedVehicle);
             }
@@ -136,7 +136,7 @@ namespace YouAreNotAlone
         {
             if (!Util.ThereIs(spawnedPed) || trycount > 5 || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("Carjacker: Carjacker need to be restored.", "");
+                Logger.Write(false, "Carjacker: Carjacker need to be restored.", "");
                 Restore(false);
 
                 return true;

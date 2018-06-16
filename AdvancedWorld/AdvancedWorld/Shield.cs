@@ -56,7 +56,7 @@ namespace YouAreNotAlone
             Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, owner, 0, false);
             attached = false;
 
-            Logger.Write("Shield: Created shield successfully.", "");
+            Logger.Write(false, "Shield: Created shield successfully.", "");
 
             return true;
         }
@@ -65,13 +65,13 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("Shield: Restore instantly.", "");
+                Logger.Write(false, "Shield: Restore instantly.", "");
 
                 if (Util.ThereIs(shield)) shield.Delete();
             }
             else
             {
-                Logger.Write("Shield: Restore naturally.", "");
+                Logger.Write(false, "Shield: Restore naturally.", "");
                 Util.NaturallyRemove(shield);
             }
         }
@@ -80,7 +80,7 @@ namespace YouAreNotAlone
         {
             if (!Util.ThereIs(shield) || !Util.ThereIs(owner) || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("Shield: Shield need to be restored.", "");
+                Logger.Write(false, "Shield: Shield need to be restored.", "");
                 Restore(false);
 
                 return true;
@@ -103,7 +103,7 @@ namespace YouAreNotAlone
                 shield.AttachTo(owner, boneIndex, position, rotation);
                 shield.IsVisible = true;
                 attached = true;
-                Logger.Write("Shield: Attached to owner.", "");
+                Logger.Write(false, "Shield: Attached to owner.", "");
             }
         }
 
@@ -114,7 +114,7 @@ namespace YouAreNotAlone
                 shield.Detach();
                 shield.IsVisible = shouldBeVisible;
                 attached = false;
-                Logger.Write("Shield: Detached from owner.", "");
+                Logger.Write(false, "Shield: Detached from owner.", "");
             }
         }
     }

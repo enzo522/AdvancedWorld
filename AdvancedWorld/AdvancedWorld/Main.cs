@@ -231,7 +231,7 @@ namespace YouAreNotAlone
                 "firetruk"
             };
 
-            Logger.Write("Main: Added default models.", "");
+            Logger.Write(false, "Main: Added default models.", "");
             CheckDLCs();
             SetUp();
         }
@@ -240,7 +240,7 @@ namespace YouAreNotAlone
         {
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpapartment")))
             {
-                Logger.Write("Main: Found MPApartment.", "");
+                Logger.Write(false, "Main: Found MPApartment.", "");
                 racerCarNames.Add("verlierer2");
                 drivebyCarNames.Add("baller3");
                 armyHeliNames.Add("valkyrie2");
@@ -248,7 +248,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpassault")))
             {
-                Logger.Write("Main: Found MPAssault.", "");
+                Logger.Write(false, "Main: Found MPAssault.", "");
                 racerCarNames.Add("dominator3");
                 racerCarNames.Add("ellie");
                 racerCarNames.Add("entity2");
@@ -263,7 +263,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpbiker")))
             {
-                Logger.Write("Main: Found MPBiker.", "");
+                Logger.Write(false, "Main: Found MPBiker.", "");
                 racerBikeNames.Add("defiler");
                 racerBikeNames.Add("hakuchou2");
                 racerBikeNames.Add("shotaro");
@@ -275,7 +275,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpbusiness2")))
             {
-                Logger.Write("Main: Found MPBusiness2.", "");
+                Logger.Write(false, "Main: Found MPBusiness2.", "");
                 racerCarNames.Add("zentorno");
                 drivebyCarNames.Add("huntley");
                 drivebyCarNames.Add("thrust");
@@ -283,7 +283,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpchristmas2017")))
             {
-                Logger.Write("Main: Found MPChristmans2017.", "");
+                Logger.Write(false, "Main: Found MPChristmans2017.", "");
                 racerCarNames.Add("autarch");
                 racerCarNames.Add("comet5");
                 racerCarNames.Add("deluxo");
@@ -305,7 +305,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpexecutive")))
             {
-                Logger.Write("Main: Found MPExecutive.", "");
+                Logger.Write(false, "Main: Found MPExecutive.", "");
                 racerCarNames.Add("fmj");
                 racerCarNames.Add("pfister811");
                 racerCarNames.Add("prototipo");
@@ -315,7 +315,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpgunrunning")))
             {
-                Logger.Write("Main: Found MPGunrunning.", "");
+                Logger.Write(false, "Main: Found MPGunrunning.", "");
                 racerCarNames.Add("ardent");
                 racerCarNames.Add("cheetah2");
                 racerCarNames.Add("torero");
@@ -328,7 +328,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpheist")))
             {
-                Logger.Write("Main: Found MPHeist.", "");
+                Logger.Write(false, "Main: Found MPHeist.", "");
                 racerBikeNames.Add("lectro");
                 drivebyCarNames.Add("enduro");
                 fibModels.Add("s_m_m_fibsec_01");
@@ -343,7 +343,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpimportexport")))
             {
-                Logger.Write("Main: Found MPImportExport.", "");
+                Logger.Write(false, "Main: Found MPImportExport.", "");
                 racerCarNames.Add("comet3");
                 racerCarNames.Add("elegy");
                 racerCarNames.Add("italigtb");
@@ -360,14 +360,14 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpjanuary2016")))
             {
-                Logger.Write("Main: Found MPJanuary2016.", "");
+                Logger.Write(false, "Main: Found MPJanuary2016.", "");
                 racerCarNames.Add("banshee2");
                 racerCarNames.Add("sultanrs");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplowrider")))
             {
-                Logger.Write("Main: Found MPLowrider.", "");
+                Logger.Write(false, "Main: Found MPLowrider.", "");
                 drivebyCarNames.Add("buccaneer2");
                 drivebyCarNames.Add("chino2");
                 drivebyCarNames.Add("voodoo");
@@ -378,7 +378,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplowrider2")))
             {
-                Logger.Write("Main: Found MPLowrider2.", "");
+                Logger.Write(false, "Main: Found MPLowrider2.", "");
                 drivebyCarNames.Add("faction3");
                 drivebyCarNames.Add("sabregt2");
                 drivebyCarNames.Add("virgo2");
@@ -386,21 +386,21 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mplts")))
             {
-                Logger.Write("Main: Found MPLTS.", "");
+                Logger.Write(false, "Main: Found MPLTS.", "");
                 racerBikeNames.Add("hakuchou");
                 drivebyCarNames.Add("innovation");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpluxe")))
             {
-                Logger.Write("Main: Found MPLuxe.", "");
+                Logger.Write(false, "Main: Found MPLuxe.", "");
                 racerCarNames.Add("feltzer3");
                 racerCarNames.Add("osiris");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpluxe2")))
             {
-                Logger.Write("Main: Found MPLuxe2.", "");
+                Logger.Write(false, "Main: Found MPLuxe2.", "");
                 racerCarNames.Add("t20");
                 drivebyCarNames.Add("chino");
                 drivebyCarNames.Add("vindicator");
@@ -408,7 +408,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpsmuggler")))
             {
-                Logger.Write("Main: Found MPSmuggler.", "");
+                Logger.Write(false, "Main: Found MPSmuggler.", "");
                 racerCarNames.Add("cyclone");
                 racerCarNames.Add("rapidgt3");
                 racerCarNames.Add("visione");
@@ -417,7 +417,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpspecialraces")))
             {
-                Logger.Write("Main: Found MPSpecialRaces.", "");
+                Logger.Write(false, "Main: Found MPSpecialRaces.", "");
                 racerCarNames.Add("gp1");
                 racerCarNames.Add("infernus2");
                 racerCarNames.Add("turismo2");
@@ -425,7 +425,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "mpstunt")))
             {
-                Logger.Write("Main: Found MPStunt.", "");
+                Logger.Write(false, "Main: Found MPStunt.", "");
                 racerCarNames.Add("le7b");
                 racerCarNames.Add("sheava");
                 racerCarNames.Add("tyrus");
@@ -435,13 +435,13 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "spupgrade")))
             {
-                Logger.Write("Main: Found SPUpgrade.", "");
+                Logger.Write(false, "Main: Found SPUpgrade.", "");
                 drivebyCarNames.Add("stalion");
             }
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "pres")))
             {
-                Logger.Write("Main: Found IVPack.", "");
+                Logger.Write(false, "Main: Found IVPack.", "");
                 racerCarNames.Add("cheetah3");
                 racerCarNames.Add("sentinel4");
                 racerCarNames.Add("supergt");
@@ -462,7 +462,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "wov")))
             {
-                Logger.Write("Main: Found World of Variety.", "");
+                Logger.Write(false, "Main: Found World of Variety.", "");
                 copModels[3].Add("s_m_y_bcop_01");
                 copCarNames[1].Add("sheriff3");
                 copHeliNames.Add("shemav");
@@ -472,7 +472,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "vwe")))
             {
-                Logger.Write("Main: Found Vanillaworks Extended.", "");
+                Logger.Write(false, "Main: Found Vanillaworks Extended.", "");
                 racerCarNames.Add("blista4");
                 racerCarNames.Add("cheetah4");
                 racerCarNames.Add("comet6");
@@ -503,7 +503,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dw")))
             {
-                Logger.Write("Main: Found Dispatchworks.", "");
+                Logger.Write(false, "Main: Found Dispatchworks.", "");
                 copCarNames[1].Add("bcso4");
                 copCarNames[1].Add("bcso5");
                 copCarNames[1].Add("bcso6");
@@ -567,7 +567,7 @@ namespace YouAreNotAlone
 
             if (Function.Call<bool>(Hash.IS_DLC_PRESENT, Function.Call<int>(Hash.GET_HASH_KEY, "dov")))
             {
-                Logger.Write("Main: Found Dispatch of Variety.", "");
+                Logger.Write(false, "Main: Found Dispatch of Variety.", "");
                 armyCarNames.Add("dovnapc");
                 copModels[2].Add("d_o_v_dick_01");
                 copModels[3].Add("d_o_v_npatrol_01");
@@ -608,7 +608,7 @@ namespace YouAreNotAlone
 
                 if (doc != null)
                 {
-                    Logger.Write("Main: Found XML file.", "");
+                    Logger.Write(false, "Main: Found XML file.", "");
 
                     break;
                 }
@@ -616,7 +616,7 @@ namespace YouAreNotAlone
 
             if (doc == null)
             {
-                Logger.Write("Main: Couldn't find XML file.", "");
+                Logger.Write(false, "Main: Couldn't find XML file.", "");
 
                 return;
             }
@@ -659,7 +659,7 @@ namespace YouAreNotAlone
                 if (((Model)spawnName).IsValid && (((Model)spawnName).IsCar || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) drivebyCarNames.Add(spawnName);
             }
 
-            Logger.Write("Main: Completed setting.", "");
+            Logger.Write(false, "Main: Completed setting.", "");
         }
 
         public static void DispatchAgainst(Entity target, EventManager.EventType type)
@@ -875,7 +875,7 @@ namespace YouAreNotAlone
             eventTimeChecker = 0;
             Interval = 15000;
             Tick += OnTick;
-            Logger.Write("YouAreNotAlone started.", "");
+            Logger.Write(false, "YouAreNotAlone started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)

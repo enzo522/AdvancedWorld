@@ -13,7 +13,7 @@ namespace YouAreNotAlone
         {
             this.name = name;
             this.goal = goal;
-            Logger.ForceWrite("Racer: Creating racer.", this.name);
+            Logger.Write(true, "Racer: Creating racer.", this.name);
         }
 
         public bool IsCreatedIn(float radius, Road road)
@@ -37,19 +37,19 @@ namespace YouAreNotAlone
                 return false;
             }
 
-            Logger.Write("Racer: Created vehicle and driver successfully.", name);
+            Logger.Write(false, "Racer: Created vehicle and driver successfully.", name);
             Script.Wait(50);
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
             SetExhausts();
             Util.Tune(spawnedVehicle, true, true, true);
-            Logger.Write("Racer: Tuned racer vehicle.", name);
+            Logger.Write(false, "Racer: Tuned racer vehicle.", name);
 
             spawnedPed.RelationshipGroup = relationship;
             spawnedPed.IsPriorityTargetForEnemies = true;
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
-            Logger.Write("Racer: Characteristics are set.", name);
+            Logger.Write(false, "Racer: Characteristics are set.", name);
             
             if (!Util.BlipIsOn(spawnedPed))
             {
@@ -70,7 +70,7 @@ namespace YouAreNotAlone
                 spawnedPed.Task.PerformSequence(ts);
                 ts.Dispose();
 
-                Logger.Write("Racer: Created racer successfully.", name);
+                Logger.Write(false, "Racer: Created racer successfully.", name);
 
                 return true;
             }
@@ -87,14 +87,14 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("Racer: Restore instantly.", name);
+                Logger.Write(false, "Racer: Restore instantly.", name);
 
                 if (Util.ThereIs(spawnedPed)) spawnedPed.Delete();
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
             }
             else
             {
-                Logger.Write("Racer: Restore naturally.", name);
+                Logger.Write(false, "Racer: Restore naturally.", name);
                 Util.NaturallyRemove(spawnedPed);
                 Util.NaturallyRemove(spawnedVehicle);
             }
@@ -106,7 +106,7 @@ namespace YouAreNotAlone
         {
             if (!Util.ThereIs(spawnedPed) || !Util.ThereIs(spawnedVehicle) || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("Racer: Racer need to be restored.", name);
+                Logger.Write(false, "Racer: Racer need to be restored.", name);
                 Restore(false);
 
                 return true;

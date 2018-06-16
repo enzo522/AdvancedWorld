@@ -111,7 +111,7 @@ namespace YouAreNotAlone
                     }
             }
 
-            Logger.Write("DispatchManager: Added new entity.", type.ToString());
+            Logger.Write(false, "DispatchManager: Added new entity.", type.ToString());
         }
 
         public DispatchManager()
@@ -119,7 +119,7 @@ namespace YouAreNotAlone
             timeChecker = 0;
             Tick += OnTick;
 
-            Logger.ForceWrite("DispatchManager started.", "");
+            Logger.Write(true, "DispatchManager started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)

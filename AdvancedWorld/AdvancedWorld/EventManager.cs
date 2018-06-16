@@ -114,7 +114,7 @@ namespace YouAreNotAlone
                     }
             }
 
-            Logger.Write("EventManager: Added new entity.", type.ToString());
+            Logger.Write(false, "EventManager: Added new entity.", type.ToString());
         }
 
         public EventManager()
@@ -122,7 +122,7 @@ namespace YouAreNotAlone
             timeChecker = 0;
             Tick += OnTick;
 
-            Logger.ForceWrite("EventManager started.", "");
+            Logger.Write(true, "EventManager started.", "");
         }
 
         private void OnTick(Object sender, EventArgs e)

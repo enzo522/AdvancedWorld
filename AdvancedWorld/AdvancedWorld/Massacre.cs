@@ -12,7 +12,7 @@ namespace YouAreNotAlone
         public Massacre() : base(EventManager.EventType.Massacre)
         {
             this.members = new List<Ped>();
-            Logger.ForceWrite("Massacre event selected.", "");
+            Logger.Write(true, "Massacre event selected.", "");
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)
@@ -45,7 +45,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("Massacre: Anim/clip sets are loaded. Creating members.", "");
+            Logger.Write(false, "Massacre: Anim/clip sets are loaded. Creating members.", "");
             
             for (int i = 0; i < 4; i++)
             {
@@ -128,12 +128,12 @@ namespace YouAreNotAlone
                 p.IsFireProof = true;
                 p.CanSwitchWeapons = true;
                 p.Task.FightAgainstHatedTargets(400.0f);
-                Logger.Write("Massacre: Characteristics are set.", "");
+                Logger.Write(false, "Massacre: Characteristics are set.", "");
 
                 if (!Util.BlipIsOn(p))
                 {
                     Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, BlipColor.White, "Massacre Squad");
-                    Logger.Write("Massacre: Create a member successfully.", "");
+                    Logger.Write(false, "Massacre: Create a member successfully.", "");
                     members.Add(p);
                 }
                 else
@@ -154,7 +154,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("Massacre: Create massacre squad successfully.", "");
+            Logger.Write(false, "Massacre: Create massacre squad successfully.", "");
 
             return true;
         }
@@ -163,7 +163,7 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("Massacre: Restore instanly.", "");
+                Logger.Write(false, "Massacre: Restore instanly.", "");
 
                 foreach (Ped p in members)
                 {
@@ -172,16 +172,15 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write("Massacre: Restore naturally.", "");
+                Logger.Write(false, "Massacre: Restore naturally.", "");
 
                 foreach (Ped p in members) Util.NaturallyRemove(p);
             }
 
             if (relationship != 0) Util.CleanUp(relationship);
-
-            Function.Call(Hash.REMOVE_ANIM_SET, "anim_group_move_ballistic");
-            Function.Call(Hash.REMOVE_ANIM_SET, "move_strafe_ballistic");
-            Function.Call(Hash.REMOVE_CLIP_SET, "move_ballistic_minigun");
+            if (Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "anim_group_move_ballistic")) Function.Call(Hash.REMOVE_ANIM_SET, "anim_group_move_ballistic");
+            if (Function.Call<bool>(Hash.HAS_ANIM_SET_LOADED, "move_strafe_ballistic")) Function.Call(Hash.REMOVE_ANIM_SET, "move_strafe_ballistic");
+            if (Function.Call<bool>(Hash.HAS_CLIP_SET_LOADED, "move_ballistic_minigun")) Function.Call(Hash.REMOVE_CLIP_SET, "move_ballistic_minigun");
 
             members.Clear();
         }
@@ -201,7 +200,7 @@ namespace YouAreNotAlone
 
                 if (!Util.WeCanGiveTaskTo(members[i]) || !members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
-                    Logger.Write("Massacre: Found a member who died or out of range. Need to be removed.", "");
+                    Logger.Write(false, "Massacre: Found a member who died or out of range. Need to be removed.", "");
                     Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
 
@@ -213,7 +212,7 @@ namespace YouAreNotAlone
 
             if (members.Count < 1)
             {
-                Logger.Write("Massacre: Everyone is gone. Time to be disposed.", "");
+                Logger.Write(false, "Massacre: Everyone is gone. Time to be disposed.", "");
                 Restore(false);
 
                 return true;

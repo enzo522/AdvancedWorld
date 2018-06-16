@@ -10,7 +10,7 @@ namespace YouAreNotAlone
         public EmergencyGround(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             this.blipName += emergencyType + " Ground";
-            Logger.ForceWrite(blipName + ": Time to dispatch.", this.name);
+            Logger.Write(true, blipName + ": Time to dispatch.", this.name);
         }
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
@@ -23,7 +23,7 @@ namespace YouAreNotAlone
 
                 if (!road.Position.Equals(Vector3.Zero))
                 {
-                    Logger.Write(blipName + ": Found proper road.", name);
+                    Logger.Write(false, blipName + ": Found proper road.", name);
 
                     break;
                 }
@@ -78,7 +78,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write(blipName + ": Created members.", name);
+            Logger.Write(false, blipName + ": Created members.", name);
 
             foreach (Ped p in members)
             {
@@ -168,12 +168,12 @@ namespace YouAreNotAlone
 
                 p.RelationshipGroup = relationship;
                 p.NeverLeavesGroup = true;
-                Logger.Write(blipName + ": Characteristics are set.", name);
+                Logger.Write(false, blipName + ": Characteristics are set.", name);
             }
 
             spawnedVehicle.EngineRunning = true;
             SetPedsOnDuty(true);
-            Logger.Write(blipName + ": Ready to dispatch.", name);
+            Logger.Write(false, blipName + ": Ready to dispatch.", name);
 
             return true;
         }

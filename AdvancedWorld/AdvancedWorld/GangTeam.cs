@@ -23,7 +23,7 @@ namespace YouAreNotAlone
             ts.AddTask.FightAgainstHatedTargets(200.0f);
             ts.AddTask.WanderAround();
             ts.Close();
-            Logger.ForceWrite("GangTeam event selected.", "");
+            Logger.Write(true, "GangTeam event selected.", "");
         }
 
         public bool IsCreatedIn(float radius, Vector3 safePosition, List<string> selectedModels, int teamID, BlipColor teamColor, string teamName)
@@ -37,7 +37,7 @@ namespace YouAreNotAlone
                 return false;
             }
 
-            Logger.Write("GangTeam: Creating members.", "");
+            Logger.Write(false, "GangTeam: Creating members.", "");
             this.relationship = teamID;
 
             for (int i = 0; i < 6; i++)
@@ -64,12 +64,12 @@ namespace YouAreNotAlone
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
                 p.Armor = Util.GetRandomIntBelow(100);
-                Logger.Write("GangTeam: Characteristics are set.", "");
+                Logger.Write(false, "GangTeam: Characteristics are set.", "");
 
                 if (!Util.BlipIsOn(p))
                 {
                     Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, teamColor, teamName);
-                    Logger.Write("GangTeam: Create a member successfully.", "");
+                    Logger.Write(false, "GangTeam: Create a member successfully.", "");
                     members.Add(p);
                 }
                 else
@@ -90,7 +90,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("GangTeam: Create gang team successfully.", "");
+            Logger.Write(false, "GangTeam: Create gang team successfully.", "");
 
             return true;
         }
@@ -99,7 +99,7 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("GangTeam: Restore instanly.", "");
+                Logger.Write(false, "GangTeam: Restore instanly.", "");
 
                 foreach (Ped p in members)
                 {
@@ -108,7 +108,7 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write("GangTeam: Restore naturally.", "");
+                Logger.Write(false, "GangTeam: Restore naturally.", "");
 
                 foreach (Ped p in members) Util.NaturallyRemove(p);
             }
@@ -121,7 +121,7 @@ namespace YouAreNotAlone
 
         public void PerformTask()
         {
-            Logger.Write("GangTeam: Let's fight with hated targets.", "");
+            Logger.Write(false, "GangTeam: Let's fight with hated targets.", "");
 
             foreach (Ped p in members)
             {
@@ -144,7 +144,7 @@ namespace YouAreNotAlone
 
                 if (!Util.WeCanGiveTaskTo(members[i]) || !members[i].IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
-                    Logger.Write("GangTeam: Found a member who died or out of range. Need to be removed.", "");
+                    Logger.Write(false, "GangTeam: Found a member who died or out of range. Need to be removed.", "");
                     Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
 
@@ -159,7 +159,7 @@ namespace YouAreNotAlone
 
             if (members.Count < 1)
             {
-                Logger.Write("GangTeam: Everyone is gone. Time to be disposed.", "");
+                Logger.Write(false, "GangTeam: Everyone is gone. Time to be disposed.", "");
                 Restore(false);
 
                 return true;

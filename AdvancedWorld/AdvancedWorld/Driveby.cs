@@ -14,7 +14,7 @@ namespace YouAreNotAlone
         {
             this.members = new List<Ped>();
             this.name = name;
-            Logger.ForceWrite("Driveby event selected.", this.name);
+            Logger.Write(true, "Driveby event selected.", this.name);
         }
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
@@ -36,7 +36,7 @@ namespace YouAreNotAlone
 
                 if (!road.Position.Equals(Vector3.Zero))
                 {
-                    Logger.Write("Driveby: Found proper road.", name);
+                    Logger.Write(false, "Driveby: Found proper road.", name);
 
                     break;
                 }
@@ -58,7 +58,7 @@ namespace YouAreNotAlone
                 return false;
             }
 
-            Logger.Write("Driveby: Created vehicle successfully.", name);
+            Logger.Write(false, "Driveby: Created vehicle successfully.", name);
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };
             Util.Tune(spawnedVehicle, false, (Util.GetRandomIntBelow(3) == 1), false);
 
@@ -71,7 +71,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("Driveby: Tuned vehicle and created members.", name);
+            Logger.Write(false, "Driveby: Tuned vehicle and created members.", name);
 
             foreach (Ped p in members)
             {
@@ -99,12 +99,12 @@ namespace YouAreNotAlone
                 p.RelationshipGroup = relationship;
                 p.IsPriorityTargetForEnemies = true;
                 p.FiringPattern = FiringPattern.BurstFireDriveby;
-                Logger.Write("Driveby: Characteristics are set.", name);
+                Logger.Write(false, "Driveby: Characteristics are set.", name);
             }
 
             if (SpawnedPedExists())
             {
-                Logger.Write("Driveby: Created driveby successfully.", name);
+                Logger.Write(false, "Driveby: Created driveby successfully.", name);
 
                 return true;
             }
@@ -121,7 +121,7 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("Driveby: Restore instanly.", name);
+                Logger.Write(false, "Driveby: Restore instanly.", name);
 
                 foreach (Ped p in members)
                 {
@@ -132,7 +132,7 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write("Driveby: Restore naturally.", name);
+                Logger.Write(false, "Driveby: Restore naturally.", name);
 
                 foreach (Ped p in members) Util.NaturallyRemove(p);
 
@@ -157,7 +157,7 @@ namespace YouAreNotAlone
                     {
                         if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
 
-                        Logger.Write("Driveby: Found driver and added blip on it.", name);
+                        Logger.Write(false, "Driveby: Found driver and added blip on it.", name);
                         spawnedPed = p;
 
                         return true;
@@ -187,11 +187,11 @@ namespace YouAreNotAlone
                 else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
 
-            Logger.Write("Driveby: Alive members - " + alive.ToString(), name);
+            Logger.Write(false, "Driveby: Alive members - " + alive.ToString(), name);
 
             if (!Util.ThereIs(spawnedVehicle) || !SpawnedPedExists() || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("Driveby: Driveby need to be restored.", name);
+                Logger.Write(false, "Driveby: Driveby need to be restored.", name);
                 Restore(false);
 
                 return true;
@@ -202,7 +202,7 @@ namespace YouAreNotAlone
 
             if (!Util.WeCanEnter(spawnedVehicle))
             {
-                Logger.Write("Driveby: Couldn't let members enter vehicle. Time to fight on foot.", name);
+                Logger.Write(false, "Driveby: Couldn't let members enter vehicle. Time to fight on foot.", name);
 
                 foreach (Ped p in members)
                 {
@@ -217,7 +217,7 @@ namespace YouAreNotAlone
             {
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
-                    Logger.Write("Driveby: Time to driveby.", name);
+                    Logger.Write(false, "Driveby: Time to driveby.", name);
 
                     foreach (Ped p in members)
                     {
@@ -233,7 +233,7 @@ namespace YouAreNotAlone
                 }
                 else
                 {
-                    Logger.Write("Driveby: There is no driver. Re-enter everyone.", name);
+                    Logger.Write(false, "Driveby: There is no driver. Re-enter everyone.", name);
 
                     foreach (Ped p in members)
                     {
@@ -243,10 +243,10 @@ namespace YouAreNotAlone
             }
             else
             {
-                if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write("Driveby: Assigned seats successfully.", name);
+                if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(false, "Driveby: Assigned seats successfully.", name);
                 else
                 {
-                    Logger.Write("Driveby: Something wrong with assigning seats. Re-enter everyone.", name);
+                    Logger.Write(false, "Driveby: Something wrong with assigning seats. Re-enter everyone.", name);
 
                     foreach (Ped p in members)
                     {

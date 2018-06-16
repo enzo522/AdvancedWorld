@@ -11,7 +11,7 @@ namespace YouAreNotAlone
         public Terrorist(string name) : base(EventManager.EventType.Terrorist)
         {
             this.name = name;
-            Logger.ForceWrite("Terrorist event selected.", this.name);
+            Logger.Write(true, "Terrorist event selected.", this.name);
         }
 
         public bool IsCreatedIn(float radius)
@@ -33,7 +33,7 @@ namespace YouAreNotAlone
 
                 if (!road.Position.Equals(Vector3.Zero))
                 {
-                    Logger.Write("Terrorist: Found proper road.", name);
+                    Logger.Write(false, "Terrorist: Found proper road.", name);
 
                     break;
                 }
@@ -65,7 +65,7 @@ namespace YouAreNotAlone
                 return false;
             }
 
-            Logger.Write("Terrorist: Created vehicle and driver.", name);
+            Logger.Write(false, "Terrorist: Created vehicle and driver.", name);
             Script.Wait(50);
             Util.Tune(spawnedVehicle, false, false, false);
 
@@ -83,12 +83,12 @@ namespace YouAreNotAlone
             spawnedPed.AlwaysKeepTask = true;
             spawnedPed.BlockPermanentEvents = true;
             spawnedPed.Task.FightAgainstHatedTargets(400.0f);
-            Logger.Write("Terrorist: Characteristics are set.", name);
+            Logger.Write(false, "Terrorist: Characteristics are set.", name);
             
             if (!Util.BlipIsOn(spawnedPed))
             {
                 Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Tank, BlipColor.Red, "Terrorist " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
-                Logger.Write("Terrorist: Created terrorist successfully.", name);
+                Logger.Write(false, "Terrorist: Created terrorist successfully.", name);
 
                 return true;
             }
@@ -105,14 +105,14 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("Terrorist: Restore instantly.", name);
+                Logger.Write(false, "Terrorist: Restore instantly.", name);
 
                 if (Util.ThereIs(spawnedPed)) spawnedPed.Delete();
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
             }
             else
             {
-                Logger.Write("Terrorist: Restore naturally.", name);
+                Logger.Write(false, "Terrorist: Restore naturally.", name);
                 Util.NaturallyRemove(spawnedPed);
                 Util.NaturallyRemove(spawnedVehicle);
             }
@@ -124,7 +124,7 @@ namespace YouAreNotAlone
         {
             if (!Util.ThereIs(spawnedPed) || !Util.ThereIs(spawnedVehicle) || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("Terrorist: Terrorist need to be restored.", name);
+                Logger.Write(false, "Terrorist: Terrorist need to be restored.", name);
                 Restore(false);
 
                 return true;
@@ -142,7 +142,7 @@ namespace YouAreNotAlone
             else if (!Util.AnyEmergencyIsNear(spawnedPed.Position, DispatchManager.DispatchType.Army, type))
             {
                 Main.DispatchAgainst(spawnedPed, type);
-                Logger.Write("Dispatch against", type.ToString());
+                Logger.Write(false, "Dispatch against", type.ToString());
                 dispatchCooldown = 0;
             }
         }

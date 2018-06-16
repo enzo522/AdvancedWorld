@@ -16,7 +16,7 @@ namespace YouAreNotAlone
         {
             this.dispatchCooldown = 7;
             this.instantly = false;
-            Logger.ForceWrite("OnFire event selected.", "");
+            Logger.Write(true, "OnFire event selected.", "");
         }
 
         public bool IsCreatedIn(float radius, bool instantly)
@@ -38,18 +38,18 @@ namespace YouAreNotAlone
 
                 if (Util.WeCanReplace(selectedVehicle))
                 {
-                    Logger.Write("OnFire: Found a proper vehicle.", "");
+                    Logger.Write(false, "OnFire: Found a proper vehicle.", "");
                     OnFireVehicle = selectedVehicle;
                     OnFireVehicle.IsPersistent = true;
 
                     if (this.instantly)
                     {
-                        Logger.Write("OnFire: Time to explode selected vehicle.", "");
+                        Logger.Write(false, "OnFire: Time to explode selected vehicle.", "");
                         OnFireVehicle.Explode();
                     }
                     else
                     {
-                        Logger.Write("OnFire: Time to set selected vehicle on fire.", "");
+                        Logger.Write(false, "OnFire: Time to set selected vehicle on fire.", "");
                         OnFireVehicle.EngineHealth = -900.0f;
                         OnFireVehicle.IsDriveable = false;
                     }
@@ -71,7 +71,7 @@ namespace YouAreNotAlone
 
                 if (!position.Equals(Vector3.Zero) && OnFireVehicle.IsInRangeOf(position, 200.0f))
                 {
-                    Logger.Write("OnFire: Found fire position.", "");
+                    Logger.Write(false, "OnFire: Found fire position.", "");
 
                     return true;
                 }
@@ -79,19 +79,19 @@ namespace YouAreNotAlone
             
             if (Util.ThereIs(new List<Entity>(World.GetNearbyEntities(OnFireVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire)))
             {
-                Logger.Write("OnFire: Found entity on fire.", "");
+                Logger.Write(false, "OnFire: Found entity on fire.", "");
 
                 return true;
             }
 
-            Logger.Write("OnFire: There is no fire near.", "");
+            Logger.Write(false, "OnFire: There is no fire near.", "");
 
             return false;
         }
 
         public override void Restore(bool instantly)
         {
-            Logger.Write("OnFire: Restore naturally.", "");
+            Logger.Write(false, "OnFire: Restore naturally.", "");
             Util.NaturallyRemove(OnFireVehicle);
         }
 
@@ -99,7 +99,7 @@ namespace YouAreNotAlone
         {
             if (!Util.ThereIs(OnFireVehicle) || !AnyFireNear() || !OnFireVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("OnFire: On fire vehicle need to be restored.", "");
+                Logger.Write(false, "OnFire: On fire vehicle need to be restored.", "");
                 Restore(false);
 
                 return true;
@@ -115,7 +115,7 @@ namespace YouAreNotAlone
             else
             {
                 Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire);
-                Logger.Write("OnFire: Dispatch against", "Fire");
+                Logger.Write(false, "OnFire: Dispatch against", "Fire");
                 dispatchCooldown = 0;
             }
 

@@ -35,7 +35,7 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write(blipName + ": Restore instantly.", name);
+                Logger.Write(false, blipName + ": Restore instantly.", name);
 
                 foreach (Ped p in members)
                 {
@@ -46,7 +46,7 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write(blipName + ": Restore naturally.", name);
+                Logger.Write(false, blipName + ": Restore naturally.", name);
 
                 foreach (Ped p in members)
                 {
@@ -82,7 +82,7 @@ namespace YouAreNotAlone
         {
             if (onVehicle)
             {
-                Logger.Write(blipName + ": Members are in vehicle. Add blip on vehicle.", name);
+                Logger.Write(false, blipName + ": Members are in vehicle. Add blip on vehicle.", name);
 
                 if (Util.ThereIs(spawnedVehicle))
                 {
@@ -104,7 +104,7 @@ namespace YouAreNotAlone
             }
             else
             {
-                Logger.Write(blipName + ": Members are on foot. Add blips on members.", name);
+                Logger.Write(false, blipName + ": Members are on foot. Add blips on members.", name);
 
                 if (Util.ThereIs(spawnedVehicle) && Util.BlipIsOn(spawnedVehicle)) spawnedVehicle.CurrentBlip.Remove();
 
@@ -149,7 +149,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver))
                     {
-                        Logger.Write(blipName + ": Time to fight in vehicle.", name);
+                        Logger.Write(false, blipName + ": Time to fight in vehicle.", name);
                         AddEmergencyBlip(true);
 
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
@@ -173,7 +173,7 @@ namespace YouAreNotAlone
                     }
                     else if (!this.GetType().Equals(typeof(EmergencyHeli)) || !spawnedVehicle.IsInAir)
                     {
-                        Logger.Write(blipName + ": There is no driver when on duty. Re-enter everyone.", name);
+                        Logger.Write(false, blipName + ": There is no driver when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -183,10 +183,10 @@ namespace YouAreNotAlone
                 }
                 else if (!this.GetType().Equals(typeof(EmergencyHeli)) || !spawnedVehicle.IsInAir)
                 {
-                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(blipName + ": Assigned seats successfully when on duty.", name);
+                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(false, blipName + ": Assigned seats successfully when on duty.", name);
                     else
                     {
-                        Logger.Write(blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
+                        Logger.Write(false, blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -214,7 +214,7 @@ namespace YouAreNotAlone
                 {
                     if (spawnedVehicle.Speed < 1)
                     {
-                        Logger.Write(blipName + ": Time to fight on foot.", name);
+                        Logger.Write(false, blipName + ": Time to fight on foot.", name);
                         AddEmergencyBlip(false);
 
                         foreach (Ped p in members)
@@ -234,7 +234,7 @@ namespace YouAreNotAlone
                     }
                     else
                     {
-                        Logger.Write(blipName + ": Near the criminals. Time to brake.", name);
+                        Logger.Write(false, blipName + ": Near the criminals. Time to brake.", name);
 
                         foreach (Ped p in members)
                         {
@@ -276,7 +276,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(spawnedVehicle.Driver))
                     {
-                        Logger.Write(blipName + ": Time to be off duty.", name);
+                        Logger.Write(false, blipName + ": Time to be off duty.", name);
 
                         if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
 
@@ -296,7 +296,7 @@ namespace YouAreNotAlone
                     }
                     else if (!this.GetType().Equals(typeof(EmergencyHeli)) || !spawnedVehicle.IsInAir)
                     {
-                        Logger.Write(blipName + ": There is no driver when off duty. Re-enter everyone.", name);
+                        Logger.Write(false, blipName + ": There is no driver when off duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -306,10 +306,10 @@ namespace YouAreNotAlone
                 }
                 else if (!this.GetType().Equals(typeof(EmergencyHeli)) || !spawnedVehicle.IsInAir)
                 {
-                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(blipName + ": Assigned seats successfully when off duty.", name);
+                    if (VehicleSeatsCanBeSeatedBy(members)) Logger.Write(false, blipName + ": Assigned seats successfully when off duty.", name);
                     else
                     {
-                        Logger.Write(blipName + ": Something wrong with assigning seats when off duty. Re-enter everyone.", name);
+                        Logger.Write(false, blipName + ": Something wrong with assigning seats when off duty. Re-enter everyone.", name);
 
                         foreach (Ped p in members)
                         {
@@ -329,7 +329,7 @@ namespace YouAreNotAlone
 
             if (Util.ThereIs(criminal))
             {
-                Logger.Write(blipName + ": Found target.", name);
+                Logger.Write(false, blipName + ": Found target.", name);
                 target = criminal;
 
                 return true;
@@ -341,7 +341,7 @@ namespace YouAreNotAlone
 
                 if (Util.ThereIs(combatingPed))
                 {
-                    Logger.Write(blipName + ": Found new target.", name);
+                    Logger.Write(false, blipName + ": Found new target.", name);
                     Util.SetAsCriminalWhoIs(combatingPed);
                     target = combatingPed;
 
@@ -349,7 +349,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write(blipName + ": Couldn't find target.", name);
+            Logger.Write(false, blipName + ": Couldn't find target.", name);
 
             return false;
         }
@@ -386,11 +386,11 @@ namespace YouAreNotAlone
                 else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
             }
 
-            Logger.Write(blipName + ": Alive members - " + alive.ToString(), name);
+            Logger.Write(false, blipName + ": Alive members - " + alive.ToString(), name);
 
             if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
-                Logger.Write(blipName + ": Emergency need to be restored.", name);
+                Logger.Write(false, blipName + ": Emergency need to be restored.", name);
                 Restore(false);
 
                 return true;
@@ -401,12 +401,12 @@ namespace YouAreNotAlone
                 if (offDuty) offDuty = false;
                 if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
                 {
-                    Logger.Write(blipName + ": Target found. Time to be on duty.", name);
+                    Logger.Write(false, blipName + ": Target found. Time to be on duty.", name);
                     SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && (!spawnedVehicle.IsInRangeOf(target.Position, 30.0f) || (target.Model.IsPed && ((Ped)target).IsInVehicle() && ((Ped)target).CurrentVehicle.Speed > 10.0f)));
                 }
                 else
                 {
-                    Logger.Write(blipName + ": Target found but too far from player. Time to be restored.", name);
+                    Logger.Write(false, blipName + ": Target found but too far from player. Time to be restored.", name);
                     Restore(false);
 
                     return true;
@@ -416,12 +416,12 @@ namespace YouAreNotAlone
             {
                 if (spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
                 {
-                    Logger.Write(blipName + ": Target not found. Time to be off duty.", name);
+                    Logger.Write(false, blipName + ": Target not found. Time to be off duty.", name);
                     SetPedsOffDuty();
                 }
                 else
                 {
-                    Logger.Write(blipName + ": Target not found and too far from player. Time to be restored.", name);
+                    Logger.Write(false, blipName + ": Target not found and too far from player. Time to be restored.", name);
                     Restore(false);
 
                     return true;

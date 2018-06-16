@@ -27,7 +27,7 @@ namespace YouAreNotAlone
         {
             if (position.Equals(Vector3.Zero))
             {
-                Logger.Write("Stinger: Couldn't find safe position. Abort.", "");
+                Logger.Write(false, "Stinger: Couldn't find safe position. Abort.", "");
 
                 return false;
             }
@@ -38,7 +38,7 @@ namespace YouAreNotAlone
 
             if (!Util.ThereIs(stinger))
             {
-                Logger.Write("Stinger: Couldn't create stinger. Abort.", "");
+                Logger.Write(false, "Stinger: Couldn't create stinger. Abort.", "");
 
                 return false;
             }
@@ -58,7 +58,7 @@ namespace YouAreNotAlone
             points[2] = stinger.Position - stinger.RightVector * dimension.X / 2 + stinger.ForwardVector * dimension.Y / 2;
             points[3] = stinger.Position + stinger.RightVector * dimension.X / 2 + stinger.ForwardVector * dimension.Y / 2;
 
-            Logger.Write("Stinger: Created stinger successfully.", "");
+            Logger.Write(false, "Stinger: Created stinger successfully.", "");
 
             return true;
         }
@@ -67,13 +67,13 @@ namespace YouAreNotAlone
         {
             if (instantly)
             {
-                Logger.Write("Stinger: Restore instanly.", "");
+                Logger.Write(false, "Stinger: Restore instanly.", "");
 
                 if (Util.ThereIs(stinger)) stinger.Delete();
             }
             else
             {
-                Logger.Write("Stinger: Restore naturally.", "");
+                Logger.Write(false, "Stinger: Restore naturally.", "");
                 Util.NaturallyRemove(stinger);
             }
         }
@@ -82,7 +82,7 @@ namespace YouAreNotAlone
         {
             if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(owner.Position, 300.0f) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write("Stinger: Stinger need to be restored.", "");
+                Logger.Write(false, "Stinger: Stinger need to be restored.", "");
                 Restore(false);
 
                 return true;

@@ -18,13 +18,13 @@ namespace YouAreNotAlone
             {
                 if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && !p.IsSittingInVehicle(spawnedVehicle))
                 {
-                    Logger.Write("EntitySet: Someone is not sitting in vehicle. Wait.", "");
+                    Logger.Write(false, "EntitySet: Someone is not sitting in vehicle. Wait.", "");
 
                     return false;
                 }
             }
 
-            Logger.Write("EntitySet: Ready to start.", "");
+            Logger.Write(false, "EntitySet: Ready to start.", "");
 
             return true;
         }
@@ -42,12 +42,12 @@ namespace YouAreNotAlone
 
             if (Util.ThereIs(spawnedVehicle.Driver) && Util.WeCanGiveTaskTo(spawnedVehicle.Driver))
             {
-                Logger.Write("EntitySet: There is driver. Let it brake.", "");
+                Logger.Write(false, "EntitySet: There is driver. Let it brake.", "");
                 Function.Call(Hash.TASK_VEHICLE_TEMP_ACTION, spawnedVehicle.Driver, spawnedVehicle, 1, 1000);
             }
             else
             {
-                Logger.Write("EntitySet: No driver. Starts with driver seat.", "");
+                Logger.Write(false, "EntitySet: No driver. Starts with driver seat.", "");
                 startingSeat = -1;
             }
 
@@ -69,7 +69,7 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write("EntitySet: Assigned seats successfully.", "");
+            Logger.Write(false, "EntitySet: Assigned seats successfully.", "");
 
             return true;
         }
