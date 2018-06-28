@@ -635,28 +635,28 @@ namespace YouAreNotAlone
             {
                 string spawnName = e.GetAttribute("name");
 
-                if (((Model)spawnName).IsValid && (((Model)spawnName).IsCar || ((Model)spawnName).IsBicycle || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) addOnCarNames.Add(spawnName);
+                if (((Model)spawnName).IsInCdImage && (((Model)spawnName).IsCar || ((Model)spawnName).IsBicycle || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) addOnCarNames.Add(spawnName);
             }
 
             foreach (XmlElement e in element.SelectNodes("//RaceCar/spawn"))
             {
                 string spawnName = e.GetAttribute("name");
 
-                if (((Model)spawnName).IsValid && ((Model)spawnName).IsCar) racerCarNames.Add(spawnName);
+                if (((Model)spawnName).IsInCdImage && ((Model)spawnName).IsCar) racerCarNames.Add(spawnName);
             }
 
             foreach (XmlElement e in element.SelectNodes("//RaceBike/spawn"))
             {
                 string spawnName = e.GetAttribute("name");
 
-                if (((Model)spawnName).IsValid && (((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) racerBikeNames.Add(spawnName);
+                if (((Model)spawnName).IsInCdImage && (((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) racerBikeNames.Add(spawnName);
             }
 
             foreach (XmlElement e in element.SelectNodes("//Driveby/spawn"))
             {
                 string spawnName = e.GetAttribute("name");
 
-                if (((Model)spawnName).IsValid && (((Model)spawnName).IsCar || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) drivebyCarNames.Add(spawnName);
+                if (((Model)spawnName).IsInCdImage && (((Model)spawnName).IsCar || ((Model)spawnName).IsBike || ((Model)spawnName).IsQuadbike)) drivebyCarNames.Add(spawnName);
             }
 
             Logger.Write(false, "Main: Completed setting.", "");
@@ -666,7 +666,7 @@ namespace YouAreNotAlone
         {
             if (NoDispatch) return;
 
-            Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 100.0f);
+            Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 70.0f);
 
             if (safePosition.Equals(Vector3.Zero)) return;
             
@@ -717,13 +717,13 @@ namespace YouAreNotAlone
                             else lspd.Restore(true);
                         }
 
-                        EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
-
-                        if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
-                        else swat.Restore(true);
-
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
                         {
+                            EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
+
+                            if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                            else swat.Restore(true);
+
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
@@ -812,7 +812,7 @@ namespace YouAreNotAlone
         {
             if (NoDispatch) return true;
 
-            Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 70.0f);
+            Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 50.0f);
 
             if (safePosition.Equals(Vector3.Zero)) return false;
 

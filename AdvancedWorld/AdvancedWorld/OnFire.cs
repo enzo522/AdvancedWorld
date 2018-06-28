@@ -14,7 +14,7 @@ namespace YouAreNotAlone
 
         public OnFire()
         {
-            this.dispatchCooldown = 7;
+            this.dispatchCooldown = 10;
             this.instantly = false;
             Logger.Write(true, "OnFire event selected.", "");
         }

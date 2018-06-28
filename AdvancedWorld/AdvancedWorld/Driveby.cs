@@ -57,6 +57,13 @@ namespace YouAreNotAlone
 
                 return false;
             }
+            else if (spawnedVehicle.PassengerSeats < 1)
+            {
+                Logger.Error("Driveby: Passenger seats are needed but there isn't. Abort.", name);
+                Restore(true);
+
+                return false;
+            }
 
             Logger.Write(false, "Driveby: Created vehicle successfully.", name);
             List<WeaponHash> drivebyWeaponList = new List<WeaponHash> { WeaponHash.MicroSMG, WeaponHash.Pistol, WeaponHash.APPistol, WeaponHash.CombatPistol, WeaponHash.MachinePistol, WeaponHash.MiniSMG, WeaponHash.Revolver, WeaponHash.RevolverMk2, WeaponHash.DoubleActionRevolver };

@@ -157,7 +157,7 @@ namespace YouAreNotAlone
 
         public static Ped Create(Model m, Vector3 v3)
         {
-            if (m.IsValid && !v3.Equals(Vector3.Zero))
+            if (m.IsInCdImage && m.IsValid && !v3.Equals(Vector3.Zero))
             {
                 Ped p = World.CreatePed(m, v3);
                 Script.Wait(50);
@@ -171,7 +171,7 @@ namespace YouAreNotAlone
 
         public static Vehicle Create(Model m, Vector3 v3, float h, bool withColors)
         {
-            if (m.IsValid && !v3.Equals(Vector3.Zero))
+            if (m.IsInCdImage && m.IsValid && !v3.Equals(Vector3.Zero))
             {
                 Vehicle v = World.CreateVehicle(m, v3, h);
                 Script.Wait(100);
