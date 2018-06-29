@@ -143,19 +143,14 @@ namespace YouAreNotAlone
             }
             else timeChecker++;
 
-            lock (aggressiveList)
-            {
-                foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
-            }
-
-            lock (racerList)
-            {
-                foreach (Racers r in racerList) r.CheckNitroable();
-            }
+            foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
+            foreach (Racers r in racerList) r.CheckNitroable();
         }
 
         private void CleanUp(List<AdvancedEntity> l)
         {
+            if (l.Count < 1) return;
+
             lock (l)
             {
                 for (int i = l.Count - 1; i >= 0; i--)

@@ -140,19 +140,14 @@ namespace YouAreNotAlone
             }
             else timeChecker++;
 
-            lock (shieldList)
-            {
-                foreach (Shield s in shieldList) s.CheckShieldable();
-            }
-
-            lock (stingerList)
-            {
-                foreach (Stinger s in stingerList) s.CheckStingable();
-            }
+            foreach (Shield s in shieldList) s.CheckShieldable();
+            foreach (Stinger s in stingerList) s.CheckStingable();
         }
 
         private void CleanUp(List<AdvancedEntity> l)
         {
+            if (l.Count < 1) return;
+
             lock (l)
             {
                 for (int i = l.Count - 1; i >= 0; i--)

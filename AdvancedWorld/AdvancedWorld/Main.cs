@@ -466,6 +466,7 @@ namespace YouAreNotAlone
                 copModels[3].Add("s_m_y_bcop_01");
                 copCarNames[1].Add("sheriff3");
                 copHeliNames.Add("shemav");
+                swatHeliNames.Add("fibmav");
                 swatModels.Add("s_m_y_swat_02");
                 swatModels.Add("s_m_y_swat_04");
             }
@@ -587,6 +588,8 @@ namespace YouAreNotAlone
                 copCarNames[1].Add("dovsheranch");
                 copCarNames[1].Add("dovshestan");
                 copCarNames[1].Add("dovshetrans");
+                copHeliNames.Add("dovpolmav");
+                copHeliNames.Add("dovshemav");
                 fibCarNames.Add("dovfibkur");
                 fibCarNames.Add("dovfibranch");
                 fibCarNames.Add("dovfibwash");
