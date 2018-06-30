@@ -16,6 +16,8 @@ namespace YouAreNotAlone
 
         public bool IsCreatedIn(float radius)
         {
+            if (relationship == 0) return false;
+
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
             if (safePosition.Equals(Vector3.Zero))
@@ -82,7 +84,7 @@ namespace YouAreNotAlone
 
             if (!Util.BlipIsOn(spawnedPed))
             {
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
                 Logger.Write(false, "AggressiveDriver: Created aggressive driver successfully.", name);
 
                 return true;

@@ -16,6 +16,9 @@ namespace YouAreNotAlone
             this.models = models;
             this.safePosition = position;
             this.goal = goal;
+
+            Util.CleanUp(this.relationship);
+            this.relationship = 0;
             Logger.Write(true, "Racers event selected.", "");
         }
 

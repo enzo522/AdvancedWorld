@@ -15,6 +15,8 @@ namespace YouAreNotAlone
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
+            if (relationship == 0) return false;
+
             Road road = new Road(Vector3.Zero, 0.0f);
 
             for (int cnt = 0; cnt < 5; cnt++)
@@ -94,8 +96,8 @@ namespace YouAreNotAlone
                 {
                     case "ARMY":
                         {
+                            p.Weapons.Give(WeaponHash.CombatMG, 500, false, true);
                             p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
-                            p.Weapons.Give(WeaponHash.CombatMG, 500, false, false);
                             p.ShootRate = 1000;
                             p.Armor = 100;
 
@@ -104,8 +106,8 @@ namespace YouAreNotAlone
 
                     case "FIB":
                         {
+                            p.Weapons.Give(WeaponHash.CarbineRifle, 300, false, true);
                             p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
-                            p.Weapons.Give(WeaponHash.CarbineRifle, 300, false, false);
                             p.ShootRate = 900;
                             p.Armor = 50;
 
@@ -114,8 +116,8 @@ namespace YouAreNotAlone
 
                     case "LSPD":
                         {
+                            p.Weapons.Give(WeaponHash.PumpShotgun, 30, false, true);
                             p.Weapons.Give(WeaponHash.Pistol, 100, true, true);
-                            p.Weapons.Give(WeaponHash.PumpShotgun, 30, false, false);
                             p.ShootRate = 500;
                             p.Armor = 30;
 
@@ -138,8 +140,8 @@ namespace YouAreNotAlone
 
                             if (!p.Weapons.HasWeapon(WeaponHash.Pistol))
                             {
+                                p.Weapons.Give(WeaponHash.Pistol, 100, false, true);
                                 p.Weapons.Give(WeaponHash.SMG, 300, true, true);
-                                p.Weapons.Give(WeaponHash.Pistol, 100, false, false);
                             }
 
                             p.ShootRate = 700;
@@ -165,14 +167,13 @@ namespace YouAreNotAlone
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
+                p.FiringPattern = FiringPattern.BurstFireDriveby;
 
                 p.RelationshipGroup = relationship;
-                p.NeverLeavesGroup = true;
                 Logger.Write(false, blipName + ": Characteristics are set.", name);
             }
 
             spawnedVehicle.EngineRunning = true;
-            SetPedsOnDuty(true);
             Logger.Write(false, blipName + ": Ready to dispatch.", name);
 
             return true;

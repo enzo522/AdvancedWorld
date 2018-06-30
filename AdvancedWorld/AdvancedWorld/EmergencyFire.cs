@@ -96,7 +96,6 @@ namespace YouAreNotAlone
             }
 
             spawnedVehicle.EngineRunning = true;
-            SetPedsOnDuty(true);
             Logger.Write(false, blipName + ": Ready to dispatch.", name);
 
             return true;

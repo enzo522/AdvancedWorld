@@ -335,18 +335,17 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (emergencyType != "ARMY")
+            Ped combatingPed = emergencyType == "ARMY" ?
+                new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsInCombat && p.IsSittingInVehicle() && Function.Call<bool>(Hash.DOES_VEHICLE_HAVE_WEAPONS, p.CurrentVehicle) && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup) > Relationship.Like) :
+                new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsInCombat && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup) > Relationship.Like);
+
+            if (Util.ThereIs(combatingPed))
             {
-                Ped combatingPed = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 300.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsInCombat && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup) > Relationship.Like);
+                Logger.Write(false, blipName + ": Found new target.", name);
+                Util.SetAsCriminalWhoIs(combatingPed, emergencyType);
+                target = combatingPed;
 
-                if (Util.ThereIs(combatingPed))
-                {
-                    Logger.Write(false, blipName + ": Found new target.", name);
-                    Util.SetAsCriminalWhoIs(combatingPed);
-                    target = combatingPed;
-
-                    return true;
-                }
+                return true;
             }
 
             Logger.Write(false, blipName + ": Couldn't find target.", name);
@@ -356,17 +355,19 @@ namespace YouAreNotAlone
 
         protected void AddVarietyTo(Ped p)
         {
-            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 8) > 0 && Util.GetRandomIntBelow(2) == 1)
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 8)), 0, 0);
+            int n = 0;
 
-            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 9) > 0 && Util.GetRandomIntBelow(2) == 1)
-                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 9, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 9)), 0, 0);
+            if ((n = Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 8)) > 0 && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 8, Util.GetRandomIntBelow(n), 0, 0);
 
-            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_DRAWABLE_VARIATIONS, p, 0) > 0 && Util.GetRandomIntBelow(2) == 1)
-                Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 0, 0)), 0, false);
+            if ((n = Function.Call<int>(Hash.GET_NUMBER_OF_PED_DRAWABLE_VARIATIONS, p, 9)) > 0 && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_COMPONENT_VARIATION, p, 9, Util.GetRandomIntBelow(n), 0, 0);
 
-            if (Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_DRAWABLE_VARIATIONS, p, 1) > 0 && Util.GetRandomIntBelow(2) == 1)
-                Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomIntBelow(Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_TEXTURE_VARIATIONS, p, 1, 0)), 0, false);
+            if ((n = Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_DRAWABLE_VARIATIONS, p, 0)) > 0 && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_PROP_INDEX, p, 0, Util.GetRandomIntBelow(n), 0, false);
+
+            if ((n = Function.Call<int>(Hash.GET_NUMBER_OF_PED_PROP_DRAWABLE_VARIATIONS, p, 1)) > 0 && Util.GetRandomIntBelow(2) == 1)
+                Function.Call(Hash.SET_PED_PROP_INDEX, p, 1, Util.GetRandomIntBelow(n), 0, false);
         }
 
         public override bool ShouldBeRemoved()

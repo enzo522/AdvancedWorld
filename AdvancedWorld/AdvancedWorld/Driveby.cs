@@ -19,6 +19,8 @@ namespace YouAreNotAlone
 
         public bool IsCreatedIn(float radius, List<string> selectedModels)
         {
+            if (relationship == 0) return false;
+
             Vector3 safePosition = Util.GetSafePositionIn(radius);
 
             if (safePosition.Equals(Vector3.Zero) || selectedModels == null)
@@ -162,7 +164,7 @@ namespace YouAreNotAlone
                 {
                     if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
                     {
-                        if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
+                        if (!Util.BlipIsOn(p)) Util.AddBlipOn(p, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
 
                         Logger.Write(false, "Driveby: Found driver and added blip on it.", name);
                         spawnedPed = p;

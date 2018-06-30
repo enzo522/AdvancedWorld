@@ -5,17 +5,21 @@ namespace YouAreNotAlone
     public class Carjacker : Criminal
     {
         private float radius;
+        private int lastVehicle;
         private int trycount;
 
         public Carjacker() : base(EventManager.EventType.Carjacker)
         {
             this.radius = 0.0f;
+            this.lastVehicle = 0;
             this.trycount = 0;
             Logger.Write(true, "Carjacker event selected.", "");
         }
 
         public bool IsCreatedIn(float radius)
         {
+            if (relationship == 0) return false;
+
             Ped[] nearbyPeds = World.GetNearbyPeds(Game.Player.Character.Position, radius);
 
             if (nearbyPeds.Length < 1)
@@ -47,6 +51,7 @@ namespace YouAreNotAlone
                 spawnedPed.BlockPermanentEvents = true;
                 Logger.Write(false, "Carjacker: Characteristics are set.", "");
 
+                if (spawnedPed.IsInVehicle()) lastVehicle = spawnedPed.CurrentVehicle.Handle;
                 if (!Util.BlipIsOn(spawnedPed))
                 {
                     Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
@@ -85,7 +90,7 @@ namespace YouAreNotAlone
             {
                 Vehicle v = nearbyVehicles[Util.GetRandomIntBelow(nearbyVehicles.Length)];
 
-                if (Util.ThereIs(v) && Util.WeCanEnter(v) && !Game.Player.Character.IsInVehicle(v) && !spawnedPed.IsInVehicle(v))
+                if (Util.ThereIs(v) && Util.WeCanEnter(v) && !spawnedPed.IsInVehicle(v) && v.Handle != lastVehicle && (Main.CriminalsCanFightWithPlayer || !Game.Player.Character.IsInVehicle(v)))
                 {
                     Logger.Write(false, "Carjacker: Found proper vehicle.", "");
                     spawnedVehicle = v;

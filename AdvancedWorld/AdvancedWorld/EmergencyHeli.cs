@@ -15,6 +15,8 @@ namespace YouAreNotAlone
 
         public override bool IsCreatedIn(Vector3 safePosition, List<string> models)
         {
+            if (relationship == 0) return false;
+
             Vector3 position = World.GetNextPositionOnStreet(safePosition.Around(10.0f));
 
             if (position.Equals(Vector3.Zero)) position = safePosition;
@@ -77,8 +79,8 @@ namespace YouAreNotAlone
                 {
                     case "ARMY":
                         {
+                            p.Weapons.Give(WeaponHash.CombatMG, 500, false, true);
                             p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
-                            p.Weapons.Give(WeaponHash.CombatMG, 500, false, false);
                             p.ShootRate = 1000;
                             p.Armor = 100;
 
@@ -96,8 +98,8 @@ namespace YouAreNotAlone
 
                     case "SWAT":
                         {
+                            p.Weapons.Give(WeaponHash.SMG, 300, false, true);
                             p.Weapons.Give(WeaponHash.MachinePistol, 300, true, true);
-                            p.Weapons.Give(WeaponHash.SMG, 300, false, false);
                             p.ShootRate = 700;
                             p.Armor = 70;
 
@@ -116,9 +118,9 @@ namespace YouAreNotAlone
                 Function.Call(Hash.SET_PED_AS_COP, p, false);
                 p.AlwaysKeepTask = true;
                 p.BlockPermanentEvents = true;
+                p.FiringPattern = FiringPattern.BurstFireDriveby;
 
                 p.RelationshipGroup = relationship;
-                p.NeverLeavesGroup = true;
                 Logger.Write(false, blipName + ": Characteristics are set.", name);
             }
 
@@ -126,7 +128,6 @@ namespace YouAreNotAlone
             spawnedVehicle.Livery = 0;
             spawnedVehicle.PrimaryColor = spawnedVehicle.SecondaryColor = VehicleColor.MetallicBlack;
             Function.Call(Hash.SET_HELI_BLADES_FULL_SPEED, spawnedVehicle);
-            SetPedsOnDuty(true);
             Logger.Write(false, blipName + ": Ready to dispatch.", name);
 
             return true;

@@ -47,7 +47,8 @@ namespace YouAreNotAlone
         private static List<int> copRelationships = new List<int> { Function.Call<int>(Hash.GET_HASH_KEY, "COP") };
         private static List<int> armyRelationships = new List<int> { Function.Call<int>(Hash.GET_HASH_KEY, "ARMY") };
         private static int playerID = Function.Call<int>(Hash.GET_HASH_KEY, "PLAYER");
-        private static int pedCriminal = World.AddRelationshipGroup("PEDCRIMINAL");
+        private static int pedCriminal = World.AddRelationshipGroup("PED_AGAINST_COP");
+        private static int pedTerrorist = World.AddRelationshipGroup("PED_AGAINST_ARMY");
         private static int count = 0;
 
         public static int GetRandomIntBelow(int maxValue)
@@ -246,62 +247,65 @@ namespace YouAreNotAlone
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
-            switch (type)
+            if (newRel != 0)
             {
-                case EventManager.EventType.AggressiveDriver:
-                case EventManager.EventType.Carjacker:
-                case EventManager.EventType.Racer:
-                    {
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                switch (type)
+                {
+                    case EventManager.EventType.AggressiveDriver:
+                    case EventManager.EventType.Carjacker:
+                    case EventManager.EventType.Racer:
+                        {
+                            foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
-                        criminalRelationships.Add(newRel);
-                        
-                        break;
-                    }
+                            criminalRelationships.Add(newRel);
 
-                case EventManager.EventType.Driveby:
-                case EventManager.EventType.Massacre:
-                    {
-                        foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            break;
+                        }
 
-                        criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                    case EventManager.EventType.Driveby:
+                    case EventManager.EventType.Massacre:
+                        {
+                            foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            
+                            if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            criminalRelationships.Add(newRel);
 
-                        if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            break;
+                        }
 
-                        break;
-                    }
+                    case EventManager.EventType.GangTeam:
+                        {
+                            foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
-                case EventManager.EventType.GangTeam:
-                    {
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
-                        criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            criminalRelationships.Add(newRel);
 
-                        if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            break;
+                        }
 
-                        break;
-                    }
+                    case EventManager.EventType.Terrorist:
+                        {
+                            foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
 
-                case EventManager.EventType.Terrorist:
-                    {
-                        foreach (int i in oldRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
-                        criminalRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            criminalRelationships.Add(newRel);
 
-                        if (!Main.CriminalsCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
-
-                        break;
-                    }
+                            break;
+                        }
+                }
             }
 
             return newRel;
@@ -311,45 +315,47 @@ namespace YouAreNotAlone
         {
             int newRel = World.AddRelationshipGroup((count++).ToString());
 
-            switch (type)
+            if (newRel != 0)
             {
-                case DispatchManager.DispatchType.Army:
-                case DispatchManager.DispatchType.ArmyHeli:
-                case DispatchManager.DispatchType.ArmyRoadBlock:
-                    {
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
-                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+                switch (type)
+                {
+                    case DispatchManager.DispatchType.Army:
+                    case DispatchManager.DispatchType.ArmyHeli:
+                    case DispatchManager.DispatchType.ArmyRoadBlock:
+                        {
+                            foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+                            foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
 
-                        armyRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"));
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC"));
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            if (!Main.DispatchesCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
-                        if (!Main.DispatchesCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"));
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC"));
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            armyRelationships.Add(newRel);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchManager.DispatchType.Cop:
-                case DispatchManager.DispatchType.CopHeli:
-                case DispatchManager.DispatchType.CopRoadBlock:
-                    {
-                        foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
-                        foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
-                        foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+                    case DispatchManager.DispatchType.Cop:
+                    case DispatchManager.DispatchType.CopHeli:
+                    case DispatchManager.DispatchType.CopRoadBlock:
+                        {
+                            foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
+                            foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
+                            foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
 
-                        copRelationships.Add(newRel);
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"));
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC"));
-                        World.SetRelationshipBetweenGroups(Relationship.Like, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "SECURITY_GUARD"));
-                        World.SetRelationshipBetweenGroups(Relationship.Dislike, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "DEALER"));
-                        World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            if (!Main.DispatchesCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
 
-                        if (!Main.DispatchesCanFightWithPlayer) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, playerID);
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "FIREMAN"));
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "MEDIC"));
+                            World.SetRelationshipBetweenGroups(Relationship.Like, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "SECURITY_GUARD"));
+                            World.SetRelationshipBetweenGroups(Relationship.Dislike, newRel, Function.Call<int>(Hash.GET_HASH_KEY, "DEALER"));
+                            World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, newRel);
+                            copRelationships.Add(newRel);
 
-                        break;
-                    }
+                            break;
+                        }
+                }
             }
 
             return newRel;
@@ -478,14 +484,26 @@ namespace YouAreNotAlone
             }
         }
 
-        public static void SetAsCriminalWhoIs(Ped p)
+        public static void SetAsCriminalWhoIs(Ped p, string type)
         {
-            foreach (int i in copRelationships)
+            if (type == "ARMY")
             {
-                if (!World.GetRelationshipBetweenGroups(pedCriminal, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, pedCriminal, i);
-            }
+                foreach (int i in armyRelationships)
+                {
+                    if (!World.GetRelationshipBetweenGroups(pedCriminal, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, pedTerrorist, i);
+                }
 
-            p.RelationshipGroup = pedCriminal;
+                p.RelationshipGroup = pedTerrorist;
+            }
+            else
+            {
+                foreach (int i in copRelationships)
+                {
+                    if (!World.GetRelationshipBetweenGroups(pedCriminal, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, pedCriminal, i);
+                }
+
+                p.RelationshipGroup = pedCriminal;
+            }
         }
     }
 }

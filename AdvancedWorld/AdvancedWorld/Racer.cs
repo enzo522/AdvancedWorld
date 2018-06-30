@@ -18,6 +18,8 @@ namespace YouAreNotAlone
 
         public bool IsCreatedIn(float radius, Road road)
         {
+            if (relationship == 0) return false;
+
             spawnedVehicle = Util.Create(name, road.Position, road.Heading, true);
 
             if (!Util.ThereIs(spawnedVehicle))
@@ -53,12 +55,12 @@ namespace YouAreNotAlone
             
             if (!Util.BlipIsOn(spawnedPed))
             {
-                if (spawnedVehicle.Model.IsCar) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)17, "Racer " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
+                if (spawnedVehicle.Model.IsCar) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)17, "Racer " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
                 else
                 {
                     if (!spawnedPed.IsWearingHelmet) spawnedPed.GiveHelmet(false, HelmetType.RegularMotorcycleHelmet, 4096);
 
-                    Util.AddBlipOn(spawnedPed, 1.0f, BlipSprite.PersonalVehicleBike, (BlipColor)17, "Racer " + VehicleName.GetNameOf(spawnedVehicle.Model.Hash));
+                    Util.AddBlipOn(spawnedPed, 1.0f, BlipSprite.PersonalVehicleBike, (BlipColor)17, "Racer " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
                 }
 
                 TaskSequence ts = new TaskSequence();

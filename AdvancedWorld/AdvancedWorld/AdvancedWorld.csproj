@@ -78,7 +78,7 @@
     <Compile Include="Terrorist.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Road.cs" />
-    <Compile Include="VehicleName.cs" />
+    <Compile Include="VehicleInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

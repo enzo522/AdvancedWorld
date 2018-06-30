@@ -17,6 +17,8 @@ namespace YouAreNotAlone
 
         public bool IsCreatedIn(float radius, Vector3 safePosition)
         {
+            if (relationship == 0) return false;
+
             Vector3 position = World.GetNextPositionOnSidewalk(safePosition);
             int trycount = 0;
 

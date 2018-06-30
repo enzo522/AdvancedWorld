@@ -15,12 +15,12 @@ namespace YouAreNotAlone
         private Vector3 position;
         private Vector3 rotation;
 
-        public Shield(Ped p)
+        public Shield(Ped owner)
         {
             this.shieldModels = new List<string> { "prop_ballistic_shield", "prop_riot_shield" };
-            this.owner = p;
+            this.owner = owner;
             this.attached = false;
-            this.boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, owner, 61163);
+            this.boneIndex = Function.Call<int>(Hash.GET_PED_BONE_INDEX, this.owner, 61163);
             this.position = new Vector3(0.21f, -0.11f, -0.038f);
             this.rotation = new Vector3(60.0f, 170.0f, 10.0f);
         }
