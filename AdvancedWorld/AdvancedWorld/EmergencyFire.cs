@@ -62,16 +62,16 @@ namespace YouAreNotAlone
 
             Logger.Write(false, blipName + ": Created members.", name);
 
+            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
+            {
+                Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
+                Restore(true);
+
+                return false;
+            }
+
             foreach (Ped p in members)
             {
-                if (!Util.ThereIs(p))
-                {
-                    Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
-                    Restore(true);
-
-                    return false;
-                }
-                
                 AddVarietyTo(p);
                 p.Weapons.RemoveAll();
                 p.RelationshipGroup = Function.Call<int>(Hash.GET_HASH_KEY, emergencyType);
@@ -107,10 +107,7 @@ namespace YouAreNotAlone
             {
                 Logger.Write(false, blipName + ": Restore instantly.", name);
 
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p)) p.Delete();
-                }
+                foreach (Ped p in members.FindAll(m => Util.ThereIs(m))) p.Delete();
 
                 if (Util.ThereIs(spawnedVehicle)) spawnedVehicle.Delete();
             }
@@ -118,14 +115,11 @@ namespace YouAreNotAlone
             {
                 Logger.Write(false, blipName + ": Restore naturally.", name);
 
-                foreach (Ped p in members)
+                foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && m.IsPersistent))
                 {
-                    if (Util.ThereIs(p) && p.IsPersistent)
-                    {
-                        p.AlwaysKeepTask = false;
-                        p.BlockPermanentEvents = false;
-                        Util.NaturallyRemove(p);
-                    }
+                    p.AlwaysKeepTask = false;
+                    p.BlockPermanentEvents = false;
+                    Util.NaturallyRemove(p);
                 }
 
                 if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent)
@@ -192,12 +186,16 @@ namespace YouAreNotAlone
                 }
 
                 if (Util.WeCanGiveTaskTo(members[i])) alive++;
-                else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                else
+                {
+                    Util.NaturallyRemove(members[i]);
+                    members.RemoveAt(i);
+                }
             }
 
             Logger.Write(false, blipName + ": Alive members - " + alive.ToString(), name);
 
-            if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || alive < 1 || members.Count < 1)
+            if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
                 Logger.Write(false, blipName + ": Emergency fire need to be restored.", name);
                 Restore(false);
@@ -212,6 +210,7 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(false, blipName + ": Target found. Time to be on duty.", name);
                     SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) && !spawnedVehicle.IsInRangeOf(targetPosition, 30.0f));
+                    RefreshBlip(false);
                 }
                 else
                 {
@@ -227,6 +226,7 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(false, blipName + ": Target not found. Time to be off duty.", name);
                     SetPedsOffDuty();
+                    RefreshBlip(true);
                 }
                 else
                 {

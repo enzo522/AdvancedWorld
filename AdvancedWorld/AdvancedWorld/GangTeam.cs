@@ -79,20 +79,19 @@ namespace YouAreNotAlone
                 }
             }
 
-            foreach (Ped p in members)
+            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
             {
-                if (!Util.ThereIs(p))
-                {
-                    Logger.Error("GangTeam: There is a member who doesn't exist. Abort.", "");
-                    Restore(true);
+                Logger.Error("GangTeam: There is a member who doesn't exist. Abort.", "");
+                Restore(true);
 
-                    return false;
-                }
+                return false;
             }
+            else
+            {
+                Logger.Write(false, "GangTeam: Create gang team successfully.", "");
 
-            Logger.Write(false, "GangTeam: Create gang team successfully.", "");
-
-            return true;
+                return true;
+            }
         }
 
         public override void Restore(bool instantly)

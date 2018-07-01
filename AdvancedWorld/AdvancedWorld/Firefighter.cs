@@ -21,18 +21,15 @@ namespace YouAreNotAlone
                         Logger.Write(false, blipName + ": Time to go with vehicle.", name);
 
                         if (spawnedVehicle.HasSiren && !spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = true;
-
-                        AddEmergencyBlip(true);
+                        
                         spawnedVehicle.Driver.Task.DriveTo(spawnedVehicle, targetPosition, 10.0f, 100.0f, 262708); // 4 + 16 + 32 + 512 + 262144
                     }
                     else
                     {
                         Logger.Write(false, blipName + ": There is no driver when on duty. Re-enter everyone.", name);
 
-                        foreach (Ped p in members)
-                        {
-                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
-                        }
+                        foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.WeCanGiveTaskTo(m) && m.IsSittingInVehicle(spawnedVehicle)))
+                            p.Task.LeaveVehicle(spawnedVehicle, false);
                     }
                 }
                 else
@@ -42,10 +39,8 @@ namespace YouAreNotAlone
                     {
                         Logger.Write(false, blipName + ": Something wrong with assigning seats when on duty. Re-enter everyone.", name);
 
-                        foreach (Ped p in members)
-                        {
-                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
-                        }
+                        foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.WeCanGiveTaskTo(m) && m.IsSittingInVehicle(spawnedVehicle)))
+                            p.Task.LeaveVehicle(spawnedVehicle, false);
                     }
                 }
             }
@@ -62,23 +57,18 @@ namespace YouAreNotAlone
                     {
                         Logger.Write(false, blipName + ": Time to put off fires.", name);
 
-                        foreach (Ped p in members)
+                        foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.WeCanGiveTaskTo(m)))
                         {
-                            if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))
+                            if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
+                            if (p.TaskSequenceProgress < 0)
                             {
-                                if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, false);
-                                else if (p.TaskSequenceProgress < 0)
-                                {
-                                    AddEmergencyBlip(false);
+                                TaskSequence ts = new TaskSequence();
+                                ts.AddTask.RunTo(targetPosition.Around(3.0f));
+                                ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
+                                ts.Close();
 
-                                    TaskSequence ts = new TaskSequence();
-                                    ts.AddTask.RunTo(targetPosition.Around(3.0f));
-                                    ts.AddTask.ShootAt(targetPosition, 10000, FiringPattern.FullAuto);
-                                    ts.Close();
-
-                                    p.Task.PerformSequence(ts);
-                                    ts.Dispose();
-                                }
+                                p.Task.PerformSequence(ts);
+                                ts.Dispose();
                             }
                         }
                     }
@@ -103,12 +93,10 @@ namespace YouAreNotAlone
 
             target = null;
             targetPosition = Vector3.Zero;
-            Entity en = new List<Entity>(World.GetNearbyEntities(spawnedVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire);
 
-            if (Util.ThereIs(en))
+            if (Util.ThereIs(target = new List<Entity>(World.GetNearbyEntities(spawnedVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire)))
             {
                 Logger.Write(false, blipName + ": Found entity on fire.", name);
-                target = en;
                 targetPosition = target.Position;
 
                 return true;

@@ -145,20 +145,19 @@ namespace YouAreNotAlone
                 }
             }
 
-            foreach (Ped p in members)
+            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
             {
-                if (!Util.ThereIs(p))
-                {
-                    Logger.Error("Massacre: There is a member who doesn't exist. Abort.", "");
-                    Restore(true);
+                Logger.Error("Massacre: There is a member who doesn't exist. Abort.", "");
+                Restore(true);
 
-                    return false;
-                }
+                return false;
             }
+            else
+            {
+                Logger.Write(false, "Massacre: Create massacre squad successfully.", "");
 
-            Logger.Write(false, "Massacre: Create massacre squad successfully.", "");
-
-            return true;
+                return true;
+            }
         }
 
         public override void Restore(bool instantly)
@@ -189,8 +188,6 @@ namespace YouAreNotAlone
 
         public override bool ShouldBeRemoved()
         {
-            spawnedPed = null;
-
             for (int i = members.Count - 1; i >= 0; i--)
             {
                 if (!Util.ThereIs(members[i]))
@@ -205,20 +202,20 @@ namespace YouAreNotAlone
                     Logger.Write(false, "Massacre: Found a member who died or out of range. Need to be removed.", "");
                     Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
-
-                    continue;
                 }
-
-                spawnedPed = members[i];
             }
 
-            if (members.Count < 1)
+            spawnedPed = null;
+
+            if (!Util.ThereIs(spawnedPed = members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))) || members.Count < 1)
             {
                 Logger.Write(false, "Massacre: Everyone is gone. Time to be disposed.", "");
                 Restore(false);
 
                 return true;
             }
+
+            foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.WeCanGiveTaskTo(m) && !m.IsInCombat)) p.Task.FightAgainstHatedTargets(400.0f);
 
             if (Util.ThereIs(spawnedPed)) CheckDispatch();
 

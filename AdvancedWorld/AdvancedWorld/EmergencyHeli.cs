@@ -65,16 +65,16 @@ namespace YouAreNotAlone
 
             Logger.Write(false, blipName + ": Created members.", name);
 
+            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
+            {
+                Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
+                Restore(true);
+
+                return false;
+            }
+
             foreach (Ped p in members)
             {
-                if (!Util.ThereIs(p))
-                {
-                    Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
-                    Restore(true);
-
-                    return false;
-                }
-
                 switch (emergencyType)
                 {
                     case "ARMY":
@@ -150,7 +150,11 @@ namespace YouAreNotAlone
                 {
                     if (!members[i].Equals(spawnedVehicle.Driver)) alive++;
                 }
-                else if (Util.BlipIsOn(members[i])) members[i].CurrentBlip.Remove();
+                else
+                {
+                    Util.NaturallyRemove(members[i]);
+                    members.RemoveAt(i);
+                }
             }
 
             Logger.Write(false, blipName + ": Alive members without driver - " + alive.ToString(), name);
@@ -170,6 +174,7 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(false, blipName + ": Target found. Time to be on duty.", name);
                     SetPedsOnDuty(Util.WeCanEnter(spawnedVehicle) || spawnedVehicle.IsInAir);
+                    RefreshBlip(false);
                 }
                 else
                 {
@@ -185,6 +190,7 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(false, blipName + ": Target not found. Time to be off duty.", name);
                     SetPedsOffDuty();
+                    RefreshBlip(true);
                 }
                 else
                 {

@@ -10,12 +10,16 @@ namespace YouAreNotAlone
         public Vehicle OnFireVehicle { get; private set; }
 
         private int dispatchCooldown;
+        private int dispatchTry;
         private bool instantly;
+        private Blip blip;
 
         public OnFire()
         {
             this.dispatchCooldown = 10;
+            this.dispatchTry = 0;
             this.instantly = false;
+            this.blip = null;
             Logger.Write(true, "OnFire event selected.", "");
         }
 
@@ -54,6 +58,13 @@ namespace YouAreNotAlone
                         OnFireVehicle.IsDriveable = false;
                     }
 
+                    blip = World.CreateBlip(OnFireVehicle.Position);
+                    blip.Scale = 0.7f;
+                    blip.Sprite = (BlipSprite)436;
+                    blip.Color = BlipColor.Red;
+                    blip.Name = "On Fire";
+                    blip.IsShortRange = true;
+
                     break;
                 }
             }
@@ -73,13 +84,17 @@ namespace YouAreNotAlone
                 {
                     Logger.Write(false, "OnFire: Found fire position.", "");
 
+                    if (!blip.Position.Equals(position)) blip.Position = position;
+
                     return true;
                 }
             }
-            
-            if (Util.ThereIs(new List<Entity>(World.GetNearbyEntities(OnFireVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire)))
+
+            if (Util.ThereIs(OnFireVehicle = new List<Vehicle>(World.GetNearbyVehicles(OnFireVehicle.Position, 200.0f)).Find(v => Util.ThereIs(v) && v.IsOnFire)))
             {
                 Logger.Write(false, "OnFire: Found entity on fire.", "");
+
+                if (!blip.Position.Equals(OnFireVehicle.Position)) blip.Position = OnFireVehicle.Position;
 
                 return true;
             }
@@ -92,6 +107,7 @@ namespace YouAreNotAlone
         public override void Restore(bool instantly)
         {
             Logger.Write(false, "OnFire: Restore naturally.", "");
+            blip.Remove();
             Util.NaturallyRemove(OnFireVehicle);
         }
 
@@ -105,18 +121,17 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (!Util.BlipIsOn(OnFireVehicle))
-            {
-                if (instantly) Util.AddBlipOn(OnFireVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Red, "Vehicle Explosion");
-                else Util.AddBlipOn(OnFireVehicle, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Yellow, "Vehicle on Fire");
-            }
-
             if (dispatchCooldown < 15) dispatchCooldown++;
-            else
+            else if (Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire))
             {
-                Main.DispatchAgainst(OnFireVehicle, EventManager.EventType.Fire);
                 Logger.Write(false, "OnFire: Dispatch against", "Fire");
                 dispatchCooldown = 0;
+            }
+            else if (++dispatchTry > 5)
+            {
+                Logger.Write(false, "OnFire: Couldn't dispatch", "Fire");
+                dispatchCooldown = 0;
+                dispatchTry = 0;
             }
 
             return false;

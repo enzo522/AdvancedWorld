@@ -1,5 +1,6 @@
 ﻿using GTA;
 using GTA.Math;
+using System.Collections.Generic;
 
 namespace YouAreNotAlone
 {
@@ -93,18 +94,11 @@ namespace YouAreNotAlone
 
         public void CheckStingable()
         {
-            Vehicle[] nearbyVehicles = World.GetNearbyVehicles(stinger.Position, 20.0f);
-
-            if (nearbyVehicles.Length < 1) return;
-
-            foreach (Vehicle v in nearbyVehicles)
+            foreach (Vehicle v in new List<Vehicle>(World.GetNearbyVehicles(stinger.Position, 20.0f)).FindAll(veh => Util.ThereIs(veh) && veh.IsTouching(stinger) && veh.CanTiresBurst))
             {
-                if (Util.ThereIs(v) && v.IsTouching(stinger) && v.CanTiresBurst)
+                foreach (Wheel w in System.Enum.GetValues(typeof(Wheel)))
                 {
-                    foreach (Wheel w in System.Enum.GetValues(typeof(Wheel)))
-                    {
-                        if (v.HasBone(w.ToString()) && !v.IsTireBurst((int)w) && StingerAreaContains(v.GetBoneCoord(w.ToString()))) v.BurstTire((int)w);
-                    }
+                    if (v.HasBone(w.ToString()) && !v.IsTireBurst((int)w) && StingerAreaContains(v.GetBoneCoord(w.ToString()))) v.BurstTire((int)w);
                 }
             }
         }

@@ -64,20 +64,19 @@ namespace YouAreNotAlone
                 }
             }
 
-            foreach (Racer r in racers)
+            if (racers.Find(r => !r.Exists()) != null)
             {
-                if (!r.Exists())
-                {
-                    Logger.Write(false, "Racers: There is a racer who doesn't exist. Abort.", "");
-                    Restore(true);
+                Logger.Write(false, "Racers: There is a racer who doesn't exist. Abort.", "");
+                Restore(true);
 
-                    return false;
-                }
+                return false;
             }
+            else
+            {
+                Logger.Write(false, "Racers: Created racers successfully.", "");
 
-            Logger.Write(false, "Racers: Created racers successfully.", "");
-
-            return true;
+                return true;
+            }
         }
 
         public void CheckNitroable()

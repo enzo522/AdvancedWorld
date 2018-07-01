@@ -665,26 +665,34 @@ namespace YouAreNotAlone
             Logger.Write(false, "Main: Completed setting.", "");
         }
 
-        public static void DispatchAgainst(Entity target, EventManager.EventType type)
+        public static bool DispatchAgainst(Entity target, EventManager.EventType type)
         {
-            if (NoDispatch) return;
+            if (NoDispatch) return false;
 
             Vector3 safePosition = Util.GetSafePositionNear(target.Position + target.ForwardVector * 70.0f);
 
-            if (safePosition.Equals(Vector3.Zero)) return;
+            if (safePosition.Equals(Vector3.Zero)) return false;
+            
+            int failedLimit = 0, failed = 0;
             
             switch (type)
             {
                 case EventManager.EventType.AggressiveDriver:
                 case EventManager.EventType.Racer:
                     {
+                        failedLimit = 2;
+
                         for (int i = 0; i < 2; i++)
                         {
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
-                            else lspd.Restore(true);
+                            else
+                            {
+                                lspd.Restore(true);
+                                failed++;
+                            }
                         }
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
@@ -692,7 +700,11 @@ namespace YouAreNotAlone
                             EmergencyHeli lspdheli = new EmergencyHeli(copHeliNames[Util.GetRandomIntBelow(copHeliNames.Count)], target, "LSPD");
 
                             if (lspdheli.IsCreatedIn(safePosition, copModels[Util.GetRandomIntBelow(copModels.Count)])) DispatchManager.Add(lspdheli, DispatchManager.DispatchType.CopHeli);
-                            else lspdheli.Restore(true);
+                            else
+                            {
+                                lspdheli.Restore(true);
+                                failed++;
+                            }
                         }
 
                         break;
@@ -700,24 +712,35 @@ namespace YouAreNotAlone
 
                 case EventManager.EventType.Carjacker:
                     {
+                        failedLimit = 1;
                         int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                         EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                         if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
-                        else lspd.Restore(true);
+                        else
+                        {
+                            lspd.Restore(true);
+                            failed++;
+                        }
 
                         break;
                     }
 
                 case EventManager.EventType.Driveby:
                     {
+                        failedLimit = 2;
+
                         for (int i = 0; i < 2; i++)
                         {
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
-                            else lspd.Restore(true);
+                            else
+                            {
+                                lspd.Restore(true);
+                                failed++;
+                            }
                         }
 
                         if (target.Model.IsPed && ((Ped)target).IsSittingInVehicle() && ((Ped)target).CurrentVehicle.Model.IsCar)
@@ -730,7 +753,11 @@ namespace YouAreNotAlone
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
-                            else swatheli.Restore(true);
+                            else
+                            {
+                                swatheli.Restore(true);
+                                failed++;
+                            }
                         }
 
                         break;
@@ -738,6 +765,7 @@ namespace YouAreNotAlone
 
                 case EventManager.EventType.Fire:
                     {
+                        failedLimit = 1;
                         Firefighter ff = new Firefighter(fireCarNames[Util.GetRandomIntBelow(fireCarNames.Count)], target);
 
                         if (ff.IsCreatedIn(safePosition, fireModels)) DispatchManager.Add(ff, DispatchManager.DispatchType.Emergency);
@@ -753,13 +781,19 @@ namespace YouAreNotAlone
 
                 case EventManager.EventType.GangTeam:
                     {
+                        failedLimit = 2;
+
                         for (int i = 0; i < 3; i++)
                         {
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
                             if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
-                            else lspd.Restore(true);
+                            else
+                            {
+                                lspd.Restore(true);
+                                failed++;
+                            }
                         }
 
                         break;
@@ -767,22 +801,36 @@ namespace YouAreNotAlone
 
                 case EventManager.EventType.Massacre:
                     {
+                        failedLimit = 4;
+
                         for (int i = 0; i < 2; i++)
                         {
                             EmergencyGround fib = new EmergencyGround(fibCarNames[Util.GetRandomIntBelow(fibCarNames.Count)], target, "FIB");
 
                             if (fib.IsCreatedIn(safePosition, fibModels)) DispatchManager.Add(fib, DispatchManager.DispatchType.Cop);
-                            else fib.Restore(true);
+                            else
+                            {
+                                fib.Restore(true);
+                                failed++;
+                            }
 
                             EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
                             if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
-                            else swat.Restore(true);
+                            else
+                            {
+                                swat.Restore(true);
+                                failed++;
+                            }
 
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
 
                             if (swatheli.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swatheli, DispatchManager.DispatchType.CopHeli);
-                            else swatheli.Restore(true);
+                            else
+                            {
+                                swatheli.Restore(true);
+                                failed++;
+                            }
                         }
 
                         break;
@@ -790,12 +838,18 @@ namespace YouAreNotAlone
 
                 case EventManager.EventType.Terrorist:
                     {
+                        failedLimit = 4;
+
                         for (int i = 0; i < 4; i++)
                         {
                             EmergencyGround army = new EmergencyGround(armyCarNames[Util.GetRandomIntBelow(armyCarNames.Count)], target, "ARMY");
 
                             if (army.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(army, DispatchManager.DispatchType.Army);
-                            else army.Restore(true);
+                            else
+                            {
+                                army.Restore(true);
+                                failed++;
+                            }
                         }
 
                         for (int i = 0; i < 2; i++)
@@ -803,12 +857,19 @@ namespace YouAreNotAlone
                             EmergencyHeli armyheli = new EmergencyHeli(armyHeliNames[Util.GetRandomIntBelow(armyHeliNames.Count)], target, "ARMY");
 
                             if (armyheli.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(armyheli, DispatchManager.DispatchType.ArmyHeli);
-                            else armyheli.Restore(true);
+                            else
+                            {
+                                armyheli.Restore(true);
+                                failed++;
+                            }
                         }
 
                         break;
                     }
             }
+
+            if (failed < failedLimit) return true;
+            else return false;
         }
 
         public static bool BlockRoadAgainst(Entity target, EventManager.EventType type)

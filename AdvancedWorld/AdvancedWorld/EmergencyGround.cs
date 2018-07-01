@@ -82,16 +82,16 @@ namespace YouAreNotAlone
 
             Logger.Write(false, blipName + ": Created members.", name);
 
+            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
+            {
+                Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
+                Restore(true);
+
+                return false;
+            }
+
             foreach (Ped p in members)
             {
-                if (!Util.ThereIs(p))
-                {
-                    Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
-                    Restore(true);
-
-                    return false;
-                }
-
                 switch (emergencyType)
                 {
                     case "ARMY":

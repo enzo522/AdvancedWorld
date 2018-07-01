@@ -87,16 +87,16 @@ namespace YouAreNotAlone
 
             Logger.Write(false, blipName + ": Tried to create stinger and created members.", name);
 
+            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
+            {
+                Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
+                Restore(true);
+
+                return false;
+            }
+
             foreach (Ped p in members)
             {
-                if (!Util.ThereIs(p))
-                {
-                    Logger.Error(blipName + ": There is a member who doesn't exist. Abort.", name);
-                    Restore(true);
-
-                    return false;
-                }
-
                 if (p.IsSittingInVehicle(spawnedVehicle)) p.Task.LeaveVehicle(spawnedVehicle, LeaveVehicleFlags.WarpOut);
 
                 switch (emergencyType)

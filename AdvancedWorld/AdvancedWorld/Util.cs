@@ -323,6 +323,7 @@ namespace YouAreNotAlone
                     case DispatchManager.DispatchType.ArmyHeli:
                     case DispatchManager.DispatchType.ArmyRoadBlock:
                         {
+                            foreach (int i in criminalRelationships) World.SetRelationshipBetweenGroups(Relationship.Hate, newRel, i);
                             foreach (int i in armyRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
                             foreach (int i in copRelationships) World.SetRelationshipBetweenGroups(Relationship.Respect, newRel, i);
 
@@ -488,19 +489,15 @@ namespace YouAreNotAlone
         {
             if (type == "ARMY")
             {
-                foreach (int i in armyRelationships)
-                {
-                    if (!World.GetRelationshipBetweenGroups(pedCriminal, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, pedTerrorist, i);
-                }
+                foreach (int i in armyRelationships.FindAll(r => !World.GetRelationshipBetweenGroups(pedTerrorist, r).Equals(Relationship.Hate)))
+                    World.SetRelationshipBetweenGroups(Relationship.Hate, pedTerrorist, i);
 
                 p.RelationshipGroup = pedTerrorist;
             }
             else
             {
-                foreach (int i in copRelationships)
-                {
-                    if (!World.GetRelationshipBetweenGroups(pedCriminal, i).Equals(Relationship.Hate)) World.SetRelationshipBetweenGroups(Relationship.Hate, pedCriminal, i);
-                }
+                foreach (int i in copRelationships.FindAll(r => !World.GetRelationshipBetweenGroups(pedCriminal, r).Equals(Relationship.Hate)))
+                    World.SetRelationshipBetweenGroups(Relationship.Hate, pedCriminal, i);
 
                 p.RelationshipGroup = pedCriminal;
             }
