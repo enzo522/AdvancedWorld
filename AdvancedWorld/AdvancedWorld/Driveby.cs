@@ -199,6 +199,9 @@ namespace YouAreNotAlone
             else if (ReadyToGoWith(members))
             {
                 if (!Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.GunCar, BlipColor.White, "Driveby " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
+
+                foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.BlipIsOn(m))) p.CurrentBlip.Remove();
+
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
                     Logger.Write(false, "Driveby: Time to driveby.", name);

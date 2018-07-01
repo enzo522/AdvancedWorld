@@ -43,7 +43,7 @@ namespace YouAreNotAlone
             for (int i = 0; i < 6; i++)
             {
                 Ped p = Util.Create(selectedModels[Util.GetRandomIntBelow(selectedModels.Count)], position);
-
+                
                 if (!Util.ThereIs(p))
                 {
                     Logger.Error("GangTeam: Couldn't create a member. Skip to set characteristics.", "");
@@ -66,16 +66,16 @@ namespace YouAreNotAlone
                 p.Armor = Util.GetRandomIntBelow(100);
                 Logger.Write(false, "GangTeam: Characteristics are set.", "");
 
-                if (!Util.BlipIsOn(p))
+                if (Util.BlipIsOn(p))
+                {
+                    Logger.Error("GangTeam: Blip is already on the member. Delete this member to abort.", "");
+                    p.Delete();
+                }
+                else
                 {
                     Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, teamColor, teamName);
                     Logger.Write(false, "GangTeam: Create a member successfully.", "");
                     members.Add(p);
-                }
-                else
-                {
-                    Logger.Error("GangTeam: Blip is already on the member. Delete this member to abort.", "");
-                    p.Delete();
                 }
             }
 
@@ -100,10 +100,7 @@ namespace YouAreNotAlone
             {
                 Logger.Write(false, "GangTeam: Restore instanly.", "");
 
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p)) p.Delete();
-                }
+                foreach (Ped p in members.FindAll(m => Util.ThereIs(m))) p.Delete();
             }
             else
             {
@@ -122,16 +119,11 @@ namespace YouAreNotAlone
         {
             Logger.Write(false, "GangTeam: Let's fight with hated targets.", "");
 
-            foreach (Ped p in members)
-            {
-                if (Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)) p.Task.PerformSequence(ts);
-            }
+            foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.WeCanGiveTaskTo(m))) p.Task.PerformSequence(ts);
         }
 
         public override bool ShouldBeRemoved()
         {
-            spawnedPed = null;
-
             for (int i = members.Count - 1; i >= 0; i--)
             {
                 if (!Util.ThereIs(members[i]))
@@ -152,8 +144,6 @@ namespace YouAreNotAlone
 
                 if (!members[i].IsInCombat && Util.ThereIs(new List<Ped>(World.GetNearbyPeds(members[i], 100.0f)).Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p) && World.GetRelationshipBetweenGroups(relationship, p.RelationshipGroup).Equals(Relationship.Hate))))
                     members[i].Task.PerformSequence(ts);
-
-                spawnedPed = members[i];
             }
 
             if (members.Count < 1)
@@ -164,7 +154,16 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+            spawnedPed = null;
+
+            if (Util.ThereIs(spawnedPed = members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)))) CheckDispatch();
+            else
+            {
+                Logger.Write(false, "GangTeam: Everyone is gone. Time to be disposed.", "");
+                Restore(false);
+
+                return true;
+            }
 
             return false;
         }

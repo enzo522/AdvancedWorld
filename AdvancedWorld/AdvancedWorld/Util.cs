@@ -319,7 +319,7 @@ namespace YouAreNotAlone
             {
                 switch (type)
                 {
-                    case DispatchManager.DispatchType.Army:
+                    case DispatchManager.DispatchType.ArmyGround:
                     case DispatchManager.DispatchType.ArmyHeli:
                     case DispatchManager.DispatchType.ArmyRoadBlock:
                         {
@@ -337,7 +337,7 @@ namespace YouAreNotAlone
                             break;
                         }
 
-                    case DispatchManager.DispatchType.Cop:
+                    case DispatchManager.DispatchType.CopGround:
                     case DispatchManager.DispatchType.CopHeli:
                     case DispatchManager.DispatchType.CopRoadBlock:
                         {
@@ -375,7 +375,7 @@ namespace YouAreNotAlone
 
             switch (type)
             {
-                case DispatchManager.DispatchType.Army:
+                case DispatchManager.DispatchType.ArmyGround:
                 case DispatchManager.DispatchType.ArmyHeli:
                 case DispatchManager.DispatchType.ArmyRoadBlock:
                     {
@@ -384,7 +384,7 @@ namespace YouAreNotAlone
                         break;
                     }
 
-                case DispatchManager.DispatchType.Cop:
+                case DispatchManager.DispatchType.CopGround:
                 case DispatchManager.DispatchType.CopHeli:
                 case DispatchManager.DispatchType.CopRoadBlock:
                     {
@@ -412,7 +412,6 @@ namespace YouAreNotAlone
                     break;
 
                 case EventManager.EventType.Carjacker:
-                case EventManager.EventType.None:
                     max = 0;
 
                     break;
@@ -430,7 +429,7 @@ namespace YouAreNotAlone
                     break;
             }
 
-            return dispatchType.Equals(DispatchManager.DispatchType.Army) ?
+            return dispatchType.Equals(DispatchManager.DispatchType.ArmyGround) ?
                 (nearbyPeds.FindAll(p => ThereIs(p) && WeCanGiveTaskTo(p) && armyRelationships.Contains(p.RelationshipGroup))).Count > max :
                 (nearbyPeds.FindAll(p => ThereIs(p) && WeCanGiveTaskTo(p) && copRelationships.Contains(p.RelationshipGroup))).Count > max;
         }

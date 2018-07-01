@@ -12,7 +12,7 @@ namespace YouAreNotAlone
         public EmergencyFire(string name, Entity target, string emergencyType) : base(name, target, emergencyType)
         {
             this.blipName += emergencyType == "FIREMAN" ? "Fire Fighter" : "Paramedic";
-            Util.CleanUp(this.relationship, DispatchManager.DispatchType.Cop);
+            Util.CleanUp(this.relationship, DispatchManager.DispatchType.CopGround);
             this.relationship = 0;
             this.targetPosition = target.Position;
         }

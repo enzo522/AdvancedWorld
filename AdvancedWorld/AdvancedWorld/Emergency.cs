@@ -26,8 +26,8 @@ namespace YouAreNotAlone
             this.offDuty = false;
             this.ts = null;
 
-            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Army);
-            else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.Cop);
+            if (this.emergencyType == "ARMY") this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.ArmyGround);
+            else this.relationship = Util.NewRelationshipOf(DispatchManager.DispatchType.CopGround);
         }
 
         public abstract bool IsCreatedIn(Vector3 safePosition, List<string> models);
@@ -64,8 +64,8 @@ namespace YouAreNotAlone
             if (ts != null) ts.Dispose();
             if (relationship != 0)
             {
-                if (emergencyType == "ARMY") Util.CleanUp(relationship, DispatchManager.DispatchType.Army);
-                else Util.CleanUp(relationship, DispatchManager.DispatchType.Cop);
+                if (emergencyType == "ARMY") Util.CleanUp(relationship, DispatchManager.DispatchType.ArmyGround);
+                else Util.CleanUp(relationship, DispatchManager.DispatchType.CopGround);
             }
 
             members.Clear();

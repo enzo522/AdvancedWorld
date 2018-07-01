@@ -48,8 +48,7 @@ namespace YouAreNotAlone
 
         public void CheckNitroable()
         {
-            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 20.0f && spawnedVehicle.Acceleration > 0
-                && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 15.0f))
+            if (!nitroCooldown && nitroAmount > 0 && spawnedVehicle.Speed > 20.0f && spawnedVehicle.Acceleration > 0 && CanSafelyUseNitroBetween(spawnedVehicle.Position, spawnedVehicle.ForwardVector * 15.0f))
             {
                 spawnedVehicle.EnginePowerMultiplier = 10.0f;
                 spawnedVehicle.EngineTorqueMultiplier = 10.0f;

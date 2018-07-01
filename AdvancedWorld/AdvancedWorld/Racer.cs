@@ -43,6 +43,7 @@ namespace YouAreNotAlone
             Script.Wait(50);
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
+
             SetExhausts();
             Util.Tune(spawnedVehicle, true, true, true);
             Logger.Write(false, "Racer: Tuned racer vehicle.", name);
@@ -53,7 +54,14 @@ namespace YouAreNotAlone
             spawnedPed.BlockPermanentEvents = true;
             Logger.Write(false, "Racer: Characteristics are set.", name);
             
-            if (!Util.BlipIsOn(spawnedPed))
+            if (Util.BlipIsOn(spawnedPed))
+            {
+                Logger.Error("Racer: Blip is already on racer. Abort.", name);
+                Restore(true);
+
+                return false;
+            }
+            else
             {
                 if (spawnedVehicle.Model.IsCar) Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, (BlipColor)17, "Racer " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
                 else
@@ -75,13 +83,6 @@ namespace YouAreNotAlone
                 Logger.Write(false, "Racer: Created racer successfully.", name);
 
                 return true;
-            }
-            else
-            {
-                Logger.Error("Racer: Blip is already on racer. Abort.", name);
-                Restore(true);
-
-                return false;
             }
         }
 

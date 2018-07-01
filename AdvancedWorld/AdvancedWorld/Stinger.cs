@@ -81,7 +81,7 @@ namespace YouAreNotAlone
 
         public override bool ShouldBeRemoved()
         {
-            if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(owner.Position, 300.0f) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
+            if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "Stinger: Stinger need to be restored.", "");
                 Restore(false);

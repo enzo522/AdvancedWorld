@@ -19,10 +19,10 @@ namespace YouAreNotAlone
 
         public enum DispatchType
         {
-            Army,
+            ArmyGround,
             ArmyHeli,
             ArmyRoadBlock,
-            Cop,
+            CopGround,
             CopHeli,
             CopRoadBlock,
             Emergency,
@@ -45,70 +45,73 @@ namespace YouAreNotAlone
 
         public static void Add(AdvancedEntity en, DispatchType type)
         {
-            switch (type)
+            lock (typeof(DispatchManager))
             {
-                case DispatchType.Army:
-                    {
-                        lock (armyList) { armyList.Add(en); }
+                switch (type)
+                {
+                    case DispatchType.ArmyGround:
+                        {
+                            armyList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.ArmyHeli:
-                    {
-                        lock (armyHeliList) { armyHeliList.Add(en); }
+                    case DispatchType.ArmyHeli:
+                        {
+                            armyHeliList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.ArmyRoadBlock:
-                    {
-                        lock (armyRoadblockList) { armyRoadblockList.Add(en); }
+                    case DispatchType.ArmyRoadBlock:
+                        {
+                            armyRoadblockList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Cop:
-                    {
-                        lock (copList) { copList.Add(en); }
+                    case DispatchType.CopGround:
+                        {
+                            copList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.CopHeli:
-                    {
-                        lock (copHeliList) { copHeliList.Add(en); }
+                    case DispatchType.CopHeli:
+                        {
+                            copHeliList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.CopRoadBlock:
-                    {
-                        lock (copRoadblockList) { copRoadblockList.Add(en); }
+                    case DispatchType.CopRoadBlock:
+                        {
+                            copRoadblockList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Emergency:
-                    {
-                        lock (emList) { emList.Add(en); }
+                    case DispatchType.Emergency:
+                        {
+                            emList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Shield:
-                    {
-                        lock (shieldList) { shieldList.Add(en); }
+                    case DispatchType.Shield:
+                        {
+                            shieldList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case DispatchType.Stinger:
-                    {
-                        lock (stingerList) { stingerList.Add(en); }
+                    case DispatchType.Stinger:
+                        {
+                            stingerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
+                }
             }
 
             Logger.Write(false, "DispatchManager: Added new entity.", type.ToString());
@@ -140,15 +143,22 @@ namespace YouAreNotAlone
             }
             else timeChecker++;
 
-            foreach (Shield s in shieldList) s.CheckShieldable();
-            foreach (Stinger s in stingerList) s.CheckStingable();
+            lock (typeof(DispatchManager))
+            {
+                foreach (Shield s in shieldList) s.CheckShieldable();
+            }
+
+            lock (typeof(DispatchManager))
+            {
+                foreach (Stinger s in stingerList) s.CheckStingable();
+            }
         }
 
         private void CleanUp(List<AdvancedEntity> l)
         {
             if (l.Count < 1) return;
 
-            lock (l)
+            lock (typeof(DispatchManager))
             {
                 for (int i = l.Count - 1; i >= 0; i--)
                 {

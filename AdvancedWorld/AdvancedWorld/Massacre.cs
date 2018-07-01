@@ -132,16 +132,16 @@ namespace YouAreNotAlone
                 p.Task.FightAgainstHatedTargets(400.0f);
                 Logger.Write(false, "Massacre: Characteristics are set.", "");
 
-                if (!Util.BlipIsOn(p))
+                if (Util.BlipIsOn(p))
+                {
+                    Logger.Error("Massacre: Blip is already on the member. Delete this member to abort.", "");
+                    p.Delete();
+                }
+                else
                 {
                     Util.AddBlipOn(p, 0.7f, BlipSprite.Rampage, BlipColor.White, "Massacre Squad");
                     Logger.Write(false, "Massacre: Create a member successfully.", "");
                     members.Add(p);
-                }
-                else
-                {
-                    Logger.Error("Massacre: Blip is already on the member. Delete this member to abort.", "");
-                    p.Delete();
                 }
             }
 
@@ -166,10 +166,7 @@ namespace YouAreNotAlone
             {
                 Logger.Write(false, "Massacre: Restore instanly.", "");
 
-                foreach (Ped p in members)
-                {
-                    if (Util.ThereIs(p)) p.Delete();
-                }
+                foreach (Ped p in members.FindAll(m => Util.ThereIs(m))) p.Delete();
             }
             else
             {
@@ -202,12 +199,14 @@ namespace YouAreNotAlone
                     Logger.Write(false, "Massacre: Found a member who died or out of range. Need to be removed.", "");
                     Util.NaturallyRemove(members[i]);
                     members.RemoveAt(i);
+
+                    continue;
                 }
+
+                if (!members[i].IsInCombat) members[i].Task.FightAgainstHatedTargets(400.0f);
             }
 
-            spawnedPed = null;
-
-            if (!Util.ThereIs(spawnedPed = members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p))) || members.Count < 1)
+            if (members.Count < 1)
             {
                 Logger.Write(false, "Massacre: Everyone is gone. Time to be disposed.", "");
                 Restore(false);
@@ -215,9 +214,16 @@ namespace YouAreNotAlone
                 return true;
             }
 
-            foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.WeCanGiveTaskTo(m) && !m.IsInCombat)) p.Task.FightAgainstHatedTargets(400.0f);
+            spawnedPed = null;
 
-            if (Util.ThereIs(spawnedPed)) CheckDispatch();
+            if (Util.ThereIs(spawnedPed = members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)))) CheckDispatch();
+            else
+            {
+                Logger.Write(false, "Massacre: Everyone is gone. Time to be disposed.", "");
+                Restore(false);
+
+                return true;
+            }
 
             return false;
         }

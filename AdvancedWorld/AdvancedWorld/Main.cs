@@ -687,7 +687,7 @@ namespace YouAreNotAlone
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.CopGround);
                             else
                             {
                                 lspd.Restore(true);
@@ -716,7 +716,7 @@ namespace YouAreNotAlone
                         int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                         EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                        if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.CopGround);
                         else
                         {
                             lspd.Restore(true);
@@ -735,7 +735,7 @@ namespace YouAreNotAlone
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.CopGround);
                             else
                             {
                                 lspd.Restore(true);
@@ -747,7 +747,7 @@ namespace YouAreNotAlone
                         {
                             EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
-                            if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                            if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.CopGround);
                             else swat.Restore(true);
 
                             EmergencyHeli swatheli = new EmergencyHeli(swatHeliNames[Util.GetRandomIntBelow(swatHeliNames.Count)], target, "SWAT");
@@ -788,7 +788,7 @@ namespace YouAreNotAlone
                             int selectedType = Util.GetRandomIntBelow(copCarNames.Count);
                             EmergencyGround lspd = new EmergencyGround(copCarNames[selectedType][Util.GetRandomIntBelow(copCarNames[selectedType].Count)], target, "LSPD");
 
-                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.Cop);
+                            if (lspd.IsCreatedIn(safePosition, copModels[selectedType])) DispatchManager.Add(lspd, DispatchManager.DispatchType.CopGround);
                             else
                             {
                                 lspd.Restore(true);
@@ -807,7 +807,7 @@ namespace YouAreNotAlone
                         {
                             EmergencyGround fib = new EmergencyGround(fibCarNames[Util.GetRandomIntBelow(fibCarNames.Count)], target, "FIB");
 
-                            if (fib.IsCreatedIn(safePosition, fibModels)) DispatchManager.Add(fib, DispatchManager.DispatchType.Cop);
+                            if (fib.IsCreatedIn(safePosition, fibModels)) DispatchManager.Add(fib, DispatchManager.DispatchType.CopGround);
                             else
                             {
                                 fib.Restore(true);
@@ -816,7 +816,7 @@ namespace YouAreNotAlone
 
                             EmergencyGround swat = new EmergencyGround(swatCarNames[Util.GetRandomIntBelow(swatCarNames.Count)], target, "SWAT");
 
-                            if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.Cop);
+                            if (swat.IsCreatedIn(safePosition, swatModels)) DispatchManager.Add(swat, DispatchManager.DispatchType.CopGround);
                             else
                             {
                                 swat.Restore(true);
@@ -844,7 +844,7 @@ namespace YouAreNotAlone
                         {
                             EmergencyGround army = new EmergencyGround(armyCarNames[Util.GetRandomIntBelow(armyCarNames.Count)], target, "ARMY");
 
-                            if (army.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(army, DispatchManager.DispatchType.Army);
+                            if (army.IsCreatedIn(safePosition, armyModels)) DispatchManager.Add(army, DispatchManager.DispatchType.ArmyGround);
                             else
                             {
                                 army.Restore(true);

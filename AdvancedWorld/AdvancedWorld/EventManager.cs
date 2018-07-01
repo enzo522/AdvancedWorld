@@ -19,7 +19,6 @@ namespace YouAreNotAlone
 
         public enum EventType
         {
-            None,
             AggressiveDriver,
             Carjacker,
             Driveby,
@@ -48,70 +47,73 @@ namespace YouAreNotAlone
         
         public static void Add(AdvancedEntity en, EventType type)
         {
-            switch (type)
+            lock (typeof(EventManager))
             {
-                case EventType.AggressiveDriver:
-                    {
-                        lock (aggressiveList) { aggressiveList.Add(en); }
+                switch (type)
+                {
+                    case EventType.AggressiveDriver:
+                        {
+                            aggressiveList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Carjacker:
-                    {
-                        lock (carjackerList) { carjackerList.Add(en); }
+                    case EventType.Carjacker:
+                        {
+                            carjackerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Driveby:
-                    {
-                        lock (drivebyList) { drivebyList.Add(en); }
+                    case EventType.Driveby:
+                        {
+                            drivebyList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Fire:
-                    {
-                        lock (onFireList) { onFireList.Add(en); }
+                    case EventType.Fire:
+                        {
+                            onFireList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.GangTeam:
-                    {
-                        lock (gangList) { gangList.Add(en); }
+                    case EventType.GangTeam:
+                        {
+                            gangList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Massacre:
-                    {
-                        lock (massacreList) { massacreList.Add(en); }
+                    case EventType.Massacre:
+                        {
+                            massacreList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Racer:
-                    {
-                        lock (racerList) { racerList.Add(en); }
+                    case EventType.Racer:
+                        {
+                            racerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.ReplacedVehicle:
-                    {
-                        lock (replacedList) { replacedList.Add(en); }
+                    case EventType.ReplacedVehicle:
+                        {
+                            replacedList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Terrorist:
-                    {
-                        lock (terroristList) { terroristList.Add(en); }
+                    case EventType.Terrorist:
+                        {
+                            terroristList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
+                }
             }
 
             Logger.Write(false, "EventManager: Added new entity.", type.ToString());
@@ -143,15 +145,22 @@ namespace YouAreNotAlone
             }
             else timeChecker++;
 
-            foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
-            foreach (Racers r in racerList) r.CheckNitroable();
+            lock (typeof(EventManager))
+            {
+                foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
+            }
+
+            lock (typeof(EventManager))
+            {
+                foreach (Racers r in racerList) r.CheckNitroable();
+            }
         }
 
         private void CleanUp(List<AdvancedEntity> l)
         {
             if (l.Count < 1) return;
 
-            lock (l)
+            lock (typeof(EventManager))
             {
                 for (int i = l.Count - 1; i >= 0; i--)
                 {

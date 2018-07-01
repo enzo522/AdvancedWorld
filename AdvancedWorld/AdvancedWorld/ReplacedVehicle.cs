@@ -65,7 +65,7 @@ namespace YouAreNotAlone
                             spawnedPed.MarkAsNoLongerNeeded();
                             Logger.Write(false, "ReplacedVehicle: Created driver.", name);
                         }
-                        else Logger.Error("ReplacedVehicle: Couldn't create driver in replacing vehicle.", name);
+                        else Logger.Write(false, "ReplacedVehicle: Couldn't create driver in replacing vehicle.", name);
                     }
 
                     if (Util.GetRandomIntBelow(3) == 1)
@@ -82,17 +82,17 @@ namespace YouAreNotAlone
                         Logger.Write(false, "ReplacedVehicle: Remain stock replacing vehicle.", name);
                     }
                     
-                    if (!Util.BlipIsOn(spawnedVehicle))
+                    if (Util.BlipIsOn(spawnedVehicle))
+                    {
+                        Logger.Error("ReplacedVehicle: Blip is already on replacing vehicle. Abort.", name);
+                        Restore(true);
+                    }
+                    else
                     {
                         Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.PersonalVehicleCar, blipColor, blipName + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
                         Logger.Write(false, "ReplacedVehicle: Create replacing vehicle successfully.", name);
 
                         return true;
-                    }
-                    else
-                    {
-                        Logger.Error("ReplacedVehicle: Blip is already on replacing vehicle. Abort.", name);
-                        Restore(true);
                     }
                 }
             }

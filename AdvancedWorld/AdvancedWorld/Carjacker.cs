@@ -35,7 +35,7 @@ namespace YouAreNotAlone
             {
                 Ped selectedPed = nearbyPeds[Util.GetRandomIntBelow(nearbyPeds.Length)];
 
-                if (!Util.ThereIs(selectedPed) || selectedPed.IsPersistent || selectedPed.Equals(Game.Player.Character) || !selectedPed.IsHuman || selectedPed.IsDead)
+                if (!Util.ThereIs(selectedPed) || Util.BlipIsOn(selectedPed) || selectedPed.IsPersistent || selectedPed.Equals(Game.Player.Character) || !selectedPed.IsHuman || selectedPed.IsDead)
                 {
                     Logger.Write(false, "Carjacker: Couldn't use selected ped.", "");
 
@@ -52,14 +52,12 @@ namespace YouAreNotAlone
                 Logger.Write(false, "Carjacker: Characteristics are set.", "");
 
                 if (spawnedPed.IsInVehicle()) lastVehicle = spawnedPed.CurrentVehicle.Handle;
-                if (!Util.BlipIsOn(spawnedPed))
-                {
-                    Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
-                    Logger.Write(false, "Carjacker: Selected carjacker successfully.", "");
-                    FindNewVehicle();
 
-                    return true;
-                }
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.Masks, BlipColor.White, "Carjacker");
+                Logger.Write(false, "Carjacker: Selected carjacker successfully.", "");
+                FindNewVehicle();
+
+                return true;
             }
 
             Logger.Error("Carjacker: Couldn't select carjacker. Abort.", "");

@@ -182,6 +182,9 @@ namespace YouAreNotAlone
             if (ReadyToGoWith(members))
             {
                 if (!Util.BlipIsOn(spawnedVehicle)) Util.AddBlipOn(spawnedVehicle, 0.7f, BlipSprite.Tank, BlipColor.Red, "Terrorist " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
+
+                foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && Util.BlipIsOn(m))) p.CurrentBlip.Remove();
+
                 if (Util.ThereIs(spawnedVehicle.Driver))
                 {
                     Logger.Write(false, "Terrorist: Time to driveby.", name);
@@ -225,7 +228,7 @@ namespace YouAreNotAlone
         private new void CheckDispatch()
         {
             if (dispatchCooldown < 15) dispatchCooldown++;
-            else if (!Util.AnyEmergencyIsNear(spawnedPed.Position, DispatchManager.DispatchType.Army, type))
+            else if (!Util.AnyEmergencyIsNear(spawnedPed.Position, DispatchManager.DispatchType.ArmyGround, type))
             {
                 if (Main.DispatchAgainst(spawnedPed, type))
                 {

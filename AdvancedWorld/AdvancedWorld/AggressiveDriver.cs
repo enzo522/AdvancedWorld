@@ -71,6 +71,7 @@ namespace YouAreNotAlone
             Script.Wait(50);
             Function.Call(Hash.SET_DRIVER_ABILITY, spawnedPed, 1.0f);
             Function.Call(Hash.SET_DRIVER_AGGRESSIVENESS, spawnedPed, 1.0f);
+
             SetExhausts();
             Util.Tune(spawnedVehicle, true, true, true);
             Logger.Write(false, "AggressiveDriver: Tuned aggressive vehicle.", name);
@@ -82,19 +83,19 @@ namespace YouAreNotAlone
             spawnedPed.Task.CruiseWithVehicle(spawnedVehicle, 100.0f, 262692); // 4 + 32 + 512 + 262144
             Logger.Write(false, "AggressiveDriver: Characteristics are set.", name);
 
-            if (!Util.BlipIsOn(spawnedPed))
-            {
-                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
-                Logger.Write(false, "AggressiveDriver: Created aggressive driver successfully.", name);
-
-                return true;
-            }
-            else
+            if (Util.BlipIsOn(spawnedPed))
             {
                 Logger.Error("AggressiveDriver: Blip is already on aggressive driver. Abort.", name);
                 Restore(true);
 
                 return false;
+            }
+            else
+            {
+                Util.AddBlipOn(spawnedPed, 0.7f, BlipSprite.PersonalVehicleCar, BlipColor.Green, "Aggressive " + VehicleInfo.GetNameOf(spawnedVehicle.Model.Hash));
+                Logger.Write(false, "AggressiveDriver: Created aggressive driver successfully.", name);
+
+                return true;
             }
         }
 
