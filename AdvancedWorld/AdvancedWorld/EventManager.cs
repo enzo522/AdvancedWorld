@@ -1,20 +1,21 @@
 ﻿using GTA;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace YouAreNotAlone
 {
     public class EventManager : Script
     {
-        private static ConcurrentBag<AdvancedEntity> aggressiveList;
-        private static ConcurrentBag<AdvancedEntity> carjackerList;
-        private static ConcurrentBag<AdvancedEntity> drivebyList;
-        private static ConcurrentBag<AdvancedEntity> gangList;
-        private static ConcurrentBag<AdvancedEntity> massacreList;
-        private static ConcurrentBag<AdvancedEntity> onFireList;
-        private static ConcurrentBag<AdvancedEntity> racerList;
-        private static ConcurrentBag<AdvancedEntity> replacedList;
-        private static ConcurrentBag<AdvancedEntity> terroristList;
+        private static List<AdvancedEntity> aggressiveList;
+        private static List<AdvancedEntity> carjackerList;
+        private static List<AdvancedEntity> drivebyList;
+        private static List<AdvancedEntity> gangList;
+        private static List<AdvancedEntity> massacreList;
+        private static List<AdvancedEntity> onFireList;
+        private static List<AdvancedEntity> racerList;
+        private static List<AdvancedEntity> replacedList;
+        private static List<AdvancedEntity> terroristList;
+        private static readonly object _lockObject = new object();
         private int timeChecker;
 
         public enum EventType
@@ -32,85 +33,88 @@ namespace YouAreNotAlone
 
         static EventManager()
         {
-            aggressiveList = new ConcurrentBag<AdvancedEntity>();
-            carjackerList = new ConcurrentBag<AdvancedEntity>();
-            drivebyList = new ConcurrentBag<AdvancedEntity>();
-            gangList = new ConcurrentBag<AdvancedEntity>();
-            massacreList = new ConcurrentBag<AdvancedEntity>();
-            onFireList = new ConcurrentBag<AdvancedEntity>();
-            racerList = new ConcurrentBag<AdvancedEntity>();
-            replacedList = new ConcurrentBag<AdvancedEntity>();
-            terroristList = new ConcurrentBag<AdvancedEntity>();
+            aggressiveList = new List<AdvancedEntity>();
+            carjackerList = new List<AdvancedEntity>();
+            drivebyList = new List<AdvancedEntity>();
+            gangList = new List<AdvancedEntity>();
+            massacreList = new List<AdvancedEntity>();
+            onFireList = new List<AdvancedEntity>();
+            racerList = new List<AdvancedEntity>();
+            replacedList = new List<AdvancedEntity>();
+            terroristList = new List<AdvancedEntity>();
         }
 
         public static bool ReplaceSlotIsAvailable() { return replacedList.Count < 5; }
         
         public static void Add(AdvancedEntity en, EventType type)
         {
-            switch (type)
+            lock (_lockObject)
             {
-                case EventType.AggressiveDriver:
-                    {
-                        aggressiveList.Add(en);
+                switch (type)
+                {
+                    case EventType.AggressiveDriver:
+                        {
+                            aggressiveList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Carjacker:
-                    {
-                        carjackerList.Add(en);
+                    case EventType.Carjacker:
+                        {
+                            carjackerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Driveby:
-                    {
-                        drivebyList.Add(en);
+                    case EventType.Driveby:
+                        {
+                            drivebyList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Fire:
-                    {
-                        onFireList.Add(en);
+                    case EventType.Fire:
+                        {
+                            onFireList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.GangTeam:
-                    {
-                        gangList.Add(en);
+                    case EventType.GangTeam:
+                        {
+                            gangList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Massacre:
-                    {
-                        massacreList.Add(en);
+                    case EventType.Massacre:
+                        {
+                            massacreList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Racer:
-                    {
-                        racerList.Add(en);
+                    case EventType.Racer:
+                        {
+                            racerList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.ReplacedVehicle:
-                    {
-                        replacedList.Add(en);
+                    case EventType.ReplacedVehicle:
+                        {
+                            replacedList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
 
-                case EventType.Terrorist:
-                    {
-                        terroristList.Add(en);
+                    case EventType.Terrorist:
+                        {
+                            terroristList.Add(en);
 
-                        break;
-                    }
+                            break;
+                        }
+                }
             }
 
             Logger.Write(false, "EventManager: Added new entity.", type.ToString());
@@ -142,22 +146,30 @@ namespace YouAreNotAlone
             }
             else timeChecker++;
 
-            foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
-            foreach (Racers r in racerList) r.CheckNitroable();
+            lock (_lockObject)
+            {
+                foreach (AggressiveDriver ad in aggressiveList) ad.CheckNitroable();
+            }
+
+            lock (_lockObject)
+            {
+                foreach (Racers r in racerList) r.CheckNitroable();
+            }
         }
 
-        private void CleanUp(ConcurrentBag<AdvancedEntity> cb)
+        private void CleanUp(List<AdvancedEntity> list)
         {
-            if (cb.Count < 1) return;
+            if (list.Count < 1) return;
 
-            foreach (AdvancedEntity ae in cb)
+            lock (_lockObject)
             {
-                if (ae.ShouldBeRemoved())
+                for (int i = list.Count - 1; i >= 0; i--)
                 {
-                    AdvancedEntity item = null;
-
-                    cb.TryTake(out item);
-                    item.Restore(false);
+                    if (list[i].ShouldBeRemoved())
+                    {
+                        list[i].Restore(false);
+                        list.RemoveAt(i);
+                    }
                 }
             }
         }
