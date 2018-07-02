@@ -171,7 +171,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedVehicle) || !SpawnedPedExistsIn(members) || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "Driveby: Driveby need to be restored.", name);
-                Restore(false);
 
                 return true;
             }

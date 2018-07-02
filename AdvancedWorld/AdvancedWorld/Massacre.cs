@@ -206,21 +206,12 @@ namespace YouAreNotAlone
                 if (!members[i].IsInCombat) members[i].Task.FightAgainstHatedTargets(400.0f);
             }
 
-            if (members.Count < 1)
-            {
-                Logger.Write(false, "Massacre: Everyone is gone. Time to be disposed.", "");
-                Restore(false);
-
-                return true;
-            }
-
             spawnedPed = null;
 
-            if (Util.ThereIs(spawnedPed = members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)))) CheckDispatch();
+            if (members.Count > 0 && Util.ThereIs(spawnedPed = members.Find(p => Util.ThereIs(p) && Util.WeCanGiveTaskTo(p)))) CheckDispatch();
             else
             {
                 Logger.Write(false, "Massacre: Everyone is gone. Time to be disposed.", "");
-                Restore(false);
 
                 return true;
             }

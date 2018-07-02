@@ -72,7 +72,6 @@ namespace YouAreNotAlone
                     {
                         Logger.Write(false, blipName + ": A dead body is checked.", name);
                         checkedPeds.Add(target.Handle);
-                        Util.NaturallyRemove(target);
                     }
                     else
                     {
@@ -109,16 +108,15 @@ namespace YouAreNotAlone
 
         protected override bool TargetIsFound()
         {
-            if (Util.ThereIs(target) && target.Model.IsPed && target.IsPersistent && !checkedPeds.Contains(target.Handle)) return true;
+            if (Util.ThereIs(target) && target.Model.IsPed && !checkedPeds.Contains(target.Handle)) return true;
 
             target = null;
             targetPosition = Vector3.Zero;
 
-            if (Util.ThereIs(target = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 200.0f)).Find(p => Util.ThereIs(p) && p.IsDead && !p.IsPersistent && !checkedPeds.Contains(p.Handle))))
+            if (Util.ThereIs(target = new List<Ped>(World.GetNearbyPeds(spawnedVehicle.Position, 200.0f)).Find(p => Util.ThereIs(p) && p.IsDead && !checkedPeds.Contains(p.Handle))))
             {
                 Logger.Write(false, blipName + ": Found a dead body.", name);
                 targetPosition = Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, (Ped)target, 11816, 0.0f, 0.0f, 0.0f);
-                target.IsPersistent = true;
 
                 return true;
             }

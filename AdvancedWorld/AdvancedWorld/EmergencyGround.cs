@@ -40,7 +40,7 @@ namespace YouAreNotAlone
 
             spawnedVehicle = Util.Create(name, road.Position, road.Heading, false);
 
-            if (!Util.ThereIs(spawnedVehicle))
+            if (!Util.ThereIs(spawnedVehicle) || !TaskIsSet())
             {
                 Logger.Error(blipName + ": Couldn't create vehicle. Abort.", name);
 

@@ -22,7 +22,7 @@ namespace YouAreNotAlone
             wheel_rm2 = 40442
         }
 
-        public Stinger(Vehicle v) { this.owner = v; }
+        public Stinger(Vehicle owner) { this.owner = owner; }
 
         public bool IsCreatedIn(Vector3 position)
         {
@@ -84,7 +84,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(stinger) || !Util.ThereIs(owner) || !stinger.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "Stinger: Stinger need to be restored.", "");
-                Restore(false);
 
                 return true;
             }

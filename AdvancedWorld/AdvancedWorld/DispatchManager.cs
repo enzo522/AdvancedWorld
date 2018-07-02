@@ -1,20 +1,20 @@
 ﻿using GTA;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace YouAreNotAlone
 {
     public class DispatchManager : Script
     {
-        private static List<AdvancedEntity> armyList;
-        private static List<AdvancedEntity> armyHeliList;
-        private static List<AdvancedEntity> armyRoadblockList;
-        private static List<AdvancedEntity> copList;
-        private static List<AdvancedEntity> copHeliList;
-        private static List<AdvancedEntity> copRoadblockList;
-        private static List<AdvancedEntity> emList;
-        private static List<AdvancedEntity> shieldList;
-        private static List<AdvancedEntity> stingerList;
+        private static ConcurrentBag<AdvancedEntity> armyList;
+        private static ConcurrentBag<AdvancedEntity> armyHeliList;
+        private static ConcurrentBag<AdvancedEntity> armyRoadblockList;
+        private static ConcurrentBag<AdvancedEntity> copList;
+        private static ConcurrentBag<AdvancedEntity> copHeliList;
+        private static ConcurrentBag<AdvancedEntity> copRoadblockList;
+        private static ConcurrentBag<AdvancedEntity> emList;
+        private static ConcurrentBag<AdvancedEntity> shieldList;
+        private static ConcurrentBag<AdvancedEntity> stingerList;
         private int timeChecker;
 
         public enum DispatchType
@@ -32,86 +32,83 @@ namespace YouAreNotAlone
 
         static DispatchManager()
         {
-            armyList = new List<AdvancedEntity>();
-            armyHeliList = new List<AdvancedEntity>();
-            armyRoadblockList = new List<AdvancedEntity>();
-            copList = new List<AdvancedEntity>();
-            copHeliList = new List<AdvancedEntity>();
-            copRoadblockList = new List<AdvancedEntity>();
-            emList = new List<AdvancedEntity>();
-            shieldList = new List<AdvancedEntity>();
-            stingerList = new List<AdvancedEntity>();
+            armyList = new ConcurrentBag<AdvancedEntity>();
+            armyHeliList = new ConcurrentBag<AdvancedEntity>();
+            armyRoadblockList = new ConcurrentBag<AdvancedEntity>();
+            copList = new ConcurrentBag<AdvancedEntity>();
+            copHeliList = new ConcurrentBag<AdvancedEntity>();
+            copRoadblockList = new ConcurrentBag<AdvancedEntity>();
+            emList = new ConcurrentBag<AdvancedEntity>();
+            shieldList = new ConcurrentBag<AdvancedEntity>();
+            stingerList = new ConcurrentBag<AdvancedEntity>();
         }
 
         public static void Add(AdvancedEntity en, DispatchType type)
         {
-            lock (typeof(DispatchManager))
+            switch (type)
             {
-                switch (type)
-                {
-                    case DispatchType.ArmyGround:
-                        {
-                            armyList.Add(en);
+                case DispatchType.ArmyGround:
+                    {
+                        armyList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.ArmyHeli:
-                        {
-                            armyHeliList.Add(en);
+                case DispatchType.ArmyHeli:
+                    {
+                        armyHeliList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.ArmyRoadBlock:
-                        {
-                            armyRoadblockList.Add(en);
+                case DispatchType.ArmyRoadBlock:
+                    {
+                        armyRoadblockList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.CopGround:
-                        {
-                            copList.Add(en);
+                case DispatchType.CopGround:
+                    {
+                        copList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.CopHeli:
-                        {
-                            copHeliList.Add(en);
+                case DispatchType.CopHeli:
+                    {
+                        copHeliList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.CopRoadBlock:
-                        {
-                            copRoadblockList.Add(en);
+                case DispatchType.CopRoadBlock:
+                    {
+                        copRoadblockList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Emergency:
-                        {
-                            emList.Add(en);
+                case DispatchType.Emergency:
+                    {
+                        emList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Shield:
-                        {
-                            shieldList.Add(en);
+                case DispatchType.Shield:
+                    {
+                        shieldList.Add(en);
 
-                            break;
-                        }
+                        break;
+                    }
 
-                    case DispatchType.Stinger:
-                        {
-                            stingerList.Add(en);
+                case DispatchType.Stinger:
+                    {
+                        stingerList.Add(en);
 
-                            break;
-                        }
-                }
+                        break;
+                    }
             }
 
             Logger.Write(false, "DispatchManager: Added new entity.", type.ToString());
@@ -143,26 +140,22 @@ namespace YouAreNotAlone
             }
             else timeChecker++;
 
-            lock (typeof(DispatchManager))
-            {
-                foreach (Shield s in shieldList) s.CheckShieldable();
-            }
-
-            lock (typeof(DispatchManager))
-            {
-                foreach (Stinger s in stingerList) s.CheckStingable();
-            }
+            foreach (Shield s in shieldList) s.CheckShieldable();
+            foreach (Stinger s in stingerList) s.CheckStingable();
         }
 
-        private void CleanUp(List<AdvancedEntity> l)
+        private void CleanUp(ConcurrentBag<AdvancedEntity> cb)
         {
-            if (l.Count < 1) return;
+            if (cb.Count < 1) return;
 
-            lock (typeof(DispatchManager))
+            foreach (AdvancedEntity ae in cb)
             {
-                for (int i = l.Count - 1; i >= 0; i--)
+                if (ae.ShouldBeRemoved())
                 {
-                    if (l[i].ShouldBeRemoved()) l.RemoveAt(i);
+                    AdvancedEntity item = null;
+
+                    cb.TryTake(out item);
+                    item.Restore(false);
                 }
             }
         }

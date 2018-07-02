@@ -123,7 +123,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedPed) || !Util.ThereIs(spawnedVehicle) || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "AggressiveDriver: Aggressive driver need to be restored.", name);
-                Restore(false);
 
                 return true;
             }

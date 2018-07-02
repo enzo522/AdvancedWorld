@@ -98,7 +98,11 @@ namespace YouAreNotAlone
         {
             for (int i = racers.Count - 1; i >= 0; i--)
             {
-                if (racers[i].ShouldBeRemoved()) racers.RemoveAt(i);
+                if (racers[i].ShouldBeRemoved())
+                {
+                    racers[i].Restore(false);
+                    racers.RemoveAt(i);
+                }
             }
 
             if (racers.Count < 1)
@@ -108,6 +112,7 @@ namespace YouAreNotAlone
                 return true;
             }
 
+            spawnedPed = null;
             float distance = float.MaxValue;
 
             foreach (Racer r in racers)

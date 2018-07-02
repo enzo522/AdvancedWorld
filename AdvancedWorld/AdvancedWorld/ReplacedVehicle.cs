@@ -122,7 +122,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedVehicle) || !Util.WeCanEnter(spawnedVehicle) || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 200.0f))
             {
                 Logger.Write(false, "ReplacedVehicle: Replaced vehicle need to be restored.", name);
-                Restore(false);
 
                 return true;
             }

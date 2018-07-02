@@ -81,7 +81,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(shield) || !Util.ThereIs(owner) || !shield.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "Shield: Shield need to be restored.", "");
-                Restore(false);
 
                 return true;
             }

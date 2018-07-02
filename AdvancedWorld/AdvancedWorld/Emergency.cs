@@ -45,22 +45,13 @@ namespace YouAreNotAlone
             {
                 Logger.Write(false, blipName + ": Restore naturally.", name);
 
-                foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && m.IsPersistent))
-                {
-                    p.AlwaysKeepTask = false;
-                    p.BlockPermanentEvents = false;
-                    Function.Call(Hash.SET_PED_AS_COP, p, true);
-                    Util.NaturallyRemove(p);
-                }
+                foreach (Ped p in members) Util.NaturallyRemove(p);
 
-                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent)
-                {
-                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
 
-                    Util.NaturallyRemove(spawnedVehicle);
-                }
+                Util.NaturallyRemove(spawnedVehicle);
             }
-
+            
             if (ts != null) ts.Dispose();
             if (relationship != 0)
             {
@@ -72,7 +63,7 @@ namespace YouAreNotAlone
         }
 
         protected abstract BlipSprite CurrentBlipSprite { get; }
-        protected void SetPedsOnDuty(bool onVehicleDuty)
+        protected bool TaskIsSet()
         {
             if (ts == null)
             {
@@ -80,8 +71,14 @@ namespace YouAreNotAlone
                 ts.AddTask.LeaveVehicle(spawnedVehicle, false);
                 ts.AddTask.FightAgainstHatedTargets(400.0f);
                 ts.Close();
-            }
 
+                return true;
+            }
+            else return false;
+        }
+
+        protected void SetPedsOnDuty(bool onVehicleDuty)
+        {
             if (!Util.ThereIs(target) || !target.Model.IsPed)
             {
                 target = null;
@@ -346,7 +343,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
                 Logger.Write(false, blipName + ": Emergency need to be restored.", name);
-                Restore(false);
 
                 return true;
             }
@@ -363,7 +359,6 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(false, blipName + ": Target found but too far from player. Time to be restored.", name);
-                    Restore(false);
 
                     return true;
                 }
@@ -379,7 +374,6 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(false, blipName + ": Target not found and too far from player. Time to be restored.", name);
-                    Restore(false);
 
                     return true;
                 }

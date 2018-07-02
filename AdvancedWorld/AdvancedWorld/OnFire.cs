@@ -90,11 +90,13 @@ namespace YouAreNotAlone
                 }
             }
 
-            if (Util.ThereIs(OnFireVehicle = new List<Vehicle>(World.GetNearbyVehicles(OnFireVehicle.Position, 200.0f)).Find(v => Util.ThereIs(v) && v.IsOnFire)))
+            Entity en = null;
+
+            if (Util.ThereIs(en = new List<Entity>(World.GetNearbyEntities(OnFireVehicle.Position, 200.0f)).Find(e => Util.ThereIs(e) && e.IsOnFire)))
             {
                 Logger.Write(false, "OnFire: Found entity on fire.", "");
 
-                if (!blip.Position.Equals(OnFireVehicle.Position)) blip.Position = OnFireVehicle.Position;
+                if (!blip.Position.Equals(OnFireVehicle.Position)) blip.Position = en.Position;
 
                 return true;
             }
@@ -116,7 +118,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(OnFireVehicle) || !AnyFireNear() || !OnFireVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "OnFire: On fire vehicle need to be restored.", "");
-                Restore(false);
 
                 return true;
             }

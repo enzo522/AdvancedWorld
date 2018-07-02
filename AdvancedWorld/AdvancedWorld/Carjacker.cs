@@ -103,9 +103,7 @@ namespace YouAreNotAlone
 
                 return;
             }
-
-            spawnedVehicle.IsPersistent = true;
-
+            
             TaskSequence ts = new TaskSequence();
             ts.AddTask.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
             ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, 262692); // 4 + 32 + 512 + 262144
@@ -140,7 +138,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedPed) || trycount > 5 || spawnedPed.IsDead || !spawnedPed.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
                 Logger.Write(false, "Carjacker: Carjacker need to be restored.", "");
-                Restore(false);
 
                 return true;
             }

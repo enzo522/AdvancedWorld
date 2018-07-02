@@ -115,26 +115,17 @@ namespace YouAreNotAlone
             {
                 Logger.Write(false, blipName + ": Restore naturally.", name);
 
-                foreach (Ped p in members.FindAll(m => Util.ThereIs(m) && m.IsPersistent))
-                {
-                    p.AlwaysKeepTask = false;
-                    p.BlockPermanentEvents = false;
-                    Util.NaturallyRemove(p);
-                }
+                foreach (Ped p in members) Util.NaturallyRemove(p);
 
-                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.IsPersistent)
-                {
-                    if (spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
+                if (Util.ThereIs(spawnedVehicle) && spawnedVehicle.HasSiren && spawnedVehicle.SirenActive) spawnedVehicle.SirenActive = false;
 
-                    Util.NaturallyRemove(spawnedVehicle);
-                }
+                Util.NaturallyRemove(spawnedVehicle);
             }
 
             members.Clear();
         }
 
         protected override BlipSprite CurrentBlipSprite { get { return BlipSprite.Hospital; } }
-
         protected new abstract void SetPedsOnDuty(bool onVehicleDuty);
         protected abstract new bool TargetIsFound();
         private new void AddVarietyTo(Ped p)
@@ -198,7 +189,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
                 Logger.Write(false, blipName + ": Emergency fire need to be restored.", name);
-                Restore(false);
 
                 return true;
             }
@@ -215,7 +205,6 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(false, blipName + ": Target found but too far from player. Time to be restored.", name);
-                    Restore(false);
 
                     return true;
                 }
@@ -231,7 +220,6 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(false, blipName + ": Target not found and too far from player. Time to be restored.", name);
-                    Restore(false);
 
                     return true;
                 }

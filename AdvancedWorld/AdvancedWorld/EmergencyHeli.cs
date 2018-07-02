@@ -23,7 +23,7 @@ namespace YouAreNotAlone
 
             spawnedVehicle = Util.Create(name, new Vector3(position.X, position.Y, position.Z + 50.0f), (target.Position - position).ToHeading(), false);
 
-            if (!Util.ThereIs(spawnedVehicle))
+            if (!Util.ThereIs(spawnedVehicle) || !TaskIsSet())
             {
                 Logger.Error(blipName + ": Couldn't create vehicle. Abort.", name);
 
@@ -162,7 +162,6 @@ namespace YouAreNotAlone
             if (!Util.ThereIs(spawnedVehicle) || alive < 1 || members.Count < 1)
             {
                 Logger.Write(false, blipName + ": Emergency helicopter need to be restored.", name);
-                Restore(false);
 
                 return true;
             }
@@ -179,7 +178,6 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(false, blipName + ": Target found but too far from player. Time to be restored.", name);
-                    Restore(false);
 
                     return true;
                 }
@@ -195,7 +193,6 @@ namespace YouAreNotAlone
                 else
                 {
                     Logger.Write(false, blipName + ": Target not found and too far from player. Time to be restored.", name);
-                    Restore(false);
 
                     return true;
                 }

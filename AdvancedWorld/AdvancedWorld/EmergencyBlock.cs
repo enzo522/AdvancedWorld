@@ -40,12 +40,14 @@ namespace YouAreNotAlone
 
             spawnedVehicle = Util.Create(name, road.Position, road.Heading + 90, false);
 
-            if (!Util.ThereIs(spawnedVehicle))
+            if (!Util.ThereIs(spawnedVehicle) || !TaskIsSet())
             {
                 Logger.Error(blipName + ": Couldn't create vehicle. Abort.", name);
 
                 return false;
             }
+            
+            Logger.Write(false, blipName + ": Tried to create stinger and members.", name);
 
             Stinger s = new Stinger(spawnedVehicle);
 
@@ -84,8 +86,6 @@ namespace YouAreNotAlone
                     }
                 }
             }
-
-            Logger.Write(false, blipName + ": Tried to create stinger and created members.", name);
 
             if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
             {
