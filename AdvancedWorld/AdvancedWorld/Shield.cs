@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace YouAreNotAlone
 {
-    public class Shield : AdvancedEntity
+    public class Shield : AdvancedEntity, ICheckable
     {
         private List<string> shieldModels;
         private Ped owner;
@@ -88,7 +88,7 @@ namespace YouAreNotAlone
             return false;
         }
 
-        public void CheckShieldable()
+        public void CheckAbilityUsable()
         {
             if (owner.IsInVehicle() || owner.IsGettingIntoAVehicle) Detach(false);
             else if (owner.IsDead) Detach(true);

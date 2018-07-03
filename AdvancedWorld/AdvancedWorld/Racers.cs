@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace YouAreNotAlone
 {
-    public class Racers : Criminal
+    public class Racers : Criminal, ICheckable
     {
         private List<Racer> racers;
         private List<string> models;
@@ -79,7 +79,7 @@ namespace YouAreNotAlone
             }
         }
 
-        public void CheckNitroable()
+        public void CheckAbilityUsable()
         {
             foreach (Racer r in racers) r.CheckNitroable();
         }

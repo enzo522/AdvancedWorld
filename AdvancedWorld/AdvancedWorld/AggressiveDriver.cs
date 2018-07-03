@@ -4,7 +4,7 @@ using GTA.Native;
 
 namespace YouAreNotAlone
 {
-    public class AggressiveDriver : Nitroable
+    public class AggressiveDriver : Nitroable, ICheckable
     {
         private string name;
 
@@ -133,6 +133,11 @@ namespace YouAreNotAlone
             CheckBlockable();
 
             return false;
+        }
+        
+        public void CheckAbilityUsable()
+        {
+            CheckNitroable();
         }
     }
 }

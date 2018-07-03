@@ -1,21 +1,21 @@
 ﻿using GTA;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace YouAreNotAlone
 {
     public class DispatchManager : Script
     {
-        private static List<AdvancedEntity> armyList;
+        private static List<AdvancedEntity> armyGroundList;
         private static List<AdvancedEntity> armyHeliList;
         private static List<AdvancedEntity> armyRoadblockList;
-        private static List<AdvancedEntity> copList;
+        private static List<AdvancedEntity> copGroundList;
         private static List<AdvancedEntity> copHeliList;
         private static List<AdvancedEntity> copRoadblockList;
         private static List<AdvancedEntity> emList;
         private static List<AdvancedEntity> shieldList;
         private static List<AdvancedEntity> stingerList;
-        private static readonly object _lockObject = new object();
         private int timeChecker;
 
         public enum DispatchType
@@ -33,10 +33,10 @@ namespace YouAreNotAlone
 
         static DispatchManager()
         {
-            armyList = new List<AdvancedEntity>();
+            armyGroundList = new List<AdvancedEntity>();
             armyHeliList = new List<AdvancedEntity>();
             armyRoadblockList = new List<AdvancedEntity>();
-            copList = new List<AdvancedEntity>();
+            copGroundList = new List<AdvancedEntity>();
             copHeliList = new List<AdvancedEntity>();
             copRoadblockList = new List<AdvancedEntity>();
             emList = new List<AdvancedEntity>();
@@ -44,78 +44,21 @@ namespace YouAreNotAlone
             stingerList = new List<AdvancedEntity>();
         }
 
-        public static void Add(AdvancedEntity en, DispatchType type)
+        public static bool Add(AdvancedEntity en, DispatchType type)
         {
-            lock (_lockObject)
+            switch (type)
             {
-                switch (type)
-                {
-                    case DispatchType.ArmyGround:
-                        {
-                            armyList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.ArmyHeli:
-                        {
-                            armyHeliList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.ArmyRoadBlock:
-                        {
-                            armyRoadblockList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.CopGround:
-                        {
-                            copList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.CopHeli:
-                        {
-                            copHeliList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.CopRoadBlock:
-                        {
-                            copRoadblockList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.Emergency:
-                        {
-                            emList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.Shield:
-                        {
-                            shieldList.Add(en);
-
-                            break;
-                        }
-
-                    case DispatchType.Stinger:
-                        {
-                            stingerList.Add(en);
-
-                            break;
-                        }
-                }
+                case DispatchType.ArmyGround: return SafelyAddTo(armyGroundList, en);
+                case DispatchType.ArmyHeli: return SafelyAddTo(armyHeliList, en);
+                case DispatchType.ArmyRoadBlock: return SafelyAddTo(armyRoadblockList, en);
+                case DispatchType.CopGround: return SafelyAddTo(copGroundList, en);
+                case DispatchType.CopHeli: return SafelyAddTo(copHeliList, en);
+                case DispatchType.CopRoadBlock: return SafelyAddTo(copRoadblockList, en);
+                case DispatchType.Emergency: return SafelyAddTo(emList, en);
+                case DispatchType.Shield: return SafelyAddTo(shieldList, en);
+                case DispatchType.Stinger: return SafelyAddTo(stingerList, en);
+                default: return false;
             }
-
-            Logger.Write(false, "DispatchManager: Added new entity.", type.ToString());
         }
 
         public DispatchManager()
@@ -130,37 +73,53 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                CleanUp(armyList);
-                CleanUp(armyHeliList);
-                CleanUp(armyRoadblockList);
-                CleanUp(copList);
-                CleanUp(copHeliList);
-                CleanUp(copRoadblockList);
-                CleanUp(emList);
-                CleanUp(shieldList);
-                CleanUp(stingerList);
+                SafelyCleanUp(armyGroundList);
+                SafelyCleanUp(armyHeliList);
+                SafelyCleanUp(armyRoadblockList);
+                SafelyCleanUp(copGroundList);
+                SafelyCleanUp(copHeliList);
+                SafelyCleanUp(copRoadblockList);
+                SafelyCleanUp(emList);
+                SafelyCleanUp(shieldList);
+                SafelyCleanUp(stingerList);
 
                 timeChecker = 0;
             }
             else timeChecker++;
 
-            lock (_lockObject)
-            {
-                foreach (Shield s in shieldList) s.CheckShieldable();
-            }
-
-            lock (_lockObject)
-            {
-                foreach (Stinger s in stingerList) s.CheckStingable();
-            }
+            SafelyCheckAbilityOf(shieldList);
+            SafelyCheckAbilityOf(stingerList);
         }
 
-        private void CleanUp(List<AdvancedEntity> list)
+        private static bool SafelyAddTo(List<AdvancedEntity> list, AdvancedEntity item)
         {
-            if (list.Count < 1) return;
+            if (list == null || item == null) return false;
 
-            lock (_lockObject)
+            bool lockTaken = false;
+
+            try
             {
+                Monitor.Enter(list, ref lockTaken);
+                list.Add(item);
+            }
+            finally
+            {
+                if (lockTaken) Monitor.Exit(list);
+            }
+
+            return lockTaken;
+        }
+
+        private static void SafelyCleanUp(List<AdvancedEntity> list)
+        {
+            if (list == null || list.Count < 1) return;
+
+            bool lockTaken = false;
+
+            try
+            {
+                Monitor.Enter(list, ref lockTaken);
+
                 for (int i = list.Count - 1; i >= 0; i--)
                 {
                     if (list[i].ShouldBeRemoved())
@@ -169,6 +128,28 @@ namespace YouAreNotAlone
                         list.RemoveAt(i);
                     }
                 }
+            }
+            finally
+            {
+                if (lockTaken) Monitor.Exit(list);
+            }
+        }
+
+        private static void SafelyCheckAbilityOf(List<AdvancedEntity> list)
+        {
+            if (list == null || list.Count < 1) return;
+
+            bool lockTaken = false;
+
+            try
+            {
+                Monitor.Enter(list, ref lockTaken);
+
+                foreach (AdvancedEntity ae in list.FindAll(item => item is ICheckable)) ((ICheckable)ae).CheckAbilityUsable();
+            }
+            finally
+            {
+                if (lockTaken) Monitor.Exit(list);
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace YouAreNotAlone
 {
-    public class Stinger : AdvancedEntity
+    public class Stinger : AdvancedEntity, ICheckable
     {
         private Vehicle owner;
         private Prop stinger;
@@ -91,7 +91,7 @@ namespace YouAreNotAlone
             return false;
         }
 
-        public void CheckStingable()
+        public void CheckAbilityUsable()
         {
             foreach (Vehicle v in new List<Vehicle>(World.GetNearbyVehicles(stinger.Position, 20.0f)).FindAll(veh => Util.ThereIs(veh) && veh.IsTouching(stinger) && veh.CanTiresBurst))
             {
