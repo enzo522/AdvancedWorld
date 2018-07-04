@@ -1,11 +1,9 @@
-﻿using GTA;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace YouAreNotAlone
 {
-    public class EventManager : Script
+    public class EventManager : AdvancedScript
     {
         private static List<AdvancedEntity> aggressiveList;
         private static List<AdvancedEntity> carjackerList;
@@ -91,84 +89,6 @@ namespace YouAreNotAlone
 
             SafelyCheckAbilityOf(aggressiveList, EventType.AggressiveDriver);
             SafelyCheckAbilityOf(racerList, EventType.Racer);
-        }
-
-        private static bool SafelyAddTo(List<AdvancedEntity> list, AdvancedEntity item, EventType type)
-        {
-            if (list == null || item == null) return false;
-
-            bool lockTaken = false;
-
-            try
-            {
-                Monitor.Enter(list, ref lockTaken);
-                list.Add(item);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
-            }
-            finally
-            {
-                if (lockTaken)
-                {
-                    Logger.Write(false, "EventManager: Successfully added new entity.", type.ToString());
-                    Monitor.Exit(list);
-                }
-            }
-
-            return lockTaken;
-        }
-
-        private static void SafelyCleanUp(List<AdvancedEntity> list, EventType type)
-        {
-            if (list == null || list.Count < 1) return;
-
-            bool lockTaken = false;
-
-            try
-            {
-                Monitor.Enter(list, ref lockTaken);
-
-                for (int i = list.Count - 1; i >= 0; i--)
-                {
-                    if (list[i].ShouldBeRemoved())
-                    {
-                        list[i].Restore(false);
-                        list.RemoveAt(i);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
-            }
-            finally
-            {
-                if (lockTaken) Monitor.Exit(list);
-            }
-        }
-
-        private static void SafelyCheckAbilityOf(List<AdvancedEntity> list, EventType type)
-        {
-            if (list == null || list.Count < 1) return;
-
-            bool lockTaken = false;
-
-            try
-            {
-                Monitor.Enter(list, ref lockTaken);
-
-                foreach (AdvancedEntity ae in list.FindAll(item => item is ICheckable)) ((ICheckable)ae).CheckAbilityUsable();
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
-            }
-            finally
-            {
-                if (lockTaken) Monitor.Exit(list);
-            }
         }
     }
 }
