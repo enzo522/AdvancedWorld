@@ -48,15 +48,15 @@ namespace YouAreNotAlone
         {
             switch (type)
             {
-                case DispatchType.ArmyGround: return SafelyAddTo(armyGroundList, en);
-                case DispatchType.ArmyHeli: return SafelyAddTo(armyHeliList, en);
-                case DispatchType.ArmyRoadBlock: return SafelyAddTo(armyRoadblockList, en);
-                case DispatchType.CopGround: return SafelyAddTo(copGroundList, en);
-                case DispatchType.CopHeli: return SafelyAddTo(copHeliList, en);
-                case DispatchType.CopRoadBlock: return SafelyAddTo(copRoadblockList, en);
-                case DispatchType.Emergency: return SafelyAddTo(emList, en);
-                case DispatchType.Shield: return SafelyAddTo(shieldList, en);
-                case DispatchType.Stinger: return SafelyAddTo(stingerList, en);
+                case DispatchType.ArmyGround: return SafelyAddTo(armyGroundList, en, type);
+                case DispatchType.ArmyHeli: return SafelyAddTo(armyHeliList, en, type);
+                case DispatchType.ArmyRoadBlock: return SafelyAddTo(armyRoadblockList, en, type);
+                case DispatchType.CopGround: return SafelyAddTo(copGroundList, en, type);
+                case DispatchType.CopHeli: return SafelyAddTo(copHeliList, en, type);
+                case DispatchType.CopRoadBlock: return SafelyAddTo(copRoadblockList, en, type);
+                case DispatchType.Emergency: return SafelyAddTo(emList, en, type);
+                case DispatchType.Shield: return SafelyAddTo(shieldList, en, type);
+                case DispatchType.Stinger: return SafelyAddTo(stingerList, en, type);
                 default: return false;
             }
         }
@@ -73,25 +73,25 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                SafelyCleanUp(armyGroundList);
-                SafelyCleanUp(armyHeliList);
-                SafelyCleanUp(armyRoadblockList);
-                SafelyCleanUp(copGroundList);
-                SafelyCleanUp(copHeliList);
-                SafelyCleanUp(copRoadblockList);
-                SafelyCleanUp(emList);
-                SafelyCleanUp(shieldList);
-                SafelyCleanUp(stingerList);
+                SafelyCleanUp(armyGroundList, DispatchType.ArmyGround);
+                SafelyCleanUp(armyHeliList, DispatchType.ArmyHeli);
+                SafelyCleanUp(armyRoadblockList, DispatchType.ArmyRoadBlock);
+                SafelyCleanUp(copGroundList, DispatchType.CopGround);
+                SafelyCleanUp(copHeliList, DispatchType.CopHeli);
+                SafelyCleanUp(copRoadblockList, DispatchType.CopRoadBlock);
+                SafelyCleanUp(emList, DispatchType.Emergency);
+                SafelyCleanUp(shieldList, DispatchType.Shield);
+                SafelyCleanUp(stingerList, DispatchType.Stinger);
 
                 timeChecker = 0;
             }
             else timeChecker++;
 
-            SafelyCheckAbilityOf(shieldList);
-            SafelyCheckAbilityOf(stingerList);
+            SafelyCheckAbilityOf(shieldList, DispatchType.Shield);
+            SafelyCheckAbilityOf(stingerList, DispatchType.Stinger);
         }
 
-        private static bool SafelyAddTo(List<AdvancedEntity> list, AdvancedEntity item)
+        private static bool SafelyAddTo(List<AdvancedEntity> list, AdvancedEntity item, DispatchType type)
         {
             if (list == null || item == null) return false;
 
@@ -102,15 +102,23 @@ namespace YouAreNotAlone
                 Monitor.Enter(list, ref lockTaken);
                 list.Add(item);
             }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
+            }
             finally
             {
-                if (lockTaken) Monitor.Exit(list);
+                if (lockTaken)
+                {
+                    Logger.Write(false, "DispatchManager: Successfully added new entity.", type.ToString());
+                    Monitor.Exit(list);
+                }
             }
 
             return lockTaken;
         }
 
-        private static void SafelyCleanUp(List<AdvancedEntity> list)
+        private static void SafelyCleanUp(List<AdvancedEntity> list, DispatchType type)
         {
             if (list == null || list.Count < 1) return;
 
@@ -129,13 +137,17 @@ namespace YouAreNotAlone
                     }
                 }
             }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
+            }
             finally
             {
                 if (lockTaken) Monitor.Exit(list);
             }
         }
 
-        private static void SafelyCheckAbilityOf(List<AdvancedEntity> list)
+        private static void SafelyCheckAbilityOf(List<AdvancedEntity> list, DispatchType type)
         {
             if (list == null || list.Count < 1) return;
 
@@ -146,6 +158,10 @@ namespace YouAreNotAlone
                 Monitor.Enter(list, ref lockTaken);
 
                 foreach (AdvancedEntity ae in list.FindAll(item => item is ICheckable)) ((ICheckable)ae).CheckAbilityUsable();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
             }
             finally
             {

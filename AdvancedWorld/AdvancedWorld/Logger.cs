@@ -22,8 +22,6 @@ namespace YouAreNotAlone
 
         public static void Error(string s, string name)
         {
-            if (Main.NoLog) return;
-
             if (name == "") File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] [ERROR] " + s + " " + name + "\n");
             else File.AppendAllText(filePath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] [ERROR] " + s + " (" + name + ")\n");
         }

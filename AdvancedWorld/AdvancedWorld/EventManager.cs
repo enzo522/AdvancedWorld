@@ -50,15 +50,15 @@ namespace YouAreNotAlone
         {
             switch (type)
             {
-                case EventType.AggressiveDriver: return SafelyAddTo(aggressiveList, en);
-                case EventType.Carjacker: return SafelyAddTo(carjackerList, en);
-                case EventType.Driveby: return SafelyAddTo(drivebyList, en);
-                case EventType.Fire: return SafelyAddTo(onFireList, en);
-                case EventType.GangTeam: return SafelyAddTo(gangList, en);
-                case EventType.Massacre: return SafelyAddTo(massacreList, en);
-                case EventType.Racer: return SafelyAddTo(racerList, en);
-                case EventType.ReplacedVehicle: return SafelyAddTo(replacedList, en);
-                case EventType.Terrorist: return SafelyAddTo(terroristList, en);
+                case EventType.AggressiveDriver: return SafelyAddTo(aggressiveList, en, type);
+                case EventType.Carjacker: return SafelyAddTo(carjackerList, en, type);
+                case EventType.Driveby: return SafelyAddTo(drivebyList, en, type);
+                case EventType.Fire: return SafelyAddTo(onFireList, en, type);
+                case EventType.GangTeam: return SafelyAddTo(gangList, en, type);
+                case EventType.Massacre: return SafelyAddTo(massacreList, en, type);
+                case EventType.Racer: return SafelyAddTo(racerList, en, type);
+                case EventType.ReplacedVehicle: return SafelyAddTo(replacedList, en, type);
+                case EventType.Terrorist: return SafelyAddTo(terroristList, en, type);
                 default: return false;
             }
         }
@@ -75,25 +75,25 @@ namespace YouAreNotAlone
         {
             if (timeChecker == 100)
             {
-                SafelyCleanUp(aggressiveList);
-                SafelyCleanUp(carjackerList);
-                SafelyCleanUp(drivebyList);
-                SafelyCleanUp(gangList);
-                SafelyCleanUp(massacreList);
-                SafelyCleanUp(onFireList);
-                SafelyCleanUp(racerList);
-                SafelyCleanUp(replacedList);
-                SafelyCleanUp(terroristList);
+                SafelyCleanUp(aggressiveList, EventType.AggressiveDriver);
+                SafelyCleanUp(carjackerList, EventType.Carjacker);
+                SafelyCleanUp(drivebyList, EventType.Driveby);
+                SafelyCleanUp(gangList, EventType.GangTeam);
+                SafelyCleanUp(massacreList, EventType.Massacre);
+                SafelyCleanUp(onFireList, EventType.Fire);
+                SafelyCleanUp(racerList, EventType.Racer);
+                SafelyCleanUp(replacedList, EventType.ReplacedVehicle);
+                SafelyCleanUp(terroristList, EventType.Terrorist);
 
                 timeChecker = 0;
             }
             else timeChecker++;
 
-            SafelyCheckAbilityOf(aggressiveList);
-            SafelyCheckAbilityOf(racerList);
+            SafelyCheckAbilityOf(aggressiveList, EventType.AggressiveDriver);
+            SafelyCheckAbilityOf(racerList, EventType.Racer);
         }
 
-        private static bool SafelyAddTo(List<AdvancedEntity> list, AdvancedEntity item)
+        private static bool SafelyAddTo(List<AdvancedEntity> list, AdvancedEntity item, EventType type)
         {
             if (list == null || item == null) return false;
 
@@ -104,15 +104,23 @@ namespace YouAreNotAlone
                 Monitor.Enter(list, ref lockTaken);
                 list.Add(item);
             }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
+            }
             finally
             {
-                if (lockTaken) Monitor.Exit(list);
+                if (lockTaken)
+                {
+                    Logger.Write(false, "EventManager: Successfully added new entity.", type.ToString());
+                    Monitor.Exit(list);
+                }
             }
 
             return lockTaken;
         }
 
-        private static void SafelyCleanUp(List<AdvancedEntity> list)
+        private static void SafelyCleanUp(List<AdvancedEntity> list, EventType type)
         {
             if (list == null || list.Count < 1) return;
 
@@ -131,13 +139,17 @@ namespace YouAreNotAlone
                     }
                 }
             }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
+            }
             finally
             {
                 if (lockTaken) Monitor.Exit(list);
             }
         }
 
-        private static void SafelyCheckAbilityOf(List<AdvancedEntity> list)
+        private static void SafelyCheckAbilityOf(List<AdvancedEntity> list, EventType type)
         {
             if (list == null || list.Count < 1) return;
 
@@ -148,6 +160,10 @@ namespace YouAreNotAlone
                 Monitor.Enter(list, ref lockTaken);
 
                 foreach (AdvancedEntity ae in list.FindAll(item => item is ICheckable)) ((ICheckable)ae).CheckAbilityUsable();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message + "\n" + e.StackTrace, type.ToString());
             }
             finally
             {

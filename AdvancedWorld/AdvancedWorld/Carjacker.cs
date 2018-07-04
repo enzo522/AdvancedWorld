@@ -79,7 +79,7 @@ namespace YouAreNotAlone
 
             if (nearbyVehicles.Length < 1)
             {
-                Logger.Error("Carjacker: Couldn't find vehicles nearby. Abort finding.", "");
+                Logger.Write(false, "Carjacker: Couldn't find vehicles nearby. Abort finding.", "");
 
                 return;
             }
@@ -103,7 +103,8 @@ namespace YouAreNotAlone
 
                 return;
             }
-            
+
+            spawnedVehicle.IsPersistent = true;
             TaskSequence ts = new TaskSequence();
             ts.AddTask.EnterVehicle(spawnedVehicle, VehicleSeat.Driver, -1, 2.0f, 1);
             ts.AddTask.CruiseWithVehicle(spawnedVehicle, 100.0f, 262692); // 4 + 32 + 512 + 262144
