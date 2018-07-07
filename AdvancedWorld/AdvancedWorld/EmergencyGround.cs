@@ -130,11 +130,7 @@ namespace YouAreNotAlone
                             {
                                 Shield s = new Shield(p);
 
-                                if (s.IsCreatedIn(p.Position.Around(5.0f)))
-                                {
-                                    DispatchManager.Add(s, DispatchManager.DispatchType.Shield);
-                                    p.Weapons.Give(WeaponHash.Pistol, 100, true, true);
-                                }
+                                if (s.IsCreatedIn(p.Position.Around(5.0f)) && DispatchManager.Add(s, DispatchManager.DispatchType.Shield)) p.Weapons.Give(WeaponHash.Pistol, 100, true, true);
                                 else s.Restore(true);
                             }
 

@@ -108,13 +108,13 @@ namespace YouAreNotAlone
 
             if (SpawnedPedExistsIn(members))
             {
-                Logger.Write(false, "Driveby: Created driveby successfully.", name);
+                Logger.Write(false, "Terrorist: Created terrorists successfully.", name);
 
                 return true;
             }
             else
             {
-                Logger.Error("Driveby: Driver doesn't exist. Abort.", name);
+                Logger.Error("Terrorist: Driver doesn't exist. Abort.", name);
                 Restore(true);
 
                 return false;
@@ -166,11 +166,11 @@ namespace YouAreNotAlone
                 }
             }
 
-            Logger.Write(false, "Driveby: Alive members - " + alive.ToString(), name);
+            Logger.Write(false, "Terrorist: Alive members - " + alive.ToString(), name);
 
             if (!Util.ThereIs(spawnedVehicle) || !SpawnedPedExistsIn(members) || alive < 1 || members.Count < 1 || !spawnedVehicle.IsInRangeOf(Game.Player.Character.Position, 500.0f))
             {
-                Logger.Write(false, "Driveby: Driveby need to be restored.", name);
+                Logger.Write(false, "Terrorist: Terrorist need to be restored.", name);
 
                 return true;
             }

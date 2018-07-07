@@ -51,7 +51,8 @@ namespace YouAreNotAlone
 
             Stinger s = new Stinger(spawnedVehicle);
 
-            if (s.IsCreatedIn(spawnedVehicle.Position - spawnedVehicle.ForwardVector * spawnedVehicle.Model.GetDimensions().Y)) DispatchManager.Add(s, DispatchManager.DispatchType.Stinger);
+            if (s.IsCreatedIn(spawnedVehicle.Position - spawnedVehicle.ForwardVector * spawnedVehicle.Model.GetDimensions().Y) && DispatchManager.Add(s, DispatchManager.DispatchType.Stinger))
+                Logger.Write(false, blipName + ": Created stinger.", name);
             else s.Restore(true);
 
             if (emergencyType == "LSPD")

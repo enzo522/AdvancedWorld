@@ -824,8 +824,7 @@ namespace YouAreNotAlone
                     }
             }
 
-            if (success >= minOfSuccess) return true;
-            else return false;
+            return success >= minOfSuccess;
         }
 
         public static bool BlockRoadAgainst(Entity target, EventManager.EventType type)
