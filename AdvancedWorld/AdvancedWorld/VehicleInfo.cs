@@ -42,17 +42,17 @@ namespace YouAreNotAlone
         private unsafe static IntPtr FindPattern(string pattern)
         {
             ProcessModule module = Process.GetCurrentProcess().MainModule;
-            long address = module.BaseAddress.ToInt64();
-            long endAddress = address + module.ModuleMemorySize;
+            long addr = module.BaseAddress.ToInt64();
+            long endAddr = addr + module.ModuleMemorySize;
 
             pattern = pattern.Replace(" ", "").Replace("??", "00");
             byte[] bytesArray = new byte[pattern.Length / 2];
 
             for (int i = 0; i < pattern.Length; i += 2) bytesArray[i / 2] = byte.Parse(pattern.Substring(i, 2), System.Globalization.NumberStyles.HexNumber);
 
-            for (; address < endAddress; address++)
+            for (; addr < endAddr; addr++)
             {
-                IntPtr data = new IntPtr(address);
+                IntPtr data = new IntPtr(addr);
 
                 if (Compare(data, bytesArray)) return data;
             }

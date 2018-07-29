@@ -501,5 +501,19 @@ namespace YouAreNotAlone
                 p.RelationshipGroup = pedCriminal;
             }
         }
+
+        public static void SetCombatAttributesOf(Ped p)
+        {
+            Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 0, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 1, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 2, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 3, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 20, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
+            Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 52, true);
+        }
     }
 }

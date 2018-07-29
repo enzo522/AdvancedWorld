@@ -77,7 +77,7 @@ namespace YouAreNotAlone
 
             Logger.Write(false, "Terrorist: Tuned vehicle and created members.", name);
 
-            if (Util.ThereIs(members.Find(p => !Util.ThereIs(p))))
+            if (members.Find(p => !Util.ThereIs(p)) != null)
             {
                 Logger.Error("Terrorist: There is a member who doesn't exist. Abort.", name);
                 Restore(true);
@@ -87,11 +87,7 @@ namespace YouAreNotAlone
 
             foreach (Ped p in members)
             {
-                Function.Call(Hash.SET_PED_FLEE_ATTRIBUTES, p, 0, false);
-                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 17, true);
-                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 46, true);
-                Function.Call(Hash.SET_PED_COMBAT_ATTRIBUTES, p, 5, true);
-
+                Util.SetCombatAttributesOf(p);
                 p.RelationshipGroup = relationship;
                 p.IsPriorityTargetForEnemies = true;
                 p.CanBeShotInVehicle = false;
