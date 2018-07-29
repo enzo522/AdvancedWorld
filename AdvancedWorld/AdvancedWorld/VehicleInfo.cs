@@ -7,8 +7,13 @@ namespace YouAreNotAlone
     public static class VehicleInfo
     {
         private delegate IntPtr GetModelInfoDelegate(int hash, IntPtr indexPtr);
-        private static IntPtr address = FindPattern("0F B7 05 ?? ?? ?? ?? 45 33 C9 4C 8B DA 66 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 C0 33 D2 8B C1 41 F7 F0 48 8B 05 ?? ?? ?? ?? 4C 8B 14 D0 EB 09 41 3B 0A 74 54");
+        private static IntPtr address;
         private static GetModelInfoDelegate GetModelInfo { get { return Marshal.GetDelegateForFunctionPointer<GetModelInfoDelegate>(address); } }
+
+        public static void Init()
+        {
+            address = FindPattern("0F B7 05 ?? ?? ?? ?? 45 33 C9 4C 8B DA 66 85 C0 0F 84 ?? ?? ?? ?? 44 0F B7 C0 33 D2 8B C1 41 F7 F0 48 8B 05 ?? ?? ?? ?? 4C 8B 14 D0 EB 09 41 3B 0A 74 54");
+        }
 
         public static string GetNameOf(int hash)
         {
@@ -23,8 +28,8 @@ namespace YouAreNotAlone
             string vehicleName = "";
 
             if (GTA.Game.GetGXTEntry(makeName) != "NULL") vehicleName += GTA.Game.GetGXTEntry(makeName) + " ";
-            if (GTA.Game.GetGXTEntry(displayName) == "NULL") vehicleName += displayName.ToUpper();
-            else vehicleName += GTA.Game.GetGXTEntry(displayName);
+
+            vehicleName += GTA.Game.GetGXTEntry(displayName) == "NULL" ? displayName.ToUpper() : GTA.Game.GetGXTEntry(displayName);
 
             return vehicleName;
         }
