@@ -42,8 +42,8 @@ namespace YouAreNotAlone
             terroristList = new List<AdvancedEntity>();
         }
 
-        public static bool ReplaceSlotIsAvailable() { return replacedList.Count < 5; }
-        
+        public static bool ReplaceSlotIsAvailable() => replacedList.Count < 5;
+
         public static bool Add(AdvancedEntity en, EventType type)
         {
             switch (type)
